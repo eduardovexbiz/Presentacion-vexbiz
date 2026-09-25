@@ -71,6 +71,14 @@ p{margin:0}
 .hero .lead{margin-top:26px;font-size:clamp(17px,1.6vw,20px);color:var(--soft);max-width:58ch;animation:rise .9s .7s both}
 .hero .cue{margin-top:46px;display:flex;align-items:center;gap:12px;color:var(--muted);font-size:14px;animation:rise .9s 1s both}
 .cue i{width:1px;height:40px;background:linear-gradient(var(--gold),transparent);display:block;animation:drip 1.8s ease-in-out infinite}
+.scrollhint{position:fixed;left:50%;bottom:24px;transform:translate(-50%,10px);display:flex;align-items:center;gap:9px;padding:11px 18px;border-radius:999px;background:rgba(7,21,48,.78);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);border:1px solid rgba(217,163,58,.4);color:var(--soft);font-size:13px;letter-spacing:.02em;z-index:60;opacity:0;pointer-events:none;transition:opacity .45s ease,transform .45s ease;box-shadow:0 10px 30px rgba(0,0,0,.35)}
+.scrollhint.show{opacity:1;transform:translate(-50%,0)}
+.scrollhint svg{width:16px;height:16px;stroke:var(--gold);fill:none;stroke-width:2.6;stroke-linecap:round;stroke-linejoin:round;animation:hintbounce 1.5s ease-in-out infinite}
+.scrollhint.nudge{border-color:rgba(217,163,58,.85)}
+.scrollhint.nudge svg{animation:hintbounce .65s ease-in-out infinite}
+@keyframes hintbounce{0%,100%{transform:translateY(0)}50%{transform:translateY(6px)}}
+.auto .scrollhint{display:none}
+@media (max-width:560px){.scrollhint{bottom:16px;font-size:12px;padding:9px 15px}}
 @keyframes rise{from{opacity:0;transform:translateY(.6em)}to{opacity:1;transform:none}}
 @keyframes drip{0%,100%{transform:scaleY(.4);transform-origin:top}50%{transform:scaleY(1);transform-origin:top}}
 
@@ -326,8 +334,8 @@ section.block{padding-block:clamp(72px,10vw,130px)}
   .hero h1 .w,.hero .lead,.hero .cue,.cue i,.browser i,.reel .play,.badge::before{animation:none}
 }
 </style>
-</head><body>
 
+</head><body>
 <header class="bar">
   <div class="wrap">
     <a class="logo" href="#top" aria-label="Vexbiz, inicio">VE<b>X</b>BIZ</a>
@@ -335,6 +343,8 @@ section.block{padding-block:clamp(72px,10vw,130px)}
   </div>
   <div class="progress"><i id="prog"></i></div>
 </header>
+
+<div class="scrollhint" id="scrollHint" aria-hidden="true"><span>Desliza para continuar</span><svg viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg></div>
 
 <main id="top">
 
@@ -344,8 +354,8 @@ section.block{padding-block:clamp(72px,10vw,130px)}
   <div class="wrap hero-in" id="heroIn">
     <div class="brand"><div class="mark" role="img" aria-label="Vexbiz">VE<b>X</b>BIZ</div><div class="sub">Corporación Tecnológica Industrial, C.A.</div></div>
     <p class="hero-kicker">VEXBIZ Suministros</p>
-    <h1 id="heroH">La tecnología de las grandes corporaciones, <em>para cualquier negocio</em></h1>
-    <p class="lead">Descubre cómo VEXBIZ Suministros centraliza el comercio en un solo ecosistema impulsado por nuestra IA. La plataforma que tu negocio necesita para competir, disponible de inmediato y con cero costos de desarrollo.</p>
+    <h1 id="heroH">Una sola plataforma de comercio electrónico <em>para quien produce, vende, compra y presta servicios</em></h1>
+    <p class="lead">Descubre cómo VEXBIZ Suministros centraliza el comercio en un solo ecosistema impulsado por nuestra tecnología. La plataforma que tu negocio necesita para crecer y con disponibilidad inmediata.</p>
     <div class="cue"><i></i>Desliza para conocer el ecosistema</div>
   </div>
 </section>
@@ -432,7 +442,7 @@ section.block{padding-block:clamp(72px,10vw,130px)}
       <div class="jr-body">
         <div>
           <div class="steps">
-            <div class="step on"><p class="num">Paso 1 de 5</p><h3>La IA carga el inventario</h3><p>El comercio entrega su lista y la plataforma procesa cada ítem: ficha detallada y fotografía, sin trabajo manual.</p></div>
+            <div class="step on"><p class="num">Paso 1 de 5</p><h3>El agente Vexbiz digitaliza tu inventario</h3><p>El comercio entrega su lista y la plataforma procesa cada ítem: ficha detallada y fotografía, sin trabajo manual.</p></div>
             <div class="step"><p class="num">Paso 2 de 5</p><h3>Entra al catálogo infinito</h3><p>El producto queda expuesto en una plataforma multinicho, junto a servicios y a otros comercios, frente a toda la demanda.</p></div>
             <div class="step"><p class="num">Paso 3 de 5</p><h3>El cliente paga seguro</h3><p>Pasarela integrada con Pago Móvil, transferencias, tarjetas y cripto. Un solo pago se divide automáticamente entre las partes.</p></div>
             <div class="step"><p class="num">Paso 4 de 5</p><h3>Llega por la última milla</h3><p>Un transportista independiente recoge en cada tienda del pedido y lo entrega consolidado en la puerta del cliente.</p></div>
@@ -727,7 +737,8 @@ section.block{padding-block:clamp(72px,10vw,130px)}
   const sw=(words(scrub),[...scrub.querySelectorAll('.w')]);
 
   const pinned=[['#s-net',renderNet,7000,false],['#s-cards',renderCards,32000,true],['#s-jr',renderJr,11000,true],['#s-pay',renderPay,10000,true]].map(([s,f,dur,loop])=>({el:$(s),f,dur,loop}));
-  const heroIn=$('#heroIn'),prog=$('#prog'),chapNow=$('#chapNow');
+  const heroIn=$('#heroIn'),prog=$('#prog'),chapNow=$('#chapNow'),scrollHint=$('#scrollHint');
+  let lastMove=performance.now();
   const chapters=$$('[data-chapter]');let chapLast='';
   const rv=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');rv.unobserve(e.target);}}),{rootMargin:'0px 0px -12% 0px'});
   $$('[data-rv]').forEach(el=>rv.observe(el));
@@ -756,7 +767,9 @@ section.block{padding-block:clamp(72px,10vw,130px)}
     const vh=innerHeight,sy=se.scrollTop||scrollY;
     prog.style.transform=`scaleX(${clamp(sy/(se.scrollHeight-vh))})`;
     const hr=$('.hero').getBoundingClientRect(),hp=clamp(-hr.top/(vh*.9));heroIn.style.transform=`translateY(${-hp*80}px)`;heroIn.style.opacity=1-hp*.85;
-    pinned.forEach(({el,f})=>{const r=el.getBoundingClientRect();if(r.bottom<-50||r.top>vh+50)return;f(clamp(-r.top/(el.offsetHeight-vh)));});
+    let activeP=null;
+    pinned.forEach(({el,f})=>{const r=el.getBoundingClientRect();if(r.bottom<-50||r.top>vh+50)return;const p=clamp(-r.top/(el.offsetHeight-vh));f(p);activeP=p;});
+    scrollHint.classList.toggle('show',activeP!=null&&activeP<.93);
     const sr=scrub.getBoundingClientRect(),sp=clamp((vh*.85-sr.top)/(sr.height+vh*.35));
     sw.forEach((w,i)=>w.classList.toggle('on',i<sp*sw.length*1.1));
     const gr=$('#rings').getBoundingClientRect();renderRings(clamp((vh-gr.top)/(vh+gr.height)));
@@ -765,7 +778,10 @@ section.block{padding-block:clamp(72px,10vw,130px)}
   }
   /* poll positions every frame: catches window scroll, body scroll and momentum scrolling on phones */
   let lastY=null;const probe=$('main');
-  (function loop(){const y=probe.getBoundingClientRect().top;if(y!==lastY){lastY=y;frame();}requestAnimationFrame(loop);})();
+  (function loop(){const y=probe.getBoundingClientRect().top;if(y!==lastY){lastY=y;lastMove=performance.now();frame();}requestAnimationFrame(loop);})();
+  /* nudge: if the hint is showing but the person hasn't moved in a couple seconds, bounce faster to catch the eye */
+  setInterval(()=>{scrollHint.classList.toggle('nudge',scrollHint.classList.contains('show')&&performance.now()-lastMove>2200);},300);
 })();
 </script>
+
 </body></html>
