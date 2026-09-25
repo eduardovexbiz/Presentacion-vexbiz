@@ -1,0 +1,758 @@
+<!doctype html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="description" content="VEXBIZ Suministros: un ecosistema de comercio electrónico automatizado con IA."><style>body{margin:0}[hidden]{display:none!important}img{max-width:100%}</style>
+<title>Ecosistema Vexbiz</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700;800&family=Barlow:wght@400;500;600&display=swap">
+<style>
+:root{
+  color-scheme: dark;
+  --ink:#050B1C; --navy:#071530; --panel:#0B1B36;
+  --line:rgba(217,163,58,.22); --gold:#D9A33A; --gold-hi:#F2C768;
+  --text:#EDF0F7; --muted:#94A0BD; --soft:#C6CDDF;
+  --display:"Barlow Condensed","Arial Narrow",Impact,sans-serif;
+  --body:"Barlow","Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  --gut:clamp(16px,4vw,56px); --max:1180px;
+}
+*{box-sizing:border-box}
+body{background:var(--ink);color:var(--text);font-family:var(--body);font-size:17px;line-height:1.6;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+a{color:inherit}
+h1,h2,h3{font-family:var(--display);font-weight:700;line-height:1.02;margin:0;text-wrap:balance}
+p{margin:0}
+.wrap{max-width:var(--max);margin:0 auto;padding-inline:var(--gut)}
+.eyebrow{font-family:var(--display);font-weight:600;font-size:14px;letter-spacing:.22em;text-transform:uppercase;color:var(--gold)}
+.gold{color:var(--gold)}
+:focus-visible{outline:2px solid var(--gold-hi);outline-offset:3px;border-radius:4px}
+
+/* ===== top bar with story progress ===== */
+.bar{position:fixed;inset:0 0 auto 0;z-index:50;padding-top:env(safe-area-inset-top,0px);background:linear-gradient(to bottom,rgba(5,11,28,.95),rgba(5,11,28,.6) 70%,rgba(5,11,28,0))}
+.bar .wrap{display:flex;align-items:center;justify-content:space-between;gap:12px;height:60px}
+.logo{font-family:var(--display);font-weight:800;font-size:27px;letter-spacing:.04em;text-decoration:none;line-height:1}
+.logo b{color:var(--gold)}
+.chapter-now{font-family:var(--display);font-size:13px;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);text-align:right;transition:opacity .3s}
+.chapter-now b{color:var(--gold-hi);font-weight:600;margin-right:8px}
+@media (max-width:560px){.chapter-now span{display:none}}
+.progress{position:absolute;left:0;bottom:0;height:2px;width:100%;background:rgba(237,240,247,.06)}
+.progress i{display:block;height:100%;width:100%;background:linear-gradient(90deg,var(--gold),var(--gold-hi));transform-origin:0 50%;transform:scaleX(0)}
+
+/* ===== shared scene machinery ===== */
+.scene{position:relative}
+.pin{position:relative;padding-block:90px 60px}
+.anim .scene{height:var(--len,300vh)}
+.anim .pin{position:sticky;top:0;height:100vh;height:100svh;overflow:hidden;padding:0}
+.steps{display:grid;gap:22px}
+.step h3{font-size:clamp(34px,4.6vw,62px);text-transform:uppercase}
+.step p{margin-top:12px;color:var(--soft);font-size:clamp(16px,1.4vw,19px);max-width:46ch}
+.anim .steps{display:grid;position:relative}
+.anim .step{grid-area:1/1;opacity:0;visibility:hidden;transform:translateY(16px);transition:opacity .4s,transform .5s cubic-bezier(.2,.7,.2,1),visibility 0s .4s}
+.anim .step.on{opacity:1;visibility:visible;transform:none;transition:opacity .4s,transform .5s cubic-bezier(.2,.7,.2,1)}
+.chap{font-family:var(--display);font-weight:600;font-size:13px;letter-spacing:.24em;text-transform:uppercase;color:var(--gold);display:flex;align-items:center;gap:12px;margin-bottom:16px}
+.chap::before{content:"";width:28px;height:1px;background:var(--gold)}
+.ticks{display:flex;gap:6px;margin-top:22px}
+.ticks span{width:22px;height:3px;border-radius:2px;background:rgba(237,240,247,.16);transition:background .3s,width .3s}
+.ticks span.on{background:var(--gold);width:40px}
+[data-rv]{--d:0ms}
+.anim [data-rv]{opacity:0;transform:translateY(30px);transition:opacity .8s var(--d),transform .9s cubic-bezier(.2,.7,.2,1) var(--d)}
+.anim [data-rv].in{opacity:1;transform:none}
+
+/* ===== prologue / hero ===== */
+.hero{position:relative;padding-block:calc(130px + env(safe-area-inset-top,0px)) 90px;overflow:hidden;isolation:isolate}
+.hero canvas{position:absolute;inset:0;width:100%;height:100%;z-index:-1}
+.hero::after{content:"";position:absolute;inset:auto 0 0 0;height:45%;background:linear-gradient(to bottom,transparent,var(--ink));z-index:-1}
+.hero-in{will-change:transform,opacity}
+.brand{display:flex;flex-direction:column;gap:10px;margin-bottom:36px;animation:rise .9s both}
+.brand .mark{font-family:var(--display);font-weight:800;font-size:clamp(64px,11vw,150px);line-height:.85;letter-spacing:.03em}
+.brand .mark b{color:var(--gold)}
+.brand .sub{display:flex;align-items:center;gap:14px;font-family:var(--display);font-weight:600;font-size:clamp(13px,1.4vw,16px);letter-spacing:.24em;text-transform:uppercase;color:var(--muted)}
+.brand .sub::after{content:"";flex:0 1 120px;height:1px;background:var(--gold)}
+.hero-kicker{font-family:var(--display);font-weight:600;font-size:14px;letter-spacing:.22em;text-transform:uppercase;color:var(--gold);margin-bottom:14px;animation:rise .9s .1s both}
+.hero h1{font-size:clamp(32px,5.6vw,80px);text-transform:uppercase;font-weight:800;max-width:17ch}
+.hero h1 em{font-style:normal;color:var(--gold)}
+.hero h1 .w{display:inline-block;animation:rise .9s cubic-bezier(.2,.7,.2,1) both;animation-delay:calc(120ms + var(--i)*55ms)}
+.hero .lead{margin-top:26px;font-size:clamp(17px,1.6vw,20px);color:var(--soft);max-width:58ch;animation:rise .9s .7s both}
+.hero .cue{margin-top:46px;display:flex;align-items:center;gap:12px;color:var(--muted);font-size:14px;animation:rise .9s 1s both}
+.cue i{width:1px;height:40px;background:linear-gradient(var(--gold),transparent);display:block;animation:drip 1.8s ease-in-out infinite}
+@keyframes rise{from{opacity:0;transform:translateY(.6em)}to{opacity:1;transform:none}}
+@keyframes drip{0%,100%{transform:scaleY(.4);transform-origin:top}50%{transform:scaleY(1);transform-origin:top}}
+
+/* ===== ch1 connection ===== */
+.duo{display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr);gap:40px;align-items:center;max-width:var(--max);margin:0 auto;padding-inline:var(--gut)}
+.anim .duo{height:100%;padding-top:60px}
+.netbox{position:relative;width:100%;aspect-ratio:5/4;max-height:70vh;margin-inline:auto}
+.netbox>svg{position:absolute;inset:0;width:100%;height:100%;overflow:visible}
+.netbox line{stroke:var(--gold);stroke-width:1.5;vector-effect:non-scaling-stroke}
+.netbox line.dash{stroke:rgba(148,160,189,.35);stroke-dasharray:4 6}
+.node{position:absolute;transform:translate(-50%,-50%);display:flex;flex-direction:column;align-items:center;gap:8px;width:120px;text-align:center}
+.node .dot{width:52px;height:52px;border-radius:50%;border:1.5px dashed rgba(148,160,189,.55);display:grid;place-items:center;background:var(--ink);transition:border-color .5s,background .5s,box-shadow .5s}
+.node .dot svg{width:24px;height:24px;stroke:var(--muted);fill:none;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round;transition:stroke .5s}
+.node span{font-family:var(--display);font-size:14px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);line-height:1.1;transition:color .5s}
+.node.lit .dot{border-style:solid;border-color:var(--gold);background:#0A1A34;box-shadow:0 0 0 6px rgba(217,163,58,.08),0 0 30px rgba(217,163,58,.25)}
+.node.lit .dot svg{stroke:var(--gold-hi)}
+.node.lit span{color:var(--text)}
+.hub{position:absolute;left:50%;top:50%;width:132px;height:132px;margin:-66px 0 0 -66px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:radial-gradient(circle at 35% 30%,#0F2B55,#0A1532 70%);border:1.5px solid var(--gold);box-shadow:0 0 0 12px rgba(217,163,58,.06),0 0 70px rgba(217,163,58,.3);font-family:var(--display);font-weight:800;font-size:28px;letter-spacing:.04em}
+.hub b{color:var(--gold)}
+.netbox .node.static-pos{position:absolute}
+@media (max-width:860px){
+  .duo{grid-template-columns:1fr;gap:24px}
+  .anim .duo{grid-template-rows:auto 1fr;align-content:start;padding-top:86px;gap:10px}
+  .anim .duo .netbox{order:-1;aspect-ratio:1/1;width:min(100%,40vh)}
+  .node{width:84px}.node .dot{width:40px;height:40px}.node .dot svg{width:19px;height:19px}.node span{font-size:11px}
+  .hub{width:92px;height:92px;margin:-46px 0 0 -46px;font-size:20px}
+  .step h3{font-size:clamp(28px,8.4vw,40px)}
+  .step p{font-size:15.5px}
+}
+
+/* ===== ch2 actor cards ===== */
+/* auto mode: scenes keep their animated layout but play on a timer instead of scroll */
+.auto .scene{height:auto}
+.auto .pin{position:relative;height:var(--ph,760px)}
+.auto .hero-in{transform:none!important;opacity:1!important}
+.auto .progress,.auto .chapter-now{display:none}
+.cards-intro,.cards-outro{text-align:center;padding-inline:var(--gut)}
+.cards-intro h2,.cards-outro h2{font-size:clamp(36px,6vw,76px);text-transform:uppercase}
+.cards-intro p,.cards-outro p{color:var(--muted);margin:12px auto 0;max-width:52ch}
+.cards-intro .chap{justify-content:center}
+.cards-layer{display:none}
+.panels{display:grid;gap:18px;max-width:var(--max);margin:36px auto;padding-inline:var(--gut)}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:26px}
+.panel .role{font-family:var(--display);font-size:14px;letter-spacing:.22em;text-transform:uppercase;color:var(--gold)}
+.panel h3{font-size:clamp(38px,5vw,64px);text-transform:uppercase;margin-top:6px}
+.panel .say{margin-top:10px;font-size:clamp(16px,1.5vw,19px);color:#D3D9E8;max-width:46ch}
+.panel ul{list-style:none;padding:0;margin:16px 0 0;display:grid;gap:8px}
+.panel li{display:grid;grid-template-columns:18px 1fr;gap:10px;font-size:15.5px;line-height:1.45;color:var(--soft)}
+.panel li::before{content:"";width:8px;height:8px;margin-top:7px;background:var(--gold);transform:rotate(45deg)}
+.panel .link{margin-top:16px;padding-top:14px;border-top:1px solid var(--line);font-size:14.5px;color:var(--muted)}
+.panel .link b{color:var(--gold-hi);font-weight:600}
+.cards-outro{padding-block:30px 60px}
+.anim .cards-intro,.anim .cards-outro{position:absolute;left:0;right:0;top:calc(80px + env(safe-area-inset-top,0px));transition:opacity .45s,transform .45s;padding-block:0}
+.anim .cards-outro{opacity:0;transform:translateY(14px)}
+.anim .cards-outro.on{opacity:1;transform:none}
+.anim .cards-intro.off{opacity:0;transform:translateY(-14px)}
+.anim .cards-layer{display:block;position:absolute;inset:0;pointer-events:none}
+.anim .panels{position:absolute;margin:0;padding:0;left:var(--gut);width:min(44%,500px);top:50%;display:block}
+.anim .panel{position:absolute;inset:auto 0 auto 0;top:0;transform:translateY(-50%);background:none;border:0;padding:0;opacity:0;visibility:hidden;transition:opacity .35s,visibility 0s .35s}
+.anim .panel.on{opacity:1;visibility:visible;transition:opacity .35s}
+.anim .panel.on .w{animation:rise .6s cubic-bezier(.2,.7,.2,1) both;animation-delay:calc(var(--i)*36ms)}
+.anim .panel.on li{animation:rise .55s cubic-bezier(.2,.7,.2,1) both;animation-delay:calc(260ms + var(--i)*70ms)}
+.w{display:inline-block}
+.cdots{display:none}
+.anim .cdots{display:flex;gap:8px;position:absolute;left:var(--gut);bottom:calc(26px + env(safe-area-inset-bottom,0px));align-items:center;transition:opacity .3s}
+.cdots span{width:26px;height:3px;border-radius:2px;background:rgba(237,240,247,.18);transition:background .3s,width .3s}
+.cdots span.on{background:var(--gold);width:44px}
+@media (max-width:860px){
+  .anim .panels{right:var(--gut);width:auto;top:auto;bottom:calc(58px + env(safe-area-inset-bottom,0px));height:46%}
+  .anim .panel{top:auto;bottom:0;transform:none}
+  .anim .panel h3{font-size:clamp(32px,9.6vw,46px)}
+  .anim .panel .say{font-size:15.5px}
+  .anim .panel ul{gap:5px;margin-top:10px}
+  .anim .panel li{font-size:14.5px}
+  .anim .panel li:nth-child(n+4),.anim .panel .link{display:none}
+  .anim .cdots{left:50%;transform:translateX(-50%)}
+}
+@media (max-width:860px) and (max-height:700px){.anim .panel ul{display:none}}
+.card{position:absolute;left:50%;top:50%;width:var(--cw,210px);aspect-ratio:3/4;margin-left:calc(var(--cw,210px) / -2);margin-top:calc(var(--cw,210px) * -.6667);border-radius:18px;padding:16px;display:flex;flex-direction:column;justify-content:space-between;will-change:transform;box-shadow:0 30px 60px -20px rgba(0,0,0,.7),0 0 0 1px rgba(255,255,255,.08) inset;overflow:hidden;transform-origin:50% 60%}
+.card::before{content:"";position:absolute;inset:0;background-image:radial-gradient(circle at 1px 1px,rgba(255,255,255,.18) 1px,transparent 1.4px);background-size:12px 12px;mask-image:linear-gradient(160deg,#000,transparent 60%);-webkit-mask-image:linear-gradient(160deg,#000,transparent 60%)}
+.card::after{content:"";position:absolute;width:140%;aspect-ratio:1;border-radius:50%;right:-70%;bottom:-60%;border:1px solid currentColor;opacity:.25;box-shadow:0 0 0 19px currentColor}
+.card .tag{position:relative;font-family:var(--display);font-weight:600;font-size:calc(var(--cw,210px) * .062);letter-spacing:.2em;text-transform:uppercase;display:flex;justify-content:space-between}
+.card svg{position:relative;width:46%;height:auto;align-self:center;stroke:currentColor;fill:none;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+.card .name{position:relative;font-family:var(--display);font-weight:800;text-transform:uppercase;font-size:calc(var(--cw,210px) * .112);line-height:.95}
+.c0{background:linear-gradient(155deg,#F6D07A,#C08A2C 70%,#8E6119);color:#0A1532}
+.c1{background:linear-gradient(155deg,#17407E,#0A1F47 65%,#040E24);color:#F2C768}
+.c2{background:linear-gradient(155deg,#3B6389,#17304D 65%,#0B1A2E);color:#E8EEF7}
+.c3{background:linear-gradient(155deg,#F3EEE2,#D4C6A6 70%,#B19E77);color:#0A1532}
+.c4{background:linear-gradient(155deg,#8A5E24,#4A300F 60%,#20150A);color:#F2C768}
+
+/* ===== ch3 journey ===== */
+.jr{max-width:var(--max);margin:0 auto;padding-inline:var(--gut);display:grid;gap:34px}
+.anim .jr{height:100%;align-content:center;padding-top:50px}
+.track{position:relative;height:84px;margin-inline:30px}
+.track .rail,.track .fill{position:absolute;left:0;right:0;top:27px;height:2px;background:rgba(237,240,247,.12)}
+.track .fill{background:linear-gradient(90deg,var(--gold),var(--gold-hi));transform-origin:0 50%;transform:scaleX(1)}
+.st{position:absolute;top:0;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:8px;width:110px}
+.st .ic{width:56px;height:56px;border-radius:50%;display:grid;place-items:center;background:var(--ink);border:1.5px solid rgba(237,240,247,.2);transition:border-color .4s,background .4s}
+.st .ic svg{width:24px;height:24px;stroke:var(--muted);fill:none;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round;transition:stroke .4s}
+.st span{font-family:var(--display);font-size:13px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);text-align:center;line-height:1.1}
+.st.done .ic{border-color:var(--gold)}
+.st.done .ic svg{stroke:var(--gold)}
+.st.on .ic{background:var(--gold);border-color:var(--gold)}
+.st.on .ic svg{stroke:var(--ink)}
+.st.on span{color:var(--text)}
+.token{position:absolute;top:-22px;width:22px;height:22px;margin-left:-11px;transform:rotate(45deg);background:var(--gold-hi);box-shadow:0 0 22px rgba(242,199,104,.8);border-radius:4px;display:none}
+.anim .token{display:block}
+.jr-body{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,.8fr);gap:40px;align-items:center}
+.jr-body .steps .num{font-family:var(--display);font-size:15px;letter-spacing:.2em;color:var(--gold)}
+.prod{justify-self:center;width:min(100%,330px);border-radius:18px;background:#F4F1EA0D;border:1px solid var(--line);padding:16px;position:relative;overflow:hidden}
+.prod .img{aspect-ratio:4/3;border-radius:12px;background:radial-gradient(circle at 50% 60%,#0F2B55,#0A1532);display:grid;place-items:center;position:relative;overflow:hidden}
+.prod .img svg{width:44%;stroke:var(--gold-hi);fill:none;stroke-width:1.4;stroke-linejoin:round}
+.prod .scan{position:absolute;left:0;right:0;height:30%;background:linear-gradient(to bottom,transparent,rgba(242,199,104,.35),transparent);top:-30%;opacity:0}
+.prod.s0 .scan{opacity:1;animation:scan 1.6s linear infinite}
+@keyframes scan{to{top:100%}}
+.prod .t{font-family:var(--display);font-size:22px;text-transform:uppercase;margin-top:12px}
+.prod .m{display:flex;justify-content:space-between;color:var(--muted);font-size:14px;margin-top:2px}
+.prod .bars{display:grid;gap:6px;margin-top:10px}
+.prod .bars i{height:7px;border-radius:4px;background:rgba(237,240,247,.1);display:block;position:relative;overflow:hidden}
+.prod .bars i::after{content:"";position:absolute;inset:0;background:var(--gold);transform-origin:0;transform:scaleX(var(--f,1));transition:transform .6s}
+.prod.s0 .bars i:nth-child(1){--f:.8}.prod.s0 .bars i:nth-child(2){--f:.45}.prod.s0 .bars i:nth-child(3){--f:.2}
+.badge{display:inline-flex;align-items:center;gap:8px;margin-top:14px;padding:7px 12px;border-radius:999px;background:var(--gold);color:var(--ink);font-family:var(--display);font-weight:600;font-size:14px;letter-spacing:.08em;text-transform:uppercase}
+.badge::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--ink);animation:blink 1.2s infinite}
+@keyframes blink{50%{opacity:.2}}
+@media (max-width:860px){
+  .anim .jr{align-content:start;padding-top:84px;gap:20px}
+  .track{margin-inline:18px;height:40px}
+  .st{width:44px}.st span{display:none}.st .ic{width:44px;height:44px}.st .ic svg{width:19px;height:19px}
+  .track .rail,.track .fill{top:21px}
+  .jr-body{grid-template-columns:1fr;gap:18px}
+  .prod{order:-1;width:100%;display:grid;grid-template-columns:110px 1fr;gap:4px 14px;align-items:center;padding:12px}
+  .prod .img{grid-row:span 3;aspect-ratio:1}
+  .prod .t{margin-top:0;font-size:18px}.prod .bars{display:none}.badge{margin-top:4px;font-size:12px;justify-self:start}
+}
+
+/* ===== mid CTA section ===== */
+.cta{padding-block:clamp(80px,10vw,130px);background:radial-gradient(ellipse at 50% 40%,rgba(217,163,58,.12),transparent 65%)}
+.cta .head{text-align:center;max-width:720px;margin:0 auto}
+.cta .head .chap{justify-content:center}
+.cta h2{font-size:clamp(40px,6vw,80px);text-transform:uppercase}
+.cta .head p{color:var(--muted);margin-top:12px}
+.tiles{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px;margin-top:50px}
+.tile{position:relative;display:grid;grid-template-rows:auto 1fr;border-radius:22px;border:1px solid var(--line);background:linear-gradient(160deg,#0B1B36,#070F26);text-decoration:none;overflow:hidden;transition:transform .35s cubic-bezier(.2,.7,.2,1),border-color .3s,box-shadow .35s}
+.tile:hover{transform:translateY(-6px);border-color:var(--gold);box-shadow:0 30px 60px -30px rgba(217,163,58,.45)}
+.tile .vis{height:270px;position:relative;overflow:hidden;border-bottom:1px solid var(--line)}
+.tile .txt{padding:24px 26px 26px;display:grid;gap:6px}
+.tile .k{font-family:var(--display);font-size:13px;letter-spacing:.22em;text-transform:uppercase;color:var(--gold)}
+.tile h3{font-size:clamp(30px,3.4vw,42px);text-transform:uppercase}
+.tile p{color:var(--muted);font-size:15.5px}
+.tile .go{margin-top:12px;display:inline-flex;align-items:center;gap:10px;font-family:var(--display);font-weight:600;letter-spacing:.1em;text-transform:uppercase;font-size:16px;color:var(--gold-hi)}
+.tile .go svg{width:18px;height:18px;transition:transform .3s}
+.tile:hover .go svg{transform:translateX(5px)}
+.browser{position:absolute;left:8%;right:8%;top:28px;bottom:-20px;border-radius:12px 12px 0 0;background:#081630;border:1px solid rgba(237,240,247,.12);padding:24px 0 0;overflow:hidden;box-shadow:0 20px 50px -20px rgba(0,0,0,.8)}
+.browser img{display:block;width:100%;height:100%;object-fit:cover;object-position:left top;transition:transform 6s ease}
+.tile:hover .browser img{transform:scale(1.04)}
+.browser::before{content:"ve.vexbiz.com";position:absolute;top:6px;left:50%;transform:translateX(-50%);font-size:11px;color:var(--muted);background:rgba(237,240,247,.06);padding:1px 14px;border-radius:6px}
+.browser::after{content:"";position:absolute;top:10px;left:12px;width:30px;height:7px;background:radial-gradient(circle,#D9A33A 3px,transparent 3.5px) 0 0/10px 7px repeat-x;opacity:.7}
+.browser i{aspect-ratio:3/4;border-radius:8px;background:linear-gradient(160deg,rgba(242,199,104,.5),rgba(217,163,58,.08));animation:float 4s ease-in-out infinite;animation-delay:calc(var(--i)*.25s)}
+.browser i:nth-child(3n){background:linear-gradient(160deg,rgba(30,80,140,.8),rgba(20,40,90,.3))}
+@keyframes float{50%{transform:translateY(-6px)}}
+.reel{position:absolute;left:50%;top:22px;bottom:-60px;width:170px;margin-left:-85px;border-radius:20px;border:1px solid rgba(237,240,247,.18);background:#0A1532;display:grid;place-items:center;overflow:hidden;box-shadow:0 20px 50px -20px rgba(0,0,0,.8)}
+.reel img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center top}
+.vis .play{position:absolute;left:calc(50% + 58px);top:170px;z-index:2}
+.vis .play{width:58px;height:58px;border-radius:50%;background:var(--gold);display:grid;place-items:center;box-shadow:0 0 0 0 rgba(217,163,58,.6);animation:ping 2s infinite}
+.vis .play svg{width:22px;height:22px;fill:var(--ink);margin-left:3px}
+@keyframes ping{70%{box-shadow:0 0 0 22px rgba(217,163,58,0)}100%{box-shadow:0 0 0 0 rgba(217,163,58,0)}}
+.reel-side{position:absolute;top:60px;width:110px;height:150px;border-radius:16px;border:1px solid rgba(237,240,247,.1);background:rgba(11,27,54,.8)}
+.reel-side.l{left:calc(50% - 190px);transform:rotate(-8deg)}.reel-side.r{right:calc(50% - 190px);transform:rotate(8deg)}
+@media (max-width:760px){.tiles{grid-template-columns:1fr}.tile .vis{height:230px}}
+
+/* ===== ch4 models ===== */
+section.block{padding-block:clamp(72px,10vw,130px)}
+.head h2{font-size:clamp(36px,5.4vw,68px);text-transform:uppercase}
+.head p{color:var(--muted);max-width:60ch;margin-top:12px}
+.models{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px;margin-top:48px}
+.models div{border:1px solid var(--line);border-radius:18px;padding:30px 26px;background:rgba(11,27,54,.4)}
+.models strong{font-family:var(--display);font-size:clamp(60px,7vw,96px);font-weight:800;line-height:.9;display:block;color:transparent;-webkit-text-stroke:1.4px var(--gold)}
+.models h3{font-size:24px;text-transform:uppercase;margin-top:14px}
+.models p{color:var(--muted);font-size:15.5px;margin-top:6px}
+@media (max-width:760px){.models{grid-template-columns:1fr}}
+
+/* ===== ch5 payment ===== */
+.paybox{position:relative;width:100%;aspect-ratio:5/3.4;max-height:66vh}
+.paybox>svg{position:absolute;inset:0;width:100%;height:100%;overflow:visible}
+.paybox line{stroke:rgba(217,163,58,.35);stroke-width:1.5;vector-effect:non-scaling-stroke;stroke-dasharray:3 5}
+.pn{position:absolute;z-index:2;transform:translate(-50%,-50%);display:flex;flex-direction:column;align-items:center;gap:8px;width:150px;text-align:center}
+.pn .dot{width:60px;height:60px;border-radius:16px;display:grid;place-items:center;background:#0A1A34;border:1.5px solid var(--gold)}
+.pn .dot svg{width:26px;height:26px;stroke:var(--gold-hi);fill:none;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+.pn.hubn .dot{display:flex;align-items:center;justify-content:center;width:78px;height:78px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#0F2B55,#0A1532);font-family:var(--display);font-weight:800;font-size:17px}
+.pn.hubn .dot b{color:var(--gold)}
+.pn .lbl{background:var(--ink);padding:0 6px;font-family:var(--display);font-size:14px;letter-spacing:.14em;text-transform:uppercase;line-height:1.1}
+.pn .st8{font-size:12.5px;line-height:1.2;padding:4px 10px;border-radius:999px;background:#0E213D;color:var(--soft);min-height:24px;transition:background .3s,color .3s}
+.pn .st8.ok{background:#123A3A;color:#8FE0B5}
+.pn .st8.lock{background:#3A2E14;color:var(--gold-hi)}
+.coin{position:absolute;z-index:1;width:16px;height:16px;margin:-8px 0 0 -8px;border-radius:50%;background:var(--gold-hi);box-shadow:0 0 18px rgba(242,199,104,.9);opacity:0}
+.paychips{display:flex;flex-wrap:wrap;gap:8px;margin-top:30px}
+.paychips span{border:1px solid rgba(237,240,247,.2);border-radius:999px;padding:6px 14px;font-size:14px;color:#D3D9E8}
+.note{margin-top:22px;font-size:14.5px;color:var(--muted);max-width:72ch;border-left:2px solid var(--gold);padding-left:14px}
+@media (max-width:860px){
+  .anim .paybox{order:-1;aspect-ratio:1/1;width:min(100%,44vh);margin-inline:auto}
+  .pn{width:104px}.pn .dot{width:44px;height:44px;border-radius:12px}.pn .dot svg{width:20px;height:20px}
+  .pn.hubn .dot{width:58px;height:58px;font-size:13px}.pn .lbl{font-size:11.5px}.pn .st8{font-size:11px;padding:3px 8px}
+}
+
+/* ===== ch6 promise (scrubbed words) ===== */
+.promise{padding-block:clamp(90px,13vw,170px);text-align:center;overflow:hidden}
+.promise .chap{justify-content:center}
+.scrub{font-family:var(--display);font-weight:800;text-transform:uppercase;font-size:clamp(40px,7.4vw,104px);line-height:.98;max-width:16ch;margin:18px auto 0;text-wrap:balance}
+.scrub .w{transition:opacity .25s,color .25s}
+.anim .scrub .w{opacity:.14}
+.anim .scrub .w.on{opacity:1}
+.scrub .g.on{color:var(--gold)}
+.niches{margin-top:60px;overflow:hidden;mask-image:linear-gradient(90deg,transparent,#000 12%,#000 88%,transparent);-webkit-mask-image:linear-gradient(90deg,transparent,#000 12%,#000 88%,transparent)}
+.niches p{color:var(--muted);margin-bottom:16px;font-size:14px}
+.ntrack{display:flex;gap:10px;width:max-content;animation:slide 38s linear infinite}
+.ntrack span{font-family:var(--display);font-weight:600;letter-spacing:.12em;text-transform:uppercase;font-size:16px;padding:10px 18px;border:1px solid var(--line);border-radius:999px;color:#D9DEEA;white-space:nowrap}
+@keyframes slide{to{transform:translateX(-50%)}}
+
+/* ===== ch7 growth rings ===== */
+.grow{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:48px;align-items:center}
+.rings{position:relative;aspect-ratio:1;width:min(100%,480px);justify-self:center}
+.ring{position:absolute;inset:0;margin:auto;border-radius:50%;border:1px solid var(--gold);display:flex;justify-content:center;transform:scale(var(--s,1));opacity:var(--o,1)}
+.ring span{position:absolute;top:-11px;background:var(--ink);padding:0 10px;font-family:var(--display);font-size:13px;letter-spacing:.18em;text-transform:uppercase;color:var(--gold-hi);white-space:nowrap}
+.ring.r1{width:38%;height:38%;border-style:solid;background:rgba(217,163,58,.07)}
+.ring.r2{width:68%;height:68%;border-style:dashed;border-color:rgba(217,163,58,.6)}
+.ring.r3{width:98%;height:98%;border-style:dashed;border-color:rgba(217,163,58,.35)}
+.core{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);text-align:center}
+.core i{display:block;width:14px;height:14px;border-radius:50%;background:var(--gold-hi);margin:0 auto 8px;box-shadow:0 0 0 6px rgba(242,199,104,.2),0 0 26px rgba(242,199,104,.8)}
+.core span{font-family:var(--display);font-size:14px;letter-spacing:.14em;text-transform:uppercase}
+.gitems{display:grid;gap:26px;margin-top:30px}
+.gitems article{border-top:2px solid var(--gold);padding-top:16px}
+.gitems h3{font-size:28px;text-transform:uppercase}
+.gitems p{color:var(--muted);font-size:15.5px;margin-top:6px}
+@media (max-width:860px){.grow{grid-template-columns:1fr}}
+
+/* ===== epilogue ===== */
+.close{padding-block:clamp(80px,11vw,150px) calc(60px + env(safe-area-inset-bottom,0px));background:radial-gradient(ellipse at 50% 0%,rgba(217,163,58,.16),transparent 60%)}
+.close-grid{display:grid;grid-template-columns:1.25fr 1fr;gap:48px;align-items:end}
+.close h2{font-size:clamp(46px,7vw,96px);text-transform:uppercase;font-weight:800}
+.close .lead{margin-top:20px;color:var(--soft);font-size:18px;max-width:52ch}
+.contact{border:1px solid var(--line);border-radius:18px;padding:24px;display:grid;gap:14px;background:rgba(7,21,48,.6)}
+.contact div{display:grid;gap:2px}
+.contact span{font-size:12.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);font-family:var(--display)}
+.contact strong{font-weight:500;font-size:17px;user-select:all;word-break:break-word}
+.foot{margin-top:70px;padding-top:22px;border-top:1px solid var(--line);display:flex;flex-wrap:wrap;justify-content:space-between;gap:10px;color:var(--muted);font-size:13.5px}
+@media (max-width:860px){.close-grid{grid-template-columns:1fr}}
+
+@media (prefers-reduced-motion:reduce){
+  .ntrack{animation:none;flex-wrap:wrap;width:auto;justify-content:center}
+  .niches{mask-image:none;-webkit-mask-image:none}
+  .hero h1 .w,.hero .lead,.hero .cue,.cue i,.browser i,.reel .play,.badge::before{animation:none}
+}
+</style>
+</head><body>
+
+<header class="bar">
+  <div class="wrap">
+    <a class="logo" href="#top" aria-label="Vexbiz, inicio">VE<b>X</b>BIZ</a>
+    <div class="chapter-now" id="chapNow" aria-live="polite"><b>Prólogo</b><span>Ecosistema Vexbiz</span></div>
+  </div>
+  <div class="progress"><i id="prog"></i></div>
+</header>
+
+<main id="top">
+
+<!-- PRÓLOGO -->
+<section class="hero" data-chapter="Prólogo|Presentación">
+  <canvas id="net" aria-hidden="true"></canvas>
+  <div class="wrap hero-in" id="heroIn">
+    <div class="brand"><div class="mark" role="img" aria-label="Vexbiz">VE<b>X</b>BIZ</div><div class="sub">Corporación Tecnológica Industrial, C.A.</div></div>
+    <p class="hero-kicker">VEXBIZ Suministros</p>
+    <h1 id="heroH">La tecnología de las grandes corporaciones, <em>para cualquier negocio</em></h1>
+    <p class="lead">Esta es la historia de cómo VEXBIZ Suministros une a todos los actores del comercio en un ecosistema automatizado con inteligencia artificial, y de por qué cada negocio puede entrar con cero costos de desarrollo.</p>
+    <div class="cue"><i></i>Desliza para comenzar la historia</div>
+  </div>
+</section>
+
+<!-- CAP 1: CONEXIÓN -->
+<section class="scene" id="s-net" style="--len:320vh" data-chapter="Capítulo 1|El punto de partida">
+  <div class="pin">
+    <div class="duo">
+      <div>
+        <p class="chap">Capítulo 1 · El punto de partida</p>
+        <div class="steps">
+          <div class="step on"><h3>Hoy, cada actor vende <span class="gold">por su cuenta</span></h3><p>Tiendas, técnicos, empresas de servicio y mayoristas trabajan aislados, cada uno con sus propias herramientas o sin ninguna.</p></div>
+          <div class="step"><h3>La tecnología de verdad <span class="gold">cuesta demasiado</span></h3><p>Vender en línea con pagos, inventario y delivery exige una inversión y un equipo técnico que la mayoría de los negocios no tiene.</p></div>
+          <div class="step"><h3>VEXBIZ los conecta en <span class="gold">un solo ecosistema</span></h3><p>Nace en Ciudad Guayana una plataforma que integra a todos los actores productivos, con cero costos de desarrollo para cada negocio.</p></div>
+        </div>
+        <div class="ticks" aria-hidden="true"><span class="on"></span><span></span><span></span></div>
+      </div>
+      <div class="netbox" id="netbox" aria-hidden="true">
+        <svg viewBox="0 0 100 100" preserveAspectRatio="none" id="netsvg"></svg>
+        <div class="hub" id="hub">VE<b>X</b>BIZ</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CAP 2: PROTAGONISTAS -->
+<section class="scene" id="s-cards" style="--len:560vh" data-chapter="Capítulo 2|Los protagonistas">
+  <div class="pin" id="cardStage">
+    <div class="cards-intro" id="cIntro">
+      <p class="chap">Capítulo 2 · Los protagonistas</p>
+      <h2>Cinco actores. <span class="gold">Un solo motor.</span></h2>
+      <p>Cada actor gana cuando otro vende. Así participa cada uno.</p>
+    </div>
+    <div class="cards-layer" aria-hidden="true">
+      <div class="card c0"><div class="tag"><span>Demanda</span><span>VX</span></div><svg viewBox="0 0 48 48"><path d="M10 16h28l-3 24H13z"/><path d="M18 20v-6a6 6 0 0 1 12 0v6"/></svg><div class="name">Cliente</div></div>
+      <div class="card c1"><div class="tag"><span>Prescriptor</span><span>VX</span></div><svg viewBox="0 0 48 48"><path d="M30 8a9 9 0 0 0-8.5 12L9 32.5a3.5 3.5 0 0 0 5 5L26.5 25A9 9 0 0 0 38 16l-5.5 2.5-4-4L31 9z"/></svg><div class="name">Servicio profesional</div></div>
+      <div class="card c2"><div class="tag"><span>Servicios</span><span>VX</span></div><svg viewBox="0 0 48 48"><rect x="8" y="16" width="32" height="22" rx="3"/><path d="M18 16v-4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v4M8 26h32M22 26v4h4v-4"/></svg><div class="name">Empresa de servicio</div></div>
+      <div class="card c3"><div class="tag"><span>Oferta</span><span>VX</span></div><svg viewBox="0 0 48 48"><path d="M8 20l3-10h26l3 10M8 20v18h32V20M8 20c0 3 2.5 5 5.3 5s5.4-2 5.4-5c0 3 2.4 5 5.3 5s5.3-2 5.3-5c0 3 2.5 5 5.4 5S40 23 40 20"/><path d="M20 38v-8h8v8"/></svg><div class="name">Proveedor</div></div>
+      <div class="card c4"><div class="tag"><span>Volumen</span><span>VX</span></div><svg viewBox="0 0 48 48"><path d="M6 40V22l10 6v-6l10 6v-6l10 6V10h6v30z"/><path d="M12 34h4M22 34h4M32 34h4"/></svg><div class="name">Mayorista</div></div>
+    </div>
+    <div class="panels">
+      <article class="panel"><p class="role">Actor 1 · Demanda</p><h3>Cliente</h3><p class="say">Compra todo lo que necesita en una sola pantalla, con un solo pago.</p>
+        <ul><li>Carrito multi-tienda: productos y servicios de distintos comercios y nichos en un mismo pedido.</li><li>Pre-orden sin cargo: no se cobra hasta que el proveedor confirma que tiene el producto.</li><li>Un solo repartidor recoge en cada tienda y entrega todo consolidado.</li><li>Al contratar un servicio, el pago queda en garantía hasta que confirma el trabajo.</li></ul>
+        <p class="link"><b>En el ecosistema:</b> su compra activa a proveedores, mayoristas, técnicos y transportistas a la vez.</p></article>
+      <article class="panel"><p class="role">Actor 2 · Prescriptor</p><h3>Servicio profesional</h3><p class="say">El técnico independiente orienta la decisión del consumidor. Con Vexbiz, esa confianza se convierte en ingreso.</p>
+        <ul><li>Perfil propio en el directorio especializado de servicios.</li><li>Código Único de Partner: recomienda productos del catálogo a sus clientes.</li><li>Bonificación automática por cada venta que impulsa, acumulada en su Wallet.</li><li>Retiro de bonificaciones por pago móvil en los días de corte.</li></ul>
+        <p class="link"><b>En el ecosistema:</b> es el motor de ventas en la calle y conecta al cliente con el inventario de los proveedores.</p></article>
+      <article class="panel"><p class="role">Actor 3 · Servicios</p><h3>Empresa de servicio</h3><p class="say">Recibe contrataciones de clientes reales desde un directorio especializado, sin montar tecnología propia.</p>
+        <ul><li>Rubros como refrigeración, mecánica, contabilidad, legales, seguros, GPS, grúa y software.</li><li>Contratación y cobro 100% digital dentro de la plataforma.</li><li>Pago en depósito de garantía: el cliente contrata con confianza y el cobro está asegurado.</li><li>Visibilidad junto al catálogo de productos que sus clientes ya compran.</li></ul>
+        <p class="link"><b>En el ecosistema:</b> completa la oferta; el cliente compra el repuesto y contrata la instalación en el mismo lugar.</p></article>
+      <article class="panel"><p class="role">Actor 4 · Oferta</p><h3>Proveedor</h3><p class="say">La tienda vende en línea sin hacer el trabajo técnico. Solo monitorea sus ganancias.</p>
+        <ul><li>Carga automatizada de inventario con IA: ficha detallada y fotografía de cada ítem.</li><li>Sus productos entran rápido al catálogo infinito, frente a toda la demanda.</li><li>El dinero se libera al momento del pago, listo para facturar y despachar.</li><li>Pasarela de pago y logística de última milla ya integradas.</li></ul>
+        <p class="link"><b>En el ecosistema:</b> se abastece de mayoristas y vende a clientes y técnicos.</p></article>
+      <article class="panel"><p class="role">Actor 5 · Volumen</p><h3>Mayorista</h3><p class="say">Fabricantes e importadores mueven volumen hacia toda la red desde un solo canal.</p>
+        <ul><li>Canal B2B directo con tiendas proveedoras, técnicos y empresas.</li><li>Inventarios masivos cargados y exhibidos por la plataforma.</li><li>Cobros en bolívares con conversión instantánea, incluso si el comprador paga con cripto.</li><li>Crecimiento con la red de franquicias digitales en cada nueva ciudad.</li></ul>
+        <p class="link"><b>En el ecosistema:</b> es el origen de la cadena: mayorista, tienda proveedora, cliente final o técnico.</p></article>
+    </div>
+    <div class="cards-outro" id="cOutro"><p class="eyebrow">Éxito compartido</p><h2>Nosotros ponemos la tecnología. <span class="gold">Ustedes, el negocio.</span></h2><p>Vexbiz es intermediario digital: no compite con sus aliados, les da la infraestructura para vender más.</p></div>
+    <div class="cdots" id="cdots" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span></div>
+  </div>
+</section>
+
+<!-- CAP 3: EL VIAJE DE UNA VENTA -->
+<section class="scene" id="s-jr" style="--len:420vh" data-chapter="Capítulo 3|El viaje de una venta">
+  <div class="pin">
+    <div class="jr">
+      <div><p class="chap">Capítulo 3 · El viaje de una venta</p></div>
+      <div class="track" id="track" aria-hidden="true">
+        <div class="rail"></div><div class="fill" id="jfill"></div><div class="token" id="token"></div>
+        <div class="st" style="left:0%"><div class="ic"><svg viewBox="0 0 24 24"><rect x="3" y="6" width="18" height="13" rx="2"/><circle cx="12" cy="12.5" r="3.5"/><path d="M8 6l1.5-2h5L16 6"/></svg></div><span>Carga con IA</span></div>
+        <div class="st" style="left:25%"><div class="ic"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg></div><span>Catálogo infinito</span></div>
+        <div class="st" style="left:50%"><div class="ic"><svg viewBox="0 0 24 24"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20M6 15h4"/></svg></div><span>Pago seguro</span></div>
+        <div class="st" style="left:75%"><div class="ic"><svg viewBox="0 0 24 24"><path d="M2 7h11v9H2zM13 10h4l3 3v3h-7"/><circle cx="6" cy="17.5" r="1.8"/><circle cx="17" cy="17.5" r="1.8"/></svg></div><span>Última milla</span></div>
+        <div class="st" style="left:100%"><div class="ic"><svg viewBox="0 0 24 24"><path d="M3 20h18M6 16l4-5 3 3 6-7"/><path d="M15 7h4v4"/></svg></div><span>Ganancias</span></div>
+      </div>
+      <div class="jr-body">
+        <div>
+          <div class="steps">
+            <div class="step on"><p class="num">Paso 1 de 5</p><h3>La IA carga el inventario</h3><p>El comercio entrega su lista y la plataforma procesa cada ítem: ficha detallada y fotografía, sin trabajo manual.</p></div>
+            <div class="step"><p class="num">Paso 2 de 5</p><h3>Entra al catálogo infinito</h3><p>El producto queda expuesto en una plataforma multinicho, junto a servicios y a otros comercios, frente a toda la demanda.</p></div>
+            <div class="step"><p class="num">Paso 3 de 5</p><h3>El cliente paga seguro</h3><p>Pasarela integrada con Pago Móvil, transferencias, tarjetas y cripto. Un solo pago se divide automáticamente entre las partes.</p></div>
+            <div class="step"><p class="num">Paso 4 de 5</p><h3>Llega por la última milla</h3><p>Un transportista independiente recoge en cada tienda del pedido y lo entrega consolidado en la puerta del cliente.</p></div>
+            <div class="step"><p class="num">Paso 5 de 5</p><h3>El comercio ve sus ganancias</h3><p>Todo el ciclo ocurrió solo. El negocio únicamente se ocupa de monitorear lo que vende.</p></div>
+          </div>
+        </div>
+        <div class="prod s0" id="prod" aria-hidden="true">
+          <div class="img"><svg viewBox="0 0 64 64"><path d="M14 22l18-10 18 10v20L32 52 14 42z"/><path d="M14 22l18 10 18-10M32 32v20"/></svg><div class="scan"></div></div>
+          <div class="t">Compresor 1/3 HP</div>
+          <div class="m"><span>Refrigeración</span><span>Tienda aliada</span></div>
+          <div class="bars"><i></i><i></i><i></i></div>
+          <div class="badge" id="pbadge">IA generando ficha y foto</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- VÉALO EN ACCIÓN (botones) -->
+<section class="cta" id="accion" data-chapter="Intermedio|Véalo en acción">
+  <div class="wrap">
+    <div class="head" data-rv>
+      <p class="chap">Intermedio · Véalo en acción</p>
+      <h2>Esto ya <span class="gold">está funcionando</span></h2>
+      <p>Hagan una pausa en la historia y recorran la plataforma, o vean cómo la presentamos en video.</p>
+    </div>
+    <div class="tiles">
+      <a class="tile" href="https://ve.vexbiz.com" target="_blank" rel="noopener" data-rv>
+        <div class="vis" aria-hidden="true"><div class="browser"><img src="img/marketplace.jpg" alt="" loading="lazy" width="1348" height="630"></div></div>
+        <div class="txt"><p class="k">Marketplace</p><h3>Entrar a ve.vexbiz.com</h3><p>El catálogo nacional: productos, repuestos, suministros y servicios en un solo lugar.</p><span class="go">Abrir marketplace <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span></div>
+      </a>
+      <a class="tile" href="https://www.instagram.com/reel/DdUd2IPzKv1/" target="_blank" rel="noopener" data-rv style="--d:120ms">
+        <div class="vis" aria-hidden="true"><div class="reel-side l"></div><div class="reel-side r"></div><div class="reel"><img src="img/camcaroni.jpg" alt="" loading="lazy" width="540" height="983"></div><div class="play"><svg viewBox="0 0 24 24"><path d="M6 4l14 8-14 8z"/></svg></div></div>
+        <div class="txt"><p class="k">Video · Instagram</p><h3>Mira el video de Vexbiz en Camcaroní</h3><p>Vexbiz ya forma parte de la Expo Empresarial Camcaroní 2026.</p><span class="go">Reproducir video <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span></div>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- CAP 4: TRES MERCADOS -->
+<section class="block" data-chapter="Capítulo 4|Tres mercados">
+  <div class="wrap">
+    <div class="head" data-rv><p class="chap">Capítulo 4 · Tres mercados</p><h2>Una plataforma, tres formas de vender</h2><p>La misma infraestructura sirve a empresas, a consumidores y a personas que ofrecen sus productos u oficios.</p></div>
+    <div class="models">
+      <div data-rv><strong>B2B</strong><h3>Empresa a empresa</h3><p>Mayoristas, importadores y fabricantes abastecen a tiendas y empresas de servicio.</p></div>
+      <div data-rv style="--d:120ms"><strong>B2C</strong><h3>Empresa a consumidor</h3><p>Comercios y profesionales venden directo al cliente final, con pago y entrega integrados.</p></div>
+      <div data-rv style="--d:240ms"><strong>C2C</strong><h3>Persona a persona</h3><p>Personas naturales registradas ofrecen productos y oficios dentro del mismo entorno seguro.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- CAP 5: CONFIANZA -->
+<section class="scene" id="s-pay" style="--len:340vh" data-chapter="Capítulo 5|La confianza">
+  <div class="pin">
+    <div class="duo">
+      <div>
+        <p class="chap">Capítulo 5 · La confianza</p>
+        <div class="steps">
+          <div class="step on"><h3>Antes de cobrar, <span class="gold">se confirma el stock</span></h3><p>El pedido nace como pre-orden y el cliente no paga nada. El proveedor tiene pocos minutos para confirmar su existencia; si no responde, se cancela sola.</p></div>
+          <div class="step"><h3>Un pago <span class="gold">se divide solo</span></h3><p>El cliente paga una vez. El proveedor recibe al instante para facturar y despachar, y el flete queda en custodia bancaria.</p></div>
+          <div class="step"><h3>El flete se libera <span class="gold">al entregar</span></h3><p>El transportista cobra cuando el cliente confirma que recibió su pedido. En servicios pasa igual: el pago queda en garantía hasta que el trabajo está a conformidad.</p></div>
+        </div>
+        <div class="ticks" aria-hidden="true"><span class="on"></span><span></span><span></span></div>
+      </div>
+      <div class="paybox" id="paybox" aria-hidden="true">
+        <svg viewBox="0 0 100 100" preserveAspectRatio="none" id="paysvg"></svg>
+      </div>
+    </div>
+  </div>
+</section>
+<section style="padding-bottom:40px">
+  <div class="wrap">
+    <div class="paychips" aria-label="Métodos de pago" data-rv><span>Pago Móvil interbancario</span><span>Transferencias</span><span>Tarjetas nacionales</span><span>Criptoactivos con conversión instantánea a bolívares</span></div>
+    <p class="note" data-rv>Vexbiz actúa como intermediario digital y proveedor de licenciamiento de software: no es dueño de los productos ni ejecuta los servicios. Cada aliado vende y factura de forma directa e independiente.</p>
+  </div>
+</section>
+
+<!-- CAP 6: LA PROMESA -->
+<section class="promise" id="promise" data-chapter="Capítulo 6|La promesa">
+  <div class="wrap">
+    <p class="chap">Capítulo 6 · La promesa</p>
+    <p class="scrub" id="scrub">Cualquier negocio, operando como una <span class="g">gran</span> <span class="g">corporación,</span> con <span class="g">cero</span> <span class="g">costos</span> de desarrollo</p>
+  </div>
+  <div class="niches" aria-label="Nichos de arranque">
+    <p class="wrap">Los nichos con los que arranca la plataforma</p>
+    <div class="ntrack">
+      <span>Refrigeración</span><span>Repuestos de carro</span><span>Repuestos de moto</span><span>Ferretería</span><span>Paneles solares</span><span>Tracker GPS</span><span>Supermercado</span><span>Farmacia</span>
+      <span aria-hidden="true">Refrigeración</span><span aria-hidden="true">Repuestos de carro</span><span aria-hidden="true">Repuestos de moto</span><span aria-hidden="true">Ferretería</span><span aria-hidden="true">Paneles solares</span><span aria-hidden="true">Tracker GPS</span><span aria-hidden="true">Supermercado</span><span aria-hidden="true">Farmacia</span>
+    </div>
+  </div>
+</section>
+
+<!-- CAP 7: CRECIMIENTO -->
+<section class="block" id="growth" data-chapter="Capítulo 7|El crecimiento">
+  <div class="wrap grow">
+    <div class="rings" id="rings" aria-hidden="true">
+      <div class="ring r3"><span>Internacional</span></div>
+      <div class="ring r2"><span>Venezuela</span></div>
+      <div class="ring r1"><span>Estado Bolívar</span></div>
+      <div class="core"><i></i><span>Ciudad Guayana</span></div>
+    </div>
+    <div>
+      <div class="head" data-rv><p class="chap">Capítulo 7 · El crecimiento</p><h2>Nacidos en Ciudad Guayana, <span class="gold">con visión global</span></h2></div>
+      <div class="gitems">
+        <article data-rv><h3>Red de Partners</h3><p>Técnicos calificados y motorizados se activan como micro-franquiciados de la app y venden el catálogo en la calle con su propio código.</p></article>
+        <article data-rv style="--d:100ms"><h3>Franquicias digitales</h3><p>El modelo se replica ciudad por ciudad, con la misma tecnología y los mismos procesos.</p></article>
+        <article data-rv style="--d:200ms"><h3>VEXBIZ Academia</h3><p>Formación especializada para que cada actor aproveche la plataforma y compita mejor.</p></article>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- EPÍLOGO -->
+<section class="close" data-chapter="Epílogo|Crezcamos juntos">
+  <div class="wrap">
+    <div class="close-grid">
+      <div data-rv>
+        <p class="chap">Epílogo · Únase al ecosistema</p>
+        <h2>Crezcamos <span class="gold">juntos</span></h2>
+        <p class="lead">El próximo capítulo lo escribimos con ustedes. Queremos que su empresa sea parte de este ecosistema desde el inicio: nosotros automatizamos el ciclo comercial y ustedes se enfocan en su negocio.</p>
+      </div>
+      <div class="contact" data-rv style="--d:120ms">
+        <div><span>Correo</span><strong>comercializacion@vexbiz.com</strong></div>
+        <div><span>Marketplace</span><strong>ve.vexbiz.com</strong></div>
+        <div><span>Sede</span><strong>Puerto Ordaz, Estado Bolívar, Venezuela</strong></div>
+      </div>
+    </div>
+    <div class="foot"><span>VEXBIZ Corporación Tecnológica Industrial, C.A.</span><span>Puerto Ordaz, Venezuela · 2026</span></div>
+  </div>
+</section>
+</main>
+
+<script>
+(function(){
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const clamp=(v,a=0,b=1)=>Math.min(b,Math.max(a,v));
+  const ease=t=>t<.5?4*t*t*t:1-Math.pow(-2*t+2,3)/2;
+  const lerp=(a,b,t)=>a+(b-a)*t;
+  const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
+  const isMobile=()=>innerWidth<=860;
+  const words=(el,cls)=>{let i=0;const walk=n=>{[...n.childNodes].forEach(c=>{if(c.nodeType===3){const f=document.createDocumentFragment();c.textContent.split(/(\s+)/).forEach(t=>{if(!t)return;if(/^\s+$/.test(t)){f.appendChild(document.createTextNode(t));return;}const s=document.createElement('span');s.className='w';s.style.setProperty('--i',i++);s.textContent=t;f.appendChild(s);});c.replaceWith(f);}else if(c.nodeType===1&&!c.classList.contains('g'))walk(c);else if(c.nodeType===1){c.classList.add('w');c.style.setProperty('--i',i++);}});};walk(el);return i;};
+
+  /* ---------- hero network ---------- */
+  const cv=$('#net'),cx=cv.getContext('2d');let pts=[],cw,ch,heroOn=true;
+  function sizeNet(){const d=Math.min(devicePixelRatio||1,2);cw=cv.clientWidth;ch=cv.clientHeight;cv.width=cw*d;cv.height=ch*d;cx.setTransform(d,0,0,d,0,0);
+    const n=Math.round(Math.min(90,cw*ch/14000));pts=Array.from({length:n},()=>({x:Math.random()*cw,y:Math.random()*ch,vx:(Math.random()-.5)*.2,vy:(Math.random()-.5)*.2,r:Math.random()*1.6+.6}));}
+  function drawNet(){cx.clearRect(0,0,cw,ch);
+    for(let i=0;i<pts.length;i++){const a=pts[i];if(!reduce){a.x+=a.vx;a.y+=a.vy;if(a.x<0||a.x>cw)a.vx*=-1;if(a.y<0||a.y>ch)a.vy*=-1;}
+      for(let j=i+1;j<pts.length;j++){const b=pts[j],dd=Math.hypot(a.x-b.x,a.y-b.y);if(dd<130){cx.strokeStyle=`rgba(217,163,58,${(1-dd/130)*.28})`;cx.lineWidth=.7;cx.beginPath();cx.moveTo(a.x,a.y);cx.lineTo(b.x,b.y);cx.stroke();}}
+      cx.fillStyle=a.r>1.6?'rgba(242,199,104,.95)':'rgba(80,135,200,.7)';cx.beginPath();cx.arc(a.x,a.y,a.r,0,7);cx.fill();}
+    if(!reduce&&heroOn)requestAnimationFrame(drawNet);}
+  new IntersectionObserver(es=>{const v=es[0].isIntersecting;if(v&&!heroOn){heroOn=true;drawNet();}heroOn=v;}).observe(cv);
+  sizeNet();drawNet();
+
+  /* ---------- build: connection scene ---------- */
+  const ico={
+    cli:'<path d="M5 8h14l-1.5 12h-11z"/><path d="M9 10V7a3 3 0 0 1 6 0v3"/>',
+    tec:'<path d="M15 4a4.5 4.5 0 0 0-4.2 6L4.5 16.2a1.8 1.8 0 0 0 2.5 2.5L13.2 12.5A4.5 4.5 0 0 0 19 8l-2.7 1.2-2-2L15.5 4.5z"/>',
+    emp:'<rect x="3" y="8" width="18" height="12" rx="2"/><path d="M9 8V6a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2M3 13h18"/>',
+    tie:'<path d="M4 10l1.5-5h13L20 10M4 10v10h16V10"/><path d="M10 20v-5h4v5"/>',
+    may:'<path d="M3 20v-9l5 3v-3l5 3v-3l5 3V5h3v15z"/>',
+    card:'<rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/>',
+    truck:'<path d="M2 7h11v9H2zM13 10h4l3 3v3h-7"/><circle cx="6" cy="17.5" r="1.8"/><circle cx="17" cy="17.5" r="1.8"/>'
+  };
+  const netbox=$('#netbox'),netsvg=$('#netsvg'),hub=$('#hub');
+  const nn=[['Cliente','cli'],['Técnico','tec'],['Empresa de servicio','emp'],['Tienda','tie'],['Mayorista','may']];
+  const S=[[.14,.16],[.84,.1],[.9,.62],[.46,.9],[.08,.7]];
+  const C=nn.map((_,i)=>{const a=-Math.PI/2+i*2*Math.PI/5;return[.5+Math.cos(a)*.37,.5+Math.sin(a)*.37];});
+  const nodes=nn.map(([n,k])=>{const d=document.createElement('div');d.className='node';d.innerHTML=`<div class="dot"><svg viewBox="0 0 24 24">${ico[k]}</svg></div><span>${n}</span>`;netbox.appendChild(d);return d;});
+  const NS='http://www.w3.org/2000/svg';
+  const mk=(cls)=>{const l=document.createElementNS(NS,'line');if(cls)l.setAttribute('class',cls);netsvg.appendChild(l);return l;};
+  const dashes=[[0,3],[1,2],[3,4],[0,1]].map(p=>({p,l:mk('dash')}));
+  const spokes=nodes.map(()=>mk());
+  const ring=nodes.map(()=>mk());
+  const setL=(l,a,b)=>{l.setAttribute('x1',a[0]*100);l.setAttribute('y1',a[1]*100);l.setAttribute('x2',b[0]*100);l.setAttribute('y2',b[1]*100);};
+  const netSteps=$$('#s-net .step'),netTicks=$$('#s-net .ticks span');
+  function renderNet(p){
+    const m=ease(clamp((p-.36)/.3)), lines=clamp((p-.66)/.24), hubS=ease(clamp((p-.42)/.25));
+    const pos=nodes.map((d,i)=>{const drift=(1-m)*Math.sin(p*9+i*1.7)*.02;const x=lerp(S[i][0]+drift,C[i][0],m),y=lerp(S[i][1]-drift,C[i][1],m);d.style.left=x*100+'%';d.style.top=y*100+'%';d.classList.toggle('lit',lines>.1);return[x,y];});
+    dashes.forEach(({p:[a,b],l})=>{setL(l,pos[a],pos[b]);l.style.opacity=(1-m)*.9;});
+    spokes.forEach((l,i)=>{const t=clamp(lines*1.6-i*.12);setL(l,[.5,.5],[lerp(.5,pos[i][0],t),lerp(.5,pos[i][1],t)]);l.style.opacity=t>0?1:0;});
+    ring.forEach((l,i)=>{const j=(i+1)%5,t=clamp(lines*1.4-.4);setL(l,pos[i],[lerp(pos[i][0],pos[j][0],t),lerp(pos[i][1],pos[j][1],t)]);l.style.opacity=t>0?.45:0;});
+    hub.style.transform=`scale(${hubS})`;hub.style.opacity=hubS;
+    const k=p<.33?0:p<.64?1:2;netSteps.forEach((s,i)=>s.classList.toggle('on',i===k));netTicks.forEach((s,i)=>s.classList.toggle('on',i===k));
+  }
+
+  /* ---------- journey ---------- */
+  const sts=$$('#track .st'),jfill=$('#jfill'),token=$('#token'),prod=$('#prod'),pbadge=$('#pbadge');
+  const jSteps=$$('#s-jr .step');
+  const badges=['IA generando ficha y foto','Publicado en el catálogo','Pago confirmado · split','En ruta · multiparada','+ Ganancia en tu panel'];
+  let jLast=-1;
+  function renderJr(p){
+    const g=clamp(p*1.08-.02)*4,k=Math.min(3,Math.floor(g)),u=ease(clamp((g-k-.25)/.55)),pos=k+u,a=Math.round(pos);
+    jfill.style.transform=`scaleX(${pos/4})`;token.style.left=(pos/4*100)+'%';
+    sts.forEach((s,i)=>{s.classList.toggle('on',i===a);s.classList.toggle('done',i<pos+.01);});
+    if(a!==jLast){jLast=a;jSteps.forEach((s,i)=>s.classList.toggle('on',i===a));prod.className='prod s'+a;pbadge.textContent=badges[a];}
+  }
+
+  /* ---------- payment scene ---------- */
+  const paybox=$('#paybox'),paysvg=$('#paysvg');
+  const pdefs=[['Cliente','cli'],['Pasarela','hub'],['Proveedor','tie'],['Transportista','truck']];
+  const pnodes=pdefs.map(([n,k])=>{const d=document.createElement('div');d.className='pn'+(k==='hub'?' hubn':'');
+    d.innerHTML=(k==='hub'?'<div class="dot">VE<b>X</b>BIZ</div>':`<div class="dot"><svg viewBox="0 0 24 24">${ico[k]}</svg></div>`)+`<span class="lbl">${n}</span><span class="st8"></span>`;paybox.appendChild(d);return d;});
+  const plines=[[0,1],[1,2],[1,3]].map(pr=>{const l=document.createElementNS(NS,'line');paysvg.appendChild(l);return{pr,l};});
+  const coins=[0,1,2].map(()=>{const c=document.createElement('div');c.className='coin';paybox.appendChild(c);return c;});
+  let PP;
+  function layoutPay(){PP=isMobile()?[[.5,.08],[.5,.5],[.18,.9],[.82,.9]]:[[.1,.5],[.46,.5],[.86,.16],[.86,.84]];
+    pnodes.forEach((d,i)=>{d.style.left=PP[i][0]*100+'%';d.style.top=PP[i][1]*100+'%';});
+    plines.forEach(({pr:[a,b],l})=>setL(l,PP[a],PP[b]));}
+  const along=(path,t)=>{const segs=path.length-1,f=clamp(t)*segs,i=Math.min(segs-1,Math.floor(f)),u=f-i,A=PP[path[i]],B=PP[path[i+1]];return[lerp(A[0],B[0],u),lerp(A[1],B[1],u)];};
+  const putCoin=(c,xy,o)=>{c.style.left=xy[0]*100+'%';c.style.top=xy[1]*100+'%';c.style.opacity=o;};
+  const pSteps=$$('#s-pay .step'),pTicks=$$('#s-pay .ticks span');
+  const st8=(i,txt,cls)=>{const e=pnodes[i].querySelector('.st8');if(e.textContent!==txt)e.textContent=txt;e.className='st8'+(cls?' '+cls:'');};
+  function renderPay(p){
+    const k=p<.34?0:p<.67?1:2,t=clamp((p-k*.335)/.3);
+    pSteps.forEach((s,i)=>s.classList.toggle('on',i===k));pTicks.forEach((s,i)=>s.classList.toggle('on',i===k));
+    coins.forEach(c=>c.style.opacity=0);
+    if(k===0){
+      putCoin(coins[0],along([0,1,2],clamp(t/.75)),t<.8?1:0);
+      st8(0,'Pre-orden · Bs 0 cobrado','lock');st8(1,'Consulta stock','');
+      st8(2,t>.8?'Stock confirmado':'¿Hay existencia?',t>.8?'ok':'');st8(3,'En espera','');
+    }else if(k===1){
+      const a=clamp(t/.4),b=clamp((t-.4)/.5);
+      putCoin(coins[0],along([0,1],a),a<1?1:0);
+      putCoin(coins[1],along([1,2],b),b>0&&b<1?1:0);putCoin(coins[2],along([1,3],b),b>0&&b<1?1:0);
+      st8(0,'Pagó una sola vez','ok');st8(1,b>0?'Divide el pago':'Recibe el pago','');
+      st8(2,b>=1?'Cobrado al instante':'Por recibir',b>=1?'ok':'');st8(3,b>=1?'Flete en custodia':'Por recibir',b>=1?'lock':'');
+    }else{
+      putCoin(coins[0],along([0,1,3],clamp(t/.8)),t<.85?1:0);
+      st8(0,t>.3?'Confirmó la entrega':'Recibe su pedido','ok');st8(1,'Libera el flete','');
+      st8(2,'Cobrado al instante','ok');st8(3,t>.85?'Flete liberado':'Entregando…',t>.85?'ok':'lock');
+    }
+  }
+
+  /* ---------- actor cards ---------- */
+  const cardStage=$('#cardStage'),cards=$$('.card'),panels=$$('.panel'),cdots=$$('#cdots span');
+  const cIntro=$('#cIntro'),cOutro=$('#cOutro'),cdotsBox=$('#cdots');
+  let K=[];
+  function layoutCards(){
+    const W=cardStage.clientWidth,H=cardStage.clientHeight,m=W<=860;
+    const cw=m?Math.min(W*.34,H*.2,170):Math.max(170,Math.min(W*.15,H*.28,240));cardStage.style.setProperty('--cw',cw+'px');
+    const fanY=m?H*.1:H*.14,spread=m?cw*.56:cw*.8,drop=m?7:13;
+    const fan=i=>({x:(i-2)*spread,y:fanY+Math.abs(i-2)**2*drop,r:(i-2)*9,s:1,o:1,z:5-Math.abs(i-2)});
+    const stack=i=>({x:(i-2)*4,y:fanY-i*4,r:(i-2)*2.5,s:.92,o:1,z:i});
+    const fx=m?0:W*.24,fy=m?-H*.22:H*.02;
+    const focus=k=>i=>{if(i===k)return{x:fx,y:fy,r:0,s:m?1.02:1.14,o:1,z:10};const o=[0,1,2,3,4].filter(n=>n!==k),j=o.indexOf(i);
+      return{x:fx+(j-1.5)*cw*(m?.34:.3),y:fy-cw*(m?.16:.22),r:(j-1.5)*7,s:m?.7:.74,o:.55,z:j};};
+    const fanEnd=i=>({x:(i-2)*spread*1.05,y:fanY+H*.04+Math.abs(i-2)**2*drop,r:(i-2)*10,s:1,o:1,z:5-Math.abs(i-2)});
+    K=[fan,stack,focus(0),focus(1),focus(2),focus(3),focus(4),fanEnd].map(f=>[0,1,2,3,4].map(i=>f(i)));
+  }
+  let cAct=-2;
+  function renderCards(p){
+    const f=p*(K.length-1),seg=Math.min(K.length-2,Math.floor(f)),u=ease(clamp((f-seg-.12)/.55));
+    cards.forEach((c,i)=>{const A=K[seg][i],B=K[seg+1][i];
+      c.style.transform=`translate(${lerp(A.x,B.x,u)}px,${lerp(A.y,B.y,u)}px) rotate(${lerp(A.r,B.r,u)}deg) scale(${lerp(A.s,B.s,u)})`;
+      c.style.opacity=lerp(A.o,B.o,u);c.style.zIndex=u>.5?B.z:A.z;});
+    const cur=seg+(u>.5?1:0),a=(cur>=2&&cur<=6)?cur-2:-1;
+    if(a!==cAct){cAct=a;panels.forEach((pn,i)=>pn.classList.toggle('on',i===a));cdots.forEach((d,i)=>d.classList.toggle('on',i===a));}
+    cIntro.classList.toggle('off',cur>=1);cOutro.classList.toggle('on',cur>=7);cdotsBox.style.opacity=a>=0?1:0;
+  }
+
+  /* ---------- growth rings ---------- */
+  const rings=$$('#rings .ring');
+  function renderRings(p){rings.slice().reverse().forEach((r,i)=>{const t=ease(clamp(p*2.4-.35-i*.32));r.style.setProperty('--s',.35+.65*t);r.style.setProperty('--o',t);});}
+
+  /* ---------- scrub words ---------- */
+  const scrub=$('#scrub');
+
+  /* ---------- static (reduced motion / fallback) ---------- */
+  layoutPay();
+  if(reduce){renderNet(1);renderPay(.99);renderRings(1);
+    $$('#s-net .step,#s-pay .step').forEach(s=>s.classList.add('on'));
+    return;}
+
+  /* ---------- choose mode ----------
+     scroll: the page scrolls inside its own window -> sticky scenes driven by scroll.
+     auto:   the viewer shows the page at full height (common in mobile app viewers),
+             so nothing scrolls inside it -> same scenes, played on a timer when visible. */
+  const se=document.scrollingElement||document.documentElement;
+  const canScroll=(se.scrollHeight-innerHeight)>innerHeight*.8 && innerHeight<screen.height*1.4;
+  const AUTO=location.hash==='#auto'||!canScroll;
+  document.documentElement.classList.add('anim');
+  if(AUTO){document.documentElement.classList.add('auto');
+    document.documentElement.style.setProperty('--ph',Math.round(Math.min(Math.max(screen.height,640),900))+'px');}
+
+  const hh=$('#heroH');words(hh);
+  panels.forEach(p=>p.querySelectorAll('h3,.say').forEach(el=>words(el)));
+  panels.forEach(p=>p.querySelectorAll('li').forEach((li,i)=>li.style.setProperty('--i',i)));
+  const sw=(words(scrub),[...scrub.querySelectorAll('.w')]);
+
+  const pinned=[['#s-net',renderNet,7000,false],['#s-cards',renderCards,22000,true],['#s-jr',renderJr,11000,true],['#s-pay',renderPay,10000,true]].map(([s,f,dur,loop])=>({el:$(s),f,dur,loop}));
+  const heroIn=$('#heroIn'),prog=$('#prog'),chapNow=$('#chapNow');
+  const chapters=$$('[data-chapter]');let chapLast='';
+  const rv=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');rv.unobserve(e.target);}}),{rootMargin:'0px 0px -12% 0px'});
+  $$('[data-rv]').forEach(el=>rv.observe(el));
+  layoutCards();layoutPay();
+  pinned.forEach(({f})=>f(0));
+  addEventListener('resize',()=>{sizeNet();layoutCards();layoutPay();});
+
+  if(AUTO){
+    /* visibility via IntersectionObserver works even when the page is inside a full-height frame */
+    const vis=new Map();
+    const io=new IntersectionObserver(es=>es.forEach(e=>{const v=vis.get(e.target);if(!v)return;
+      if(e.isIntersecting&&!v.on){v.on=true;v.t0=performance.now();}else if(!e.isIntersecting&&v.on){v.on=false;}}),{threshold:.35});
+    pinned.forEach(sc=>{vis.set(sc.el,{on:false,t0:0,sc});io.observe(sc.el);});
+    const once=(el,dur,fn)=>{const v={on:false,t0:0,once:{dur,fn}};vis.set(el,v);io.observe(el);return v;};
+    once(scrub,2600,t=>sw.forEach((w,i)=>w.classList.toggle('on',i<t*sw.length*1.05)));
+    once($('#rings'),2800,t=>renderRings(.2+t*.55));
+    (function loop(now){
+      vis.forEach(v=>{if(!v.on)return;const el=now-v.t0;
+        if(v.once){v.once.fn(clamp(el/v.once.dur));return;}
+        const sc=v.sc;let t=el/sc.dur;t=sc.loop?(t%1):clamp(t);sc.f(t);});
+      requestAnimationFrame(loop);})(performance.now());
+    return;
+  }
+
+  function frame(){
+    const vh=innerHeight,sy=se.scrollTop||scrollY;
+    prog.style.transform=`scaleX(${clamp(sy/(se.scrollHeight-vh))})`;
+    const hr=$('.hero').getBoundingClientRect(),hp=clamp(-hr.top/(vh*.9));heroIn.style.transform=`translateY(${-hp*80}px)`;heroIn.style.opacity=1-hp*.85;
+    pinned.forEach(({el,f})=>{const r=el.getBoundingClientRect();if(r.bottom<-50||r.top>vh+50)return;f(clamp(-r.top/(el.offsetHeight-vh)));});
+    const sr=scrub.getBoundingClientRect(),sp=clamp((vh*.85-sr.top)/(sr.height+vh*.35));
+    sw.forEach((w,i)=>w.classList.toggle('on',i<sp*sw.length*1.1));
+    const gr=$('#rings').getBoundingClientRect();renderRings(clamp((vh-gr.top)/(vh+gr.height)));
+    let cur=chapters[0];for(const c of chapters){if(c.getBoundingClientRect().top<vh*.5)cur=c;}
+    const d=cur.dataset.chapter;if(d!==chapLast){chapLast=d;const [a,b]=d.split('|');chapNow.innerHTML=`<b>${a}</b><span>${b}</span>`;}
+  }
+  /* poll positions every frame: catches window scroll, body scroll and momentum scrolling on phones */
+  let lastY=null;const probe=$('main');
+  (function loop(){const y=probe.getBoundingClientRect().top;if(y!==lastY){lastY=y;frame();}requestAnimationFrame(loop);})();
+})();
+</script>
+</body></html>
