@@ -81,22 +81,22 @@ p{margin:0}
 .netbox>svg{position:absolute;inset:0;width:100%;height:100%;overflow:visible}
 .netbox line{stroke:var(--gold);stroke-width:1.5;vector-effect:non-scaling-stroke}
 .netbox line.dash{stroke:rgba(148,160,189,.35);stroke-dasharray:4 6}
-.node{position:absolute;transform:translate(-50%,-50%);display:flex;flex-direction:column;align-items:center;gap:8px;width:120px;text-align:center}
-.node .dot{width:52px;height:52px;border-radius:50%;border:1.5px dashed rgba(148,160,189,.55);display:grid;place-items:center;background:var(--ink);transition:border-color .5s,background .5s,box-shadow .5s}
+.node{position:absolute;transform:translate(-50%,-50%);display:flex;flex-direction:column;align-items:center;gap:6px;width:112px;text-align:center}
+.node .dot{width:48px;height:48px;border-radius:50%;border:1.5px dashed rgba(148,160,189,.55);display:grid;place-items:center;background:var(--ink);transition:border-color .5s,background .5s,box-shadow .5s}
 .node .dot svg{width:24px;height:24px;stroke:var(--muted);fill:none;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round;transition:stroke .5s}
 .node span{font-family:var(--display);font-size:14px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);line-height:1.1;transition:color .5s}
 .node.lit .dot{border-style:solid;border-color:var(--gold);background:#0A1A34;box-shadow:0 0 0 6px rgba(217,163,58,.08),0 0 30px rgba(217,163,58,.25)}
 .node.lit .dot svg{stroke:var(--gold-hi)}
 .node.lit span{color:var(--text)}
-.hub{position:absolute;left:50%;top:50%;width:132px;height:132px;margin:-66px 0 0 -66px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:radial-gradient(circle at 35% 30%,#0F2B55,#0A1532 70%);border:1.5px solid var(--gold);box-shadow:0 0 0 12px rgba(217,163,58,.06),0 0 70px rgba(217,163,58,.3);font-family:var(--display);font-weight:800;font-size:28px;letter-spacing:.04em}
+.hub{position:absolute;left:50%;top:50%;width:120px;height:120px;margin:-60px 0 0 -60px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:radial-gradient(circle at 35% 30%,#0F2B55,#0A1532 70%);border:1.5px solid var(--gold);box-shadow:0 0 0 12px rgba(217,163,58,.06),0 0 70px rgba(217,163,58,.3);font-family:var(--display);font-weight:800;font-size:28px;letter-spacing:.04em}
 .hub b{color:var(--gold)}
 .netbox .node.static-pos{position:absolute}
 @media (max-width:860px){
   .duo{grid-template-columns:1fr;gap:24px}
   .anim .duo{grid-template-rows:auto 1fr;align-content:start;padding-top:86px;gap:10px}
   .anim .duo .netbox{order:-1;aspect-ratio:1/1;width:min(100%,40vh)}
-  .node{width:84px}.node .dot{width:40px;height:40px}.node .dot svg{width:19px;height:19px}.node span{font-size:11px}
-  .hub{width:92px;height:92px;margin:-46px 0 0 -46px;font-size:20px}
+  .node{width:78px}.node .dot{width:36px;height:36px}.node .dot svg{width:17px;height:17px}.node span{font-size:10px;letter-spacing:.08em}
+  .hub{width:80px;height:80px;margin:-40px 0 0 -40px;font-size:18px}
   .step h3{font-size:clamp(28px,8.4vw,40px)}
   .step p{font-size:15.5px}
 }
@@ -154,12 +154,14 @@ p{margin:0}
 .card::after{content:"";position:absolute;width:140%;aspect-ratio:1;border-radius:50%;right:-70%;bottom:-60%;border:1px solid currentColor;opacity:.25;box-shadow:0 0 0 19px currentColor}
 .card .tag{position:relative;font-family:var(--display);font-weight:600;font-size:calc(var(--cw,210px) * .062);letter-spacing:.2em;text-transform:uppercase;display:flex;justify-content:space-between}
 .card svg{position:relative;width:46%;height:auto;align-self:center;stroke:currentColor;fill:none;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
-.card .name{position:relative;font-family:var(--display);font-weight:800;text-transform:uppercase;font-size:calc(var(--cw,210px) * .112);line-height:.95}
+.card .name{position:relative;font-family:var(--display);font-weight:800;text-transform:uppercase;font-size:calc(var(--cw,210px) * .102);line-height:.95}
 .c0{background:linear-gradient(155deg,#F6D07A,#C08A2C 70%,#8E6119);color:#0A1532}
 .c1{background:linear-gradient(155deg,#17407E,#0A1F47 65%,#040E24);color:#F2C768}
 .c2{background:linear-gradient(155deg,#3B6389,#17304D 65%,#0B1A2E);color:#E8EEF7}
 .c3{background:linear-gradient(155deg,#F3EEE2,#D4C6A6 70%,#B19E77);color:#0A1532}
 .c4{background:linear-gradient(155deg,#8A5E24,#4A300F 60%,#20150A);color:#F2C768}
+.c5{background:linear-gradient(155deg,#D3D8E1,#97A1B3 70%,#667085);color:#0A1532}
+.c6{background:linear-gradient(155deg,#0E2A4F,#061429 65%,#020A18);color:#D9A33A;box-shadow:0 30px 60px -20px rgba(0,0,0,.7),0 0 0 1.5px rgba(217,163,58,.6) inset}
 
 /* ===== ch3 journey ===== */
 .jr{max-width:var(--max);margin:0 auto;padding-inline:var(--gut);display:grid;gap:34px}
@@ -343,8 +345,8 @@ section.block{padding-block:clamp(72px,10vw,130px)}
     <div class="brand"><div class="mark" role="img" aria-label="Vexbiz">VE<b>X</b>BIZ</div><div class="sub">Corporación Tecnológica Industrial, C.A.</div></div>
     <p class="hero-kicker">VEXBIZ Suministros</p>
     <h1 id="heroH">La tecnología de las grandes corporaciones, <em>para cualquier negocio</em></h1>
-    <p class="lead">Esta es la historia de cómo VEXBIZ Suministros une a todos los actores del comercio en un ecosistema automatizado con inteligencia artificial, y de por qué cada negocio puede entrar con cero costos de desarrollo.</p>
-    <div class="cue"><i></i>Desliza para comenzar la historia</div>
+    <p class="lead">Descubre cómo VEXBIZ Suministros centraliza el comercio en un solo ecosistema impulsado por nuestra IA. La plataforma que tu negocio necesita para competir, disponible de inmediato y con cero costos de desarrollo.</p>
+    <div class="cue"><i></i>Desliza para conocer el ecosistema</div>
   </div>
 </section>
 
@@ -355,9 +357,9 @@ section.block{padding-block:clamp(72px,10vw,130px)}
       <div>
         <p class="chap">Capítulo 1 · El punto de partida</p>
         <div class="steps">
-          <div class="step on"><h3>Hoy, cada actor vende <span class="gold">por su cuenta</span></h3><p>Tiendas, técnicos, empresas de servicio y mayoristas trabajan aislados, cada uno con sus propias herramientas o sin ninguna.</p></div>
+          <div class="step on"><h3>Hoy, cada actor vende <span class="gold">por su cuenta</span></h3><p>Fabricantes, mayoristas, tiendas, técnicos y profesionales trabajan aislados, cada uno con sus propias herramientas o sin ninguna.</p></div>
           <div class="step"><h3>La tecnología de verdad <span class="gold">cuesta demasiado</span></h3><p>Vender en línea con pagos, inventario y delivery exige una inversión y un equipo técnico que la mayoría de los negocios no tiene.</p></div>
-          <div class="step"><h3>VEXBIZ los conecta en <span class="gold">un solo ecosistema</span></h3><p>Nace en Ciudad Guayana una plataforma que integra a todos los actores productivos, con cero costos de desarrollo para cada negocio.</p></div>
+          <div class="step"><h3>VEXBIZ los conecta en <span class="gold">un solo ecosistema</span></h3><p>Nace en Ciudad Guayana una plataforma que integra a todos los actores productivos, desde el fabricante hasta el cliente, con cero costos de desarrollo para cada negocio.</p></div>
         </div>
         <div class="ticks" aria-hidden="true"><span class="on"></span><span></span><span></span></div>
       </div>
@@ -370,39 +372,47 @@ section.block{padding-block:clamp(72px,10vw,130px)}
 </section>
 
 <!-- CAP 2: PROTAGONISTAS -->
-<section class="scene" id="s-cards" style="--len:560vh" data-chapter="Capítulo 2|Los protagonistas">
+<section class="scene" id="s-cards" style="--len:780vh" data-chapter="Capítulo 2|Los protagonistas">
   <div class="pin" id="cardStage">
     <div class="cards-intro" id="cIntro">
       <p class="chap">Capítulo 2 · Los protagonistas</p>
-      <h2>Cinco actores. <span class="gold">Un solo motor.</span></h2>
+      <h2>Siete actores. <span class="gold">Un solo motor.</span></h2>
       <p>Cada actor gana cuando otro vende. Así participa cada uno.</p>
     </div>
     <div class="cards-layer" aria-hidden="true">
       <div class="card c0"><div class="tag"><span>Demanda</span><span>VX</span></div><svg viewBox="0 0 48 48"><path d="M10 16h28l-3 24H13z"/><path d="M18 20v-6a6 6 0 0 1 12 0v6"/></svg><div class="name">Cliente</div></div>
-      <div class="card c1"><div class="tag"><span>Prescriptor</span><span>VX</span></div><svg viewBox="0 0 48 48"><path d="M30 8a9 9 0 0 0-8.5 12L9 32.5a3.5 3.5 0 0 0 5 5L26.5 25A9 9 0 0 0 38 16l-5.5 2.5-4-4L31 9z"/></svg><div class="name">Servicio profesional</div></div>
+      <div class="card c1"><div class="tag"><span>Prescriptor</span><span>VX</span></div><svg viewBox="0 0 48 48"><path d="M30 8a9 9 0 0 0-8.5 12L9 32.5a3.5 3.5 0 0 0 5 5L26.5 25A9 9 0 0 0 38 16l-5.5 2.5-4-4L31 9z"/></svg><div class="name">Técnico independiente</div></div>
       <div class="card c2"><div class="tag"><span>Servicios</span><span>VX</span></div><svg viewBox="0 0 48 48"><rect x="8" y="16" width="32" height="22" rx="3"/><path d="M18 16v-4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v4M8 26h32M22 26v4h4v-4"/></svg><div class="name">Empresa de servicio</div></div>
+      <div class="card c5"><div class="tag"><span>Asesoría</span><span>VX</span></div><svg viewBox="0 0 48 48"><path d="M24 8v32M14 40h20M10 14h28"/><path d="M10 14l-6 12a6 6 0 0 0 12 0zM38 14l-6 12a6 6 0 0 0 12 0z"/></svg><div class="name">Servicios profesionales</div></div>
       <div class="card c3"><div class="tag"><span>Oferta</span><span>VX</span></div><svg viewBox="0 0 48 48"><path d="M8 20l3-10h26l3 10M8 20v18h32V20M8 20c0 3 2.5 5 5.3 5s5.4-2 5.4-5c0 3 2.4 5 5.3 5s5.3-2 5.3-5c0 3 2.5 5 5.4 5S40 23 40 20"/><path d="M20 38v-8h8v8"/></svg><div class="name">Proveedor</div></div>
-      <div class="card c4"><div class="tag"><span>Volumen</span><span>VX</span></div><svg viewBox="0 0 48 48"><path d="M6 40V22l10 6v-6l10 6v-6l10 6V10h6v30z"/><path d="M12 34h4M22 34h4M32 34h4"/></svg><div class="name">Mayorista</div></div>
+      <div class="card c4"><div class="tag"><span>Distribución</span><span>VX</span></div><svg viewBox="0 0 48 48"><path d="M6 40V18L24 8l18 10v22"/><path d="M14 40V26h20v14M14 32h20"/></svg><div class="name">Mayorista</div></div>
+      <div class="card c6"><div class="tag"><span>Origen</span><span>VX</span></div><svg viewBox="0 0 48 48"><path d="M6 40V22l10 6v-6l10 6v-6l10 6V10h6v30z"/><path d="M12 34h4M22 34h4M32 34h4"/></svg><div class="name">Fabricante / Importador</div></div>
     </div>
     <div class="panels">
       <article class="panel"><p class="role">Actor 1 · Demanda</p><h3>Cliente</h3><p class="say">Compra todo lo que necesita en una sola pantalla, con un solo pago.</p>
         <ul><li>Carrito multi-tienda: productos y servicios de distintos comercios y nichos en un mismo pedido.</li><li>Pre-orden sin cargo: no se cobra hasta que el proveedor confirma que tiene el producto.</li><li>Un solo repartidor recoge en cada tienda y entrega todo consolidado.</li><li>Al contratar un servicio, el pago queda en garantía hasta que confirma el trabajo.</li></ul>
         <p class="link"><b>En el ecosistema:</b> su compra activa a proveedores, mayoristas, técnicos y transportistas a la vez.</p></article>
-      <article class="panel"><p class="role">Actor 2 · Prescriptor</p><h3>Servicio profesional</h3><p class="say">El técnico independiente orienta la decisión del consumidor. Con Vexbiz, esa confianza se convierte en ingreso.</p>
+      <article class="panel"><p class="role">Actor 2 · Prescriptor</p><h3>Técnico independiente</h3><p class="say">El técnico orienta la decisión del consumidor. Con Vexbiz, esa confianza se convierte en ingreso.</p>
         <ul><li>Perfil propio en el directorio especializado de servicios.</li><li>Código Único de Partner: recomienda productos del catálogo a sus clientes.</li><li>Bonificación automática por cada venta que impulsa, acumulada en su Wallet.</li><li>Retiro de bonificaciones por pago móvil en los días de corte.</li></ul>
         <p class="link"><b>En el ecosistema:</b> es el motor de ventas en la calle y conecta al cliente con el inventario de los proveedores.</p></article>
       <article class="panel"><p class="role">Actor 3 · Servicios</p><h3>Empresa de servicio</h3><p class="say">Recibe contrataciones de clientes reales desde un directorio especializado, sin montar tecnología propia.</p>
-        <ul><li>Rubros como refrigeración, mecánica, contabilidad, legales, seguros, GPS, grúa y software.</li><li>Contratación y cobro 100% digital dentro de la plataforma.</li><li>Pago en depósito de garantía: el cliente contrata con confianza y el cobro está asegurado.</li><li>Visibilidad junto al catálogo de productos que sus clientes ya compran.</li></ul>
+        <ul><li>Rubros como refrigeración, mecánica de carro y moto, instalación de GPS, grúa y auxilio vial, y desarrollo de software.</li><li>Contratación y cobro 100% digital dentro de la plataforma.</li><li>Pago en depósito de garantía: el cliente contrata con confianza y el cobro está asegurado.</li><li>Visibilidad junto al catálogo de productos que sus clientes ya compran.</li></ul>
         <p class="link"><b>En el ecosistema:</b> completa la oferta; el cliente compra el repuesto y contrata la instalación en el mismo lugar.</p></article>
-      <article class="panel"><p class="role">Actor 4 · Oferta</p><h3>Proveedor</h3><p class="say">La tienda vende en línea sin hacer el trabajo técnico. Solo monitorea sus ganancias.</p>
+      <article class="panel"><p class="role">Actor 4 · Asesoría</p><h3>Servicios profesionales</h3><p class="say">Gestores, contadores, abogados y agentes de seguro llegan a los negocios y personas que ya operan en el ecosistema.</p>
+        <ul><li>Gestoría de trámites, servicios contables, servicios legales y agentes de seguro con perfil propio.</li><li>Clientes que ya compran y venden en la plataforma y necesitan formalizar y proteger su negocio.</li><li>Contratación y cobro digital, con el pago en garantía hasta la conformidad.</li><li>Sin montar página web ni sistema de cobro propio.</li></ul>
+        <p class="link"><b>En el ecosistema:</b> acompaña a cada negocio del ecosistema en lo legal, lo contable y lo administrativo.</p></article>
+      <article class="panel"><p class="role">Actor 5 · Oferta</p><h3>Proveedor</h3><p class="say">La tienda vende en línea sin hacer el trabajo técnico. Solo monitorea sus ganancias.</p>
         <ul><li>Carga automatizada de inventario con IA: ficha detallada y fotografía de cada ítem.</li><li>Sus productos entran rápido al catálogo infinito, frente a toda la demanda.</li><li>El dinero se libera al momento del pago, listo para facturar y despachar.</li><li>Pasarela de pago y logística de última milla ya integradas.</li></ul>
         <p class="link"><b>En el ecosistema:</b> se abastece de mayoristas y vende a clientes y técnicos.</p></article>
-      <article class="panel"><p class="role">Actor 5 · Volumen</p><h3>Mayorista</h3><p class="say">Fabricantes e importadores mueven volumen hacia toda la red desde un solo canal.</p>
+      <article class="panel"><p class="role">Actor 6 · Distribución</p><h3>Mayorista</h3><p class="say">Compra en volumen a fabricantes e importadores y distribuye en lotes a las tiendas.</p>
         <ul><li>Canal B2B directo con tiendas proveedoras, técnicos y empresas.</li><li>Inventarios masivos cargados y exhibidos por la plataforma.</li><li>Cobros en bolívares con conversión instantánea, incluso si el comprador paga con cripto.</li><li>Crecimiento con la red de franquicias digitales en cada nueva ciudad.</li></ul>
-        <p class="link"><b>En el ecosistema:</b> es el origen de la cadena: mayorista, tienda proveedora, cliente final o técnico.</p></article>
+        <p class="link"><b>En el ecosistema:</b> conecta la producción con el comercio: compra al fabricante y vende a la tienda.</p></article>
+      <article class="panel"><p class="role">Actor 7 · Origen</p><h3>Fabricante / Importador</h3><p class="say">Produce o importa la mercancía y la coloca en volumen a mayoristas y grandes distribuidores.</p>
+        <ul><li>Vitrina digital para su catálogo completo frente a toda la red.</li><li>Ventas B2B en volumen a mayoristas y distribuidores.</li><li>Carga del catálogo con IA: fichas técnicas y fotografía de cada producto.</li><li>Pagos seguros con split y conversión a bolívares.</li></ul>
+        <p class="link"><b>En el ecosistema:</b> es el origen de la cadena: fabricante, mayorista, tienda, cliente final o técnico.</p></article>
     </div>
     <div class="cards-outro" id="cOutro"><p class="eyebrow">Éxito compartido</p><h2>Nosotros ponemos la tecnología. <span class="gold">Ustedes, el negocio.</span></h2><p>Vexbiz es intermediario digital: no compite con sus aliados, les da la infraestructura para vender más.</p></div>
-    <div class="cdots" id="cdots" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span></div>
+    <div class="cdots" id="cdots" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
   </div>
 </section>
 
@@ -583,18 +593,20 @@ section.block{padding-block:clamp(72px,10vw,130px)}
     tec:'<path d="M15 4a4.5 4.5 0 0 0-4.2 6L4.5 16.2a1.8 1.8 0 0 0 2.5 2.5L13.2 12.5A4.5 4.5 0 0 0 19 8l-2.7 1.2-2-2L15.5 4.5z"/>',
     emp:'<rect x="3" y="8" width="18" height="12" rx="2"/><path d="M9 8V6a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2M3 13h18"/>',
     tie:'<path d="M4 10l1.5-5h13L20 10M4 10v10h16V10"/><path d="M10 20v-5h4v5"/>',
-    may:'<path d="M3 20v-9l5 3v-3l5 3v-3l5 3V5h3v15z"/>',
+    may:'<path d="M3 20V9l9-5 9 5v11"/><path d="M7 20v-7h10v7M7 16.5h10"/>',
+    fab:'<path d="M3 20v-9l5 3v-3l5 3v-3l5 3V5h3v15z"/>',
+    pro:'<path d="M12 4v16M8 20h8M5 7h14"/><path d="M5 7l-3 6a3 3 0 0 0 6 0zM19 7l-3 6a3 3 0 0 0 6 0z"/>',
     card:'<rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/>',
     truck:'<path d="M2 7h11v9H2zM13 10h4l3 3v3h-7"/><circle cx="6" cy="17.5" r="1.8"/><circle cx="17" cy="17.5" r="1.8"/>'
   };
   const netbox=$('#netbox'),netsvg=$('#netsvg'),hub=$('#hub');
-  const nn=[['Cliente','cli'],['Técnico','tec'],['Empresa de servicio','emp'],['Tienda','tie'],['Mayorista','may']];
-  const S=[[.14,.16],[.84,.1],[.9,.62],[.46,.9],[.08,.7]];
-  const C=nn.map((_,i)=>{const a=-Math.PI/2+i*2*Math.PI/5;return[.5+Math.cos(a)*.37,.5+Math.sin(a)*.37];});
+  const nn=[['Cliente','cli'],['Técnico','tec'],['Empresa de servicio','emp'],['Servicios profesionales','pro'],['Tienda','tie'],['Mayorista','may'],['Fabricante / Importador','fab']];
+  const S=[[.14,.14],[.62,.08],[.92,.3],[.86,.74],[.5,.9],[.12,.8],[.06,.46]];
+  const C=nn.map((_,i)=>{const a=-Math.PI/2+i*2*Math.PI/nn.length;return[.5+Math.cos(a)*.37,.5+Math.sin(a)*.37];});
   const nodes=nn.map(([n,k])=>{const d=document.createElement('div');d.className='node';d.innerHTML=`<div class="dot"><svg viewBox="0 0 24 24">${ico[k]}</svg></div><span>${n}</span>`;netbox.appendChild(d);return d;});
   const NS='http://www.w3.org/2000/svg';
   const mk=(cls)=>{const l=document.createElementNS(NS,'line');if(cls)l.setAttribute('class',cls);netsvg.appendChild(l);return l;};
-  const dashes=[[0,3],[1,2],[3,4],[0,1]].map(p=>({p,l:mk('dash')}));
+  const dashes=[[0,4],[1,2],[4,5],[0,1],[3,6]].map(p=>({p,l:mk('dash')}));
   const spokes=nodes.map(()=>mk());
   const ring=nodes.map(()=>mk());
   const setL=(l,a,b)=>{l.setAttribute('x1',a[0]*100);l.setAttribute('y1',a[1]*100);l.setAttribute('x2',b[0]*100);l.setAttribute('y2',b[1]*100);};
@@ -604,7 +616,7 @@ section.block{padding-block:clamp(72px,10vw,130px)}
     const pos=nodes.map((d,i)=>{const drift=(1-m)*Math.sin(p*9+i*1.7)*.02;const x=lerp(S[i][0]+drift,C[i][0],m),y=lerp(S[i][1]-drift,C[i][1],m);d.style.left=x*100+'%';d.style.top=y*100+'%';d.classList.toggle('lit',lines>.1);return[x,y];});
     dashes.forEach(({p:[a,b],l})=>{setL(l,pos[a],pos[b]);l.style.opacity=(1-m)*.9;});
     spokes.forEach((l,i)=>{const t=clamp(lines*1.6-i*.12);setL(l,[.5,.5],[lerp(.5,pos[i][0],t),lerp(.5,pos[i][1],t)]);l.style.opacity=t>0?1:0;});
-    ring.forEach((l,i)=>{const j=(i+1)%5,t=clamp(lines*1.4-.4);setL(l,pos[i],[lerp(pos[i][0],pos[j][0],t),lerp(pos[i][1],pos[j][1],t)]);l.style.opacity=t>0?.45:0;});
+    ring.forEach((l,i)=>{const j=(i+1)%nodes.length,t=clamp(lines*1.4-.4);setL(l,pos[i],[lerp(pos[i][0],pos[j][0],t),lerp(pos[i][1],pos[j][1],t)]);l.style.opacity=t>0?.45:0;});
     hub.style.transform=`scale(${hubS})`;hub.style.opacity=hubS;
     const k=p<.33?0:p<.64?1:2;netSteps.forEach((s,i)=>s.classList.toggle('on',i===k));netTicks.forEach((s,i)=>s.classList.toggle('on',i===k));
   }
@@ -662,16 +674,17 @@ section.block{padding-block:clamp(72px,10vw,130px)}
   const cIntro=$('#cIntro'),cOutro=$('#cOutro'),cdotsBox=$('#cdots');
   let K=[];
   function layoutCards(){
+    const N=cards.length,mid=(N-1)/2,idx=[...Array(N).keys()];
     const W=cardStage.clientWidth,H=cardStage.clientHeight,m=W<=860;
-    const cw=m?Math.min(W*.34,H*.2,170):Math.max(170,Math.min(W*.15,H*.28,240));cardStage.style.setProperty('--cw',cw+'px');
-    const fanY=m?H*.1:H*.14,spread=m?cw*.56:cw*.8,drop=m?7:13;
-    const fan=i=>({x:(i-2)*spread,y:fanY+Math.abs(i-2)**2*drop,r:(i-2)*9,s:1,o:1,z:5-Math.abs(i-2)});
-    const stack=i=>({x:(i-2)*4,y:fanY-i*4,r:(i-2)*2.5,s:.92,o:1,z:i});
+    const cw=m?Math.min(W*.27,H*.17,140):Math.max(160,Math.min(W*.13,H*.26,220));cardStage.style.setProperty('--cw',cw+'px');
+    const fanY=m?H*.1:H*.14,spread=m?Math.min(cw*.5,(W-cw-28)/(N-1)):Math.min(cw*.72,(W*.92-cw)/(N-1)),drop=m?4:7;
+    const fan=i=>({x:(i-mid)*spread,y:fanY+Math.abs(i-mid)**2*drop,r:(i-mid)*6.5,s:1,o:1,z:10-Math.round(Math.abs(i-mid))});
+    const stack=i=>({x:(i-mid)*3,y:fanY-i*3,r:(i-mid)*2,s:.92,o:1,z:i});
     const fx=m?0:W*.24,fy=m?-H*.22:H*.02;
-    const focus=k=>i=>{if(i===k)return{x:fx,y:fy,r:0,s:m?1.02:1.14,o:1,z:10};const o=[0,1,2,3,4].filter(n=>n!==k),j=o.indexOf(i);
-      return{x:fx+(j-1.5)*cw*(m?.34:.3),y:fy-cw*(m?.16:.22),r:(j-1.5)*7,s:m?.7:.74,o:.55,z:j};};
-    const fanEnd=i=>({x:(i-2)*spread*1.05,y:fanY+H*.04+Math.abs(i-2)**2*drop,r:(i-2)*10,s:1,o:1,z:5-Math.abs(i-2)});
-    K=[fan,stack,focus(0),focus(1),focus(2),focus(3),focus(4),fanEnd].map(f=>[0,1,2,3,4].map(i=>f(i)));
+    const focus=k=>i=>{if(i===k)return{x:fx,y:fy,r:0,s:m?1.02:1.14,o:1,z:20};const o=idx.filter(n=>n!==k),j=o.indexOf(i),c=(N-2)/2;
+      return{x:fx+(j-c)*cw*(m?.24:.22),y:fy-cw*(m?.16:.22),r:(j-c)*5,s:m?.7:.74,o:.55,z:j};};
+    const fanEnd=i=>({x:(i-mid)*spread*1.04,y:fanY+H*.04+Math.abs(i-mid)**2*drop,r:(i-mid)*7,s:1,o:1,z:10-Math.round(Math.abs(i-mid))});
+    K=[fan,stack,...idx.map(focus),fanEnd].map(f=>idx.map(i=>f(i)));
   }
   let cAct=-2;
   function renderCards(p){
@@ -679,9 +692,9 @@ section.block{padding-block:clamp(72px,10vw,130px)}
     cards.forEach((c,i)=>{const A=K[seg][i],B=K[seg+1][i];
       c.style.transform=`translate(${lerp(A.x,B.x,u)}px,${lerp(A.y,B.y,u)}px) rotate(${lerp(A.r,B.r,u)}deg) scale(${lerp(A.s,B.s,u)})`;
       c.style.opacity=lerp(A.o,B.o,u);c.style.zIndex=u>.5?B.z:A.z;});
-    const cur=seg+(u>.5?1:0),a=(cur>=2&&cur<=6)?cur-2:-1;
+    const N=cards.length,cur=seg+(u>.5?1:0),a=(cur>=2&&cur<=N+1)?cur-2:-1;
     if(a!==cAct){cAct=a;panels.forEach((pn,i)=>pn.classList.toggle('on',i===a));cdots.forEach((d,i)=>d.classList.toggle('on',i===a));}
-    cIntro.classList.toggle('off',cur>=1);cOutro.classList.toggle('on',cur>=7);cdotsBox.style.opacity=a>=0?1:0;
+    cIntro.classList.toggle('off',cur>=1);cOutro.classList.toggle('on',cur>=N+2);cdotsBox.style.opacity=a>=0?1:0;
   }
 
   /* ---------- growth rings ---------- */
@@ -713,7 +726,7 @@ section.block{padding-block:clamp(72px,10vw,130px)}
   panels.forEach(p=>p.querySelectorAll('li').forEach((li,i)=>li.style.setProperty('--i',i)));
   const sw=(words(scrub),[...scrub.querySelectorAll('.w')]);
 
-  const pinned=[['#s-net',renderNet,7000,false],['#s-cards',renderCards,22000,true],['#s-jr',renderJr,11000,true],['#s-pay',renderPay,10000,true]].map(([s,f,dur,loop])=>({el:$(s),f,dur,loop}));
+  const pinned=[['#s-net',renderNet,7000,false],['#s-cards',renderCards,32000,true],['#s-jr',renderJr,11000,true],['#s-pay',renderPay,10000,true]].map(([s,f,dur,loop])=>({el:$(s),f,dur,loop}));
   const heroIn=$('#heroIn'),prog=$('#prog'),chapNow=$('#chapNow');
   const chapters=$$('[data-chapter]');let chapLast='';
   const rv=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');rv.unobserve(e.target);}}),{rootMargin:'0px 0px -12% 0px'});
