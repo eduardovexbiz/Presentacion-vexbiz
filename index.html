@@ -41,7 +41,7 @@ p{margin:0}
 .anim .pin{position:sticky;top:0;height:100vh;height:100svh;overflow:hidden;padding:0}
 .steps{display:grid;gap:22px}
 .step h3{font-size:clamp(34px,4.6vw,62px);text-transform:uppercase}
-.step p{margin-top:12px;color:var(--soft);font-size:clamp(16px,1.4vw,19px);max-width:46ch}
+.step p{margin-top:12px;color:var(--soft);font-size:clamp(17px,1.5vw,21px);line-height:1.5;max-width:46ch}
 .anim .steps{display:grid;position:relative}
 .anim .step{grid-area:1/1;opacity:0;visibility:hidden;transform:translateY(16px);transition:opacity .4s,transform .5s cubic-bezier(.2,.7,.2,1),visibility 0s .4s}
 .anim .step.on{opacity:1;visibility:visible;transform:none;transition:opacity .4s,transform .5s cubic-bezier(.2,.7,.2,1)}
@@ -106,8 +106,30 @@ p{margin:0}
   .node{width:78px}.node .dot{width:36px;height:36px}.node .dot svg{width:17px;height:17px}.node span{font-size:10px;letter-spacing:.08em}
   .hub{width:80px;height:80px;margin:-40px 0 0 -40px;font-size:18px}
   .step h3{font-size:clamp(28px,8.4vw,40px)}
-  .step p{font-size:15.5px}
+  .step p{font-size:17px}
 }
+
+
+/* ===== step mode: buttons drive the scenes ===== */
+.stp .scene{height:auto}
+.stp .pin{position:relative;height:var(--ph,680px)}
+.stepbar{position:relative;z-index:5;display:flex;align-items:center;justify-content:center;gap:clamp(14px,3vw,28px);padding:14px var(--gut) 26px;max-width:var(--max);margin:0 auto}
+.stepbar{display:none}.stp .stepbar{display:flex}
+.sb{font:inherit;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:10px;min-height:64px;border-radius:999px;font-family:var(--display);font-weight:700;font-size:20px;letter-spacing:.06em;text-transform:uppercase;transition:transform .15s,background .2s,opacity .2s,box-shadow .2s;-webkit-tap-highlight-color:transparent;touch-action:manipulation}
+.sb svg{width:30px;height:30px;fill:none;stroke:currentColor;stroke-width:3;stroke-linecap:round;stroke-linejoin:round;flex:none}
+.sb:active{transform:scale(.95)}
+.sb:focus-visible{outline:3px solid var(--gold-hi);outline-offset:4px}
+.sb.prev{padding:0 22px 0 16px;background:transparent;color:var(--text);border:2px solid rgba(237,240,247,.45)}
+.sb.prev:disabled{opacity:.28;cursor:default}
+.sb.next{padding:0 22px 0 30px;background:var(--gold);color:#0A1532;border:2px solid var(--gold);box-shadow:0 8px 26px -8px rgba(217,163,58,.7)}
+.sb.next.done{background:transparent;color:var(--gold-hi)}
+html:not(.pressed) .sb.next{animation:sbpulse 1.8s ease-in-out infinite}
+@keyframes sbpulse{0%,100%{box-shadow:0 0 0 0 rgba(217,163,58,.55)}50%{box-shadow:0 0 0 14px rgba(217,163,58,0)}}
+.sbc{min-width:74px;text-align:center;font-family:var(--display);font-size:18px;letter-spacing:.06em;color:var(--muted);white-space:nowrap}
+.sbc b{font-size:30px;color:var(--text);font-weight:700;margin-right:2px}
+@media (max-width:560px){.sb{min-height:60px;font-size:18px}.sb.prev span{display:none}.sb.prev{padding:0;width:60px}.sbc{min-width:60px;font-size:16px}.sbc b{font-size:26px}}
+.stp.anim .cdots{display:none}
+@media (max-width:860px){.stp.anim .panels{bottom:14px}.stp.anim .duo .netbox{width:min(100%,33vh)}.stp.anim .paybox{width:min(100%,35vh);margin-bottom:22px}}
 
 /* ===== ch2 actor cards ===== */
 /* auto mode: scenes keep their animated layout but play on a timer instead of scroll */
@@ -344,7 +366,6 @@ section.block{padding-block:clamp(72px,10vw,130px)}
   <div class="progress"><i id="prog"></i></div>
 </header>
 
-<div class="scrollhint" id="scrollHint" aria-hidden="true"><span>Desliza para continuar</span><svg viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg></div>
 
 <main id="top">
 
@@ -693,7 +714,7 @@ section.block{padding-block:clamp(72px,10vw,130px)}
     const fx=m?0:W*.24,fy=m?-H*.22:H*.02;
     const focus=k=>i=>{if(i===k)return{x:fx,y:fy,r:0,s:m?1.02:1.14,o:1,z:20};const o=idx.filter(n=>n!==k),j=o.indexOf(i),c=(N-2)/2;
       return{x:fx+(j-c)*cw*(m?.24:.22),y:fy-cw*(m?.16:.22),r:(j-c)*5,s:m?.7:.74,o:.55,z:j};};
-    const fanEnd=i=>({x:(i-mid)*spread*1.04,y:fanY+H*.04+Math.abs(i-mid)**2*drop,r:(i-mid)*7,s:1,o:1,z:10-Math.round(Math.abs(i-mid))});
+    const fanEnd=i=>({x:(i-mid)*spread*1.04,y:fanY+H*(m?.17:.13)+Math.abs(i-mid)**2*drop,r:(i-mid)*7,s:1,o:1,z:10-Math.round(Math.abs(i-mid))});
     K=[fan,stack,...idx.map(focus),fanEnd].map(f=>idx.map(i=>f(i)));
   }
   let cAct=-2;
@@ -720,67 +741,87 @@ section.block{padding-block:clamp(72px,10vw,130px)}
     $$('#s-net .step,#s-pay .step').forEach(s=>s.classList.add('on'));
     return;}
 
-  /* ---------- choose mode ----------
-     scroll: the page scrolls inside its own window -> sticky scenes driven by scroll.
-     auto:   the viewer shows the page at full height (common in mobile app viewers),
-             so nothing scrolls inside it -> same scenes, played on a timer when visible. */
+  /* ---------- mode ----------
+     Scenes no longer hijack the scroll. Each animated scene is a normal block of the page
+     with big "Anterior / Siguiente" buttons under it; each press plays the next step smoothly.
+     auto = the viewer shows the page at full height (some mobile app viewers). */
   const se=document.scrollingElement||document.documentElement;
   const canScroll=(se.scrollHeight-innerHeight)>innerHeight*.8 && innerHeight<screen.height*1.4;
   const AUTO=location.hash==='#auto'||!canScroll;
-  document.documentElement.classList.add('anim');
-  if(AUTO){document.documentElement.classList.add('auto');
-    document.documentElement.style.setProperty('--ph',Math.round(Math.min(Math.max(screen.height,640),900))+'px');}
+  const root=document.documentElement;
+  root.classList.add('anim','stp');if(AUTO)root.classList.add('auto');
+  const setPH=()=>{const vh=AUTO?Math.min(screen.height,900):innerHeight;root.style.setProperty('--ph',Math.round((isMobile()?clamp(vh-96,640,860):clamp(vh-120,560,820)))+'px');};
+  setPH();
 
   const hh=$('#heroH');words(hh);
   panels.forEach(p=>p.querySelectorAll('h3,.say').forEach(el=>words(el)));
   panels.forEach(p=>p.querySelectorAll('li').forEach((li,i)=>li.style.setProperty('--i',i)));
   const sw=(words(scrub),[...scrub.querySelectorAll('.w')]);
 
-  const pinned=[['#s-net',renderNet,7000,false],['#s-cards',renderCards,32000,true],['#s-jr',renderJr,11000,true],['#s-pay',renderPay,10000,true]].map(([s,f,dur,loop])=>({el:$(s),f,dur,loop}));
-  const heroIn=$('#heroIn'),prog=$('#prog'),chapNow=$('#chapNow'),scrollHint=$('#scrollHint');
-  let lastMove=performance.now();
+  const heroIn=$('#heroIn'),prog=$('#prog'),chapNow=$('#chapNow');
   const chapters=$$('[data-chapter]');let chapLast='';
   const rv=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');rv.unobserve(e.target);}}),{rootMargin:'0px 0px -12% 0px'});
   $$('[data-rv]').forEach(el=>rv.observe(el));
   layoutCards();layoutPay();
-  pinned.forEach(({f})=>f(0));
-  addEventListener('resize',()=>{sizeNet();layoutCards();layoutPay();});
 
-  if(AUTO){
-    /* visibility via IntersectionObserver works even when the page is inside a full-height frame */
-    const vis=new Map();
-    const io=new IntersectionObserver(es=>es.forEach(e=>{const v=vis.get(e.target);if(!v)return;
-      if(e.isIntersecting&&!v.on){v.on=true;v.t0=performance.now();}else if(!e.isIntersecting&&v.on){v.on=false;}}),{threshold:.35});
-    pinned.forEach(sc=>{vis.set(sc.el,{on:false,t0:0,sc});io.observe(sc.el);});
-    const once=(el,dur,fn)=>{const v={on:false,t0:0,once:{dur,fn}};vis.set(el,v);io.observe(el);return v;};
-    once(scrub,2600,t=>sw.forEach((w,i)=>w.classList.toggle('on',i<t*sw.length*1.05)));
-    once($('#rings'),2800,t=>renderRings(.2+t*.55));
-    (function loop(now){
-      vis.forEach(v=>{if(!v.on)return;const el=now-v.t0;
-        if(v.once){v.once.fn(clamp(el/v.once.dur));return;}
-        const sc=v.sc;let t=el/sc.dur;t=sc.loop?(t%1):clamp(t);sc.f(t);});
-      requestAnimationFrame(loop);})(performance.now());
-    return;
-  }
+  /* ---------- step-by-step scenes ---------- */
+  const NC=K.length;
+  const jStop=j=>(j/4+.02)/1.08;
+  const defs=[
+    {sel:'#s-net',f:renderNet,stops:[.08,.63,1],dur:1500},
+    {sel:'#s-cards',f:renderCards,stops:[...Array(NC).keys()].map(i=>i/(NC-1)),dur:1100},
+    {sel:'#s-jr',f:renderJr,stops:[0,1,2,3,4].map(jStop),dur:1100},
+    {sel:'#s-pay',f:renderPay,stops:[.3,.635,.97],dur:1900,intro:true}
+  ];
+  const arrow=d=>`<svg viewBox="0 0 24 24" aria-hidden="true"><path d="${d}"/></svg>`;
+  const L='M15 5l-7 7 7 7',R='M9 5l7 7-7 7',D='M5 9l7 7 7-7';
+  let anyPressed=false;
+  const scenes=defs.map(d=>{
+    const el=$(d.sel),bar=document.createElement('div');bar.className='stepbar';
+    bar.innerHTML=`<button type="button" class="sb prev" aria-label="Paso anterior">${arrow(L)}<span>Anterior</span></button>
+      <div class="sbc" aria-live="polite"><b class="n">1</b><span> de ${d.stops.length}</span></div>
+      <button type="button" class="sb next" aria-label="Paso siguiente"><span class="t">Siguiente</span>${arrow(R)}</button>`;
+    el.appendChild(bar);
+    const sc={...d,el,bar,i:0,p:d.intro?0:d.stops[0],raf:0,
+      prev:bar.querySelector('.prev'),next:bar.querySelector('.next'),n:bar.querySelector('.n'),t:bar.querySelector('.next .t')};
+    sc.f(sc.p);
+    sc.prev.addEventListener('click',()=>go(sc,sc.i-1));
+    sc.next.addEventListener('click',()=>{if(sc.i>=sc.stops.length-1){leave(sc);return;}go(sc,sc.i+1);});
+    ui(sc);return sc;});
+  function ui(sc){const last=sc.i>=sc.stops.length-1;
+    sc.n.textContent=sc.i+1;sc.prev.disabled=sc.i===0;
+    sc.t.textContent=last?'Continuar':'Siguiente';
+    sc.next.querySelector('svg path').setAttribute('d',last?D:R);
+    sc.next.classList.toggle('done',last);}
+  function tween(sc,to,dur){cancelAnimationFrame(sc.raf);const from=sc.p,t0=performance.now();
+    const k=Math.max(.45,Math.min(1,Math.abs(to-from)/(1/(sc.stops.length-1||1))));const D=dur*k;
+    (function step(now){const t=clamp((now-t0)/D);sc.p=lerp(from,to,t<.5?2*t*t:1-Math.pow(-2*t+2,2)/2);sc.f(sc.p);if(t<1)sc.raf=requestAnimationFrame(step);})(t0);}
+  function go(sc,i){i=clamp(i,0,sc.stops.length-1);if(i===sc.i&&Math.abs(sc.p-sc.stops[i])<1e-3)return;
+    anyPressed=true;root.classList.add('pressed');sc.i=i;ui(sc);tween(sc,sc.stops[i],sc.dur);}
+  function leave(sc){let n=sc.el.nextElementSibling;while(n&&n.tagName!=='SECTION')n=n.nextElementSibling;
+    if(n)n.scrollIntoView({behavior:'smooth',block:'start'});}
+  /* intro: the payment scene plays its first step on its own when it comes into view */
+  const io=new IntersectionObserver(es=>es.forEach(e=>{if(!e.isIntersecting)return;const sc=scenes.find(s=>s.el===e.target);
+    if(sc&&sc.intro&&!sc.played){sc.played=true;tween(sc,sc.stops[0],sc.dur);}}),{threshold:.45});
+  scenes.forEach(sc=>io.observe(sc.el));
+  addEventListener('resize',()=>{sizeNet();setPH();layoutCards();layoutPay();scenes.forEach(sc=>sc.f(sc.p));});
 
+  /* ---------- simple reveals (play once when visible, no scrolling tricks) ---------- */
+  const once=(el,dur,fn)=>{fn(0);const o=new IntersectionObserver(es=>{if(!es[0].isIntersecting)return;o.disconnect();const t0=performance.now();
+    (function st(now){const t=clamp((now-t0)/dur);fn(t);if(t<1)requestAnimationFrame(st);})(t0);},{threshold:.4});o.observe(el);};
+  once(scrub,2600,t=>sw.forEach((w,i)=>w.classList.toggle('on',i<t*sw.length*1.05)));
+  once($('#rings'),2800,t=>renderRings(.2+t*.55));
+
+  if(AUTO)return;
   function frame(){
     const vh=innerHeight,sy=se.scrollTop||scrollY;
     prog.style.transform=`scaleX(${clamp(sy/(se.scrollHeight-vh))})`;
     const hr=$('.hero').getBoundingClientRect(),hp=clamp(-hr.top/(vh*.9));heroIn.style.transform=`translateY(${-hp*80}px)`;heroIn.style.opacity=1-hp*.85;
-    let activeP=null;
-    pinned.forEach(({el,f})=>{const r=el.getBoundingClientRect();if(r.bottom<-50||r.top>vh+50)return;const p=clamp(-r.top/(el.offsetHeight-vh));f(p);activeP=p;});
-    scrollHint.classList.toggle('show',activeP!=null&&activeP<.93);
-    const sr=scrub.getBoundingClientRect(),sp=clamp((vh*.85-sr.top)/(sr.height+vh*.35));
-    sw.forEach((w,i)=>w.classList.toggle('on',i<sp*sw.length*1.1));
-    const gr=$('#rings').getBoundingClientRect();renderRings(clamp((vh-gr.top)/(vh+gr.height)));
     let cur=chapters[0];for(const c of chapters){if(c.getBoundingClientRect().top<vh*.5)cur=c;}
     const d=cur.dataset.chapter;if(d!==chapLast){chapLast=d;const [a,b]=d.split('|');chapNow.innerHTML=`<b>${a}</b><span>${b}</span>`;}
   }
-  /* poll positions every frame: catches window scroll, body scroll and momentum scrolling on phones */
   let lastY=null;const probe=$('main');
-  (function loop(){const y=probe.getBoundingClientRect().top;if(y!==lastY){lastY=y;lastMove=performance.now();frame();}requestAnimationFrame(loop);})();
-  /* nudge: if the hint is showing but the person hasn't moved in a couple seconds, bounce faster to catch the eye */
-  setInterval(()=>{scrollHint.classList.toggle('nudge',scrollHint.classList.contains('show')&&performance.now()-lastMove>2200);},300);
+  (function loop(){const y=probe.getBoundingClientRect().top;if(y!==lastY){lastY=y;frame();}requestAnimationFrame(loop);})();
 })();
 </script>
 
