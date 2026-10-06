@@ -1,0 +1,589 @@
+<!doctype html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><style>body{margin:0}[hidden]{display:none!important}img{max-width:100%}</style></head><body>
+<title>Vexbiz Flete</title>
+<meta name="description" content="Vexbiz Flete: fletes para ferretería coordinados desde el marketplace de Vexbiz.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700;800&family=Barlow:wght@400;500;600&display=swap">
+<script>document.documentElement.classList.add('js')</script>
+<style>
+/* Layout: presentación por láminas a pantalla completa, botones Anterior/Siguiente fijos abajo. Identidad Vexbiz: azul noche + oro. */
+:root{
+  color-scheme:dark;
+  --ink:#050B1C; --navy:#071530; --panel:#0B1B36; --panel-hi:#10264A;
+  --line:rgba(217,163,58,.24); --hair:rgba(237,240,247,.10);
+  --gold:#D9A33A; --gold-hi:#F2C768; --ok:#5CC28B;
+  --text:#EDF0F7; --muted:#94A0BD; --soft:#C6CDDF;
+  --display:"Barlow Condensed","Arial Narrow",Impact,sans-serif;
+  --body:"Barlow","Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  --gut:clamp(16px,4vw,56px);
+}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{margin:0;background:var(--ink);color:var(--text);font-family:var(--body);font-size:17px;line-height:1.55;-webkit-font-smoothing:antialiased;overflow:hidden}
+.nojs body,html:not(.js) body{overflow:auto}
+a{color:var(--gold-hi)}
+h1,h2,h3{font-family:var(--display);font-weight:700;line-height:1.02;margin:0;text-wrap:balance;text-transform:uppercase}
+p{margin:0}
+.gold{color:var(--gold)}
+:focus-visible{outline:2px solid var(--gold-hi);outline-offset:3px;border-radius:4px}
+
+/* ---------- bar ---------- */
+.top{position:fixed;inset:0 0 auto 0;z-index:20;padding-top:env(safe-area-inset-top,0px);background:linear-gradient(var(--ink) 55%,rgba(5,11,28,0))}
+.top .in{display:flex;align-items:center;justify-content:space-between;gap:12px;height:56px;padding-inline:var(--gut)}
+.logo{font-family:var(--display);font-weight:800;font-size:24px;letter-spacing:.04em;line-height:1}
+.logo b{color:var(--gold)}
+.logo small{font-weight:600;font-size:13px;letter-spacing:.24em;color:var(--muted);margin-left:10px}
+.where{font-family:var(--display);font-size:13px;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);text-align:right}
+.where b{color:var(--gold-hi);font-weight:600;margin-right:6px}
+@media (max-width:560px){.where span,.logo small{display:none}}
+.prog{position:absolute;left:0;right:0;bottom:0;height:2px;background:var(--hair)}
+.prog i{display:block;height:100%;background:linear-gradient(90deg,var(--gold),var(--gold-hi));width:0;transition:width .5s cubic-bezier(.2,.7,.2,1)}
+
+/* ---------- slides ---------- */
+.deck{position:relative;height:100%}
+.s{padding:calc(80px + env(safe-area-inset-top,0px)) var(--gut) calc(110px + env(safe-area-inset-bottom,0px))}
+.js .s{position:absolute;inset:0;overflow-y:auto;overflow-x:hidden;visibility:hidden;opacity:0;transform:translateX(40px);transition:opacity .45s,transform .6s cubic-bezier(.2,.7,.2,1),visibility 0s .6s}
+.js .s.back{transform:translateX(-40px)}
+.js .s.on{visibility:visible;opacity:1;transform:none;transition:opacity .45s,transform .6s cubic-bezier(.2,.7,.2,1)}
+.box{max-width:1120px;margin:0 auto;min-height:100%;display:flex;flex-direction:column;justify-content:center;gap:28px}
+.chap{font-family:var(--display);font-weight:600;font-size:14px;letter-spacing:.24em;text-transform:uppercase;color:var(--gold);display:flex;align-items:center;gap:12px}
+.chap::before{content:"";width:28px;height:1px;background:var(--gold)}
+.s h2{font-size:clamp(34px,5vw,64px);max-width:20ch}
+.lead{color:var(--soft);font-size:clamp(17px,1.6vw,21px);max-width:60ch}
+.head{display:grid;gap:14px}
+
+/* entrada animada por lámina */
+.js .s [data-a]{opacity:0;transform:translateY(18px)}
+.js .s.on [data-a]{animation:in .7s cubic-bezier(.2,.7,.2,1) both;animation-delay:calc(var(--d,0) * 110ms + 120ms)}
+@keyframes in{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
+
+/* ---------- grids & cards ---------- */
+.g{display:grid;gap:16px}
+.g2{grid-template-columns:repeat(2,minmax(0,1fr))}
+.g3{grid-template-columns:repeat(3,minmax(0,1fr))}
+.g4{grid-template-columns:repeat(4,minmax(0,1fr))}
+@media (max-width:860px){.g3,.g4{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:560px){.g2,.g3,.g4{grid-template-columns:minmax(0,1fr)}}
+.card{background:var(--panel);border:1px solid var(--hair);border-radius:14px;padding:20px 20px 22px;display:grid;gap:8px;align-content:start;min-width:0}
+.card h3{font-size:24px;letter-spacing:.02em}
+.card p{color:var(--soft);font-size:16px}
+.card.hl{border-color:var(--line);background:linear-gradient(160deg,var(--panel-hi),var(--panel))}
+.ic{width:42px;height:42px;border-radius:50%;border:1.5px solid var(--gold);display:grid;place-items:center;color:var(--gold-hi)}
+.ic svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.k{font-family:var(--display);font-size:13px;letter-spacing:.2em;text-transform:uppercase;color:var(--gold)}
+ul.ck{list-style:none;padding:0;margin:0;display:grid;gap:9px}
+ul.ck li{position:relative;padding-left:26px;color:var(--soft);font-size:16px}
+ul.ck li::before{content:"";position:absolute;left:2px;top:.45em;width:11px;height:6px;border-left:2px solid var(--gold);border-bottom:2px solid var(--gold);transform:rotate(-45deg)}
+ul.ck.no li::before{width:12px;height:2px;border:0;background:var(--muted);transform:none;top:.75em}
+
+/* ---------- cover ---------- */
+.cover .box{gap:22px}
+.mark{font-family:var(--display);font-weight:800;font-size:clamp(60px,11vw,150px);line-height:.85;letter-spacing:.02em;text-transform:uppercase}
+.mark b{color:var(--gold)}
+.cover .lead{font-size:clamp(18px,1.9vw,23px)}
+.road{position:relative;width:100%;max-width:900px;height:120px;margin-top:10px}
+@media (max-width:560px){.road{height:90px}}
+.road svg{width:100%;height:100%;overflow:visible}
+.road .lane{stroke:var(--hair);stroke-width:2}
+.road .dash{stroke:var(--gold);stroke-width:2;stroke-dasharray:10 12;animation:dash 1.2s linear infinite}
+@keyframes dash{to{stroke-dashoffset:-22}}
+.road .pin text{font-family:var(--display);font-size:15px;letter-spacing:.14em;fill:var(--muted);text-transform:uppercase}
+.truck{animation:drive 7s cubic-bezier(.45,0,.55,1) infinite}
+@keyframes drive{0%{transform:translateX(70px)}12%{transform:translateX(70px)}80%{transform:translateX(730px)}100%{transform:translateX(730px)}}
+.who{display:flex;flex-wrap:wrap;gap:10px 22px;color:var(--muted);font-size:15px}
+.who b{color:var(--text);font-weight:600}
+
+/* ---------- triangle (idea) ---------- */
+.tri{display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);gap:18px;align-items:center}
+.hubc{width:170px;height:170px;border-radius:50%;display:grid;place-items:center;text-align:center;background:radial-gradient(circle at 35% 30%,#123063,#0A1532 70%);border:1.5px solid var(--gold);box-shadow:0 0 0 12px rgba(217,163,58,.06),0 0 60px rgba(217,163,58,.25);font-family:var(--display);font-weight:800;font-size:26px;line-height:1;letter-spacing:.04em}
+.hubc small{display:block;font-size:13px;letter-spacing:.24em;color:var(--gold);margin-top:6px}
+.tri .col{display:grid;gap:16px}
+@media (max-width:760px){.tri{grid-template-columns:minmax(0,1fr)}.hubc{margin:4px auto;width:140px;height:140px;font-size:22px}}
+
+/* ---------- flow ---------- */
+.flow{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;counter-reset:f}
+@media (max-width:860px){.flow{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:560px){.flow{grid-template-columns:minmax(0,1fr)}}
+.flow li{counter-increment:f;position:relative;background:var(--panel);border:1px solid var(--hair);border-radius:14px;padding:18px 18px 20px 70px;min-width:0}
+.flow li::before{content:counter(f);position:absolute;left:18px;top:16px;width:36px;height:36px;border-radius:50%;display:grid;place-items:center;font-family:var(--display);font-weight:700;font-size:19px;color:var(--ink);background:var(--gold)}
+.flow h3{font-size:21px;margin-bottom:4px}
+.flow p{color:var(--soft);font-size:15px}
+.who-tag{display:inline-block;font-family:var(--display);font-size:12px;letter-spacing:.18em;text-transform:uppercase;color:var(--gold-hi);margin-bottom:6px}
+
+/* ---------- phone mock ---------- */
+.split{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,.9fr);gap:40px;align-items:center}
+@media (max-width:860px){.split{grid-template-columns:minmax(0,1fr)}}
+.phone{width:100%;max-width:330px;margin-inline:auto;border-radius:34px;border:2px solid #22355A;background:#081329;padding:16px 14px 18px;display:grid;gap:10px}
+.phone .bar{display:flex;justify-content:space-between;align-items:center;font-size:12px;color:var(--muted);padding:0 6px 6px;border-bottom:1px solid var(--hair)}
+.phone .bar b{font-family:var(--display);font-size:16px;letter-spacing:.06em;color:var(--text)}
+.order{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:12px 13px;font-size:14px;display:grid;gap:4px}
+.order .r{display:flex;justify-content:space-between;gap:8px;color:var(--muted)}
+.order .r b{color:var(--text);font-weight:600}
+.msg{max-width:84%;padding:9px 12px;border-radius:14px;font-size:14px;line-height:1.35}
+.msg small{display:block;font-size:11px;color:var(--muted);margin-bottom:2px}
+.msg.f{background:var(--panel-hi);border-bottom-left-radius:4px;justify-self:start}
+.msg.c{background:#2A2210;border:1px solid var(--line);border-bottom-right-radius:4px;justify-self:end}
+.msg .p{font-family:var(--display);font-weight:700;font-size:20px;color:var(--gold-hi)}
+.deal{justify-self:center;font-family:var(--display);font-size:14px;letter-spacing:.14em;text-transform:uppercase;color:var(--ok);border:1px solid var(--ok);border-radius:999px;padding:5px 14px}
+.track{display:grid;gap:6px;font-size:13px;color:var(--muted)}
+.track .line{height:6px;border-radius:3px;background:var(--hair);overflow:hidden}
+.track .line i{display:block;height:100%;width:64%;background:linear-gradient(90deg,var(--gold),var(--gold-hi))}
+.js .s.on .track .line i{animation:fill 2.4s .8s cubic-bezier(.2,.7,.2,1) both}
+@keyframes fill{from{width:0}}
+
+/* ---------- money ---------- */
+.price{display:flex;align-items:flex-end;gap:14px;flex-wrap:wrap}
+.price .n{font-family:var(--display);font-weight:800;font-size:clamp(80px,12vw,150px);line-height:.8;color:var(--gold-hi)}
+.price .u{font-family:var(--display);font-size:22px;letter-spacing:.12em;text-transform:uppercase;color:var(--soft);padding-bottom:8px}
+.chart{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px;align-items:end;height:230px;padding-top:10px;border-bottom:1px solid var(--hair)}
+.chart .c{display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%;gap:8px}
+.chart .v{font-family:var(--display);font-weight:700;font-size:24px;font-variant-numeric:tabular-nums}
+.chart .b{width:min(90px,70%);border-radius:8px 8px 0 0;background:linear-gradient(var(--gold-hi),var(--gold));height:var(--h)}
+.js .s.on .chart .b{animation:grow 1s cubic-bezier(.2,.7,.2,1) both;animation-delay:calc(var(--d,0) * 150ms + 400ms);transform-origin:bottom}
+@keyframes grow{from{transform:scaleY(0)}}
+.chart-l{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px;text-align:center;font-family:var(--display);font-size:15px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+.note{font-size:14px;color:var(--muted)}
+
+/* ---------- timeline ---------- */
+.tl{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px;position:relative}
+@media (max-width:860px){.tl{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:560px){.tl{grid-template-columns:minmax(0,1fr)}}
+.wk{border-top:3px solid var(--gold);background:var(--panel);border-radius:0 0 14px 14px;padding:16px 18px 20px;display:grid;gap:8px;align-content:start;min-width:0}
+.wk .d{font-family:var(--display);font-size:14px;letter-spacing:.16em;text-transform:uppercase;color:var(--gold-hi)}
+.wk h3{font-size:22px}
+.wk.goal{background:linear-gradient(160deg,#2A2210,var(--panel));border-top-color:var(--gold-hi)}
+
+/* ---------- metrics ---------- */
+.met{display:grid;gap:4px;padding:18px 0;border-top:1px solid var(--hair)}
+.met .n{font-family:var(--display);font-weight:700;font-size:40px;line-height:1;color:var(--gold-hi);font-variant-numeric:tabular-nums}
+.met p{color:var(--soft);font-size:15px}
+
+/* ---------- closing ---------- */
+.ask{counter-reset:a;display:grid;gap:12px;list-style:none;padding:0;margin:0}
+.ask li{counter-increment:a;display:grid;grid-template-columns:auto 1fr;gap:16px;align-items:baseline;padding:14px 0;border-bottom:1px solid var(--hair);font-size:clamp(17px,1.7vw,21px);color:var(--soft)}
+.ask li::before{content:counter(a,decimal-leading-zero);font-family:var(--display);font-weight:700;font-size:22px;color:var(--gold)}
+.ask b{color:var(--text)}
+
+/* ---------- nav ---------- */
+.nav{position:fixed;left:0;right:0;bottom:0;z-index:20;padding:14px var(--gut) calc(14px + env(safe-area-inset-bottom,0px));background:linear-gradient(rgba(5,11,28,0),var(--ink) 40%);display:flex;justify-content:center;align-items:center;gap:14px}
+.nav button{font:inherit;font-family:var(--display);font-weight:600;font-size:17px;letter-spacing:.12em;text-transform:uppercase;cursor:pointer;border-radius:999px;padding:12px 26px;min-width:140px;border:1.5px solid var(--gold);transition:background .25s,color .25s,opacity .25s,transform .15s}
+.nav button:active{transform:scale(.97)}
+.nav .prev{background:transparent;color:var(--gold-hi)}
+.nav .next{background:var(--gold);color:var(--ink)}
+.nav .next:hover{background:var(--gold-hi)}
+.nav .prev:hover{background:rgba(217,163,58,.12)}
+.nav button:disabled{opacity:.3;cursor:default}
+.nav .count{font-family:var(--display);font-size:16px;letter-spacing:.14em;color:var(--muted);min-width:64px;text-align:center;font-variant-numeric:tabular-nums}
+.nav .count b{color:var(--text)}
+@media (max-width:560px){.nav button{min-width:0;padding:11px 20px;font-size:15px}}
+html:not(.js) .nav{display:none}
+
+@media (prefers-reduced-motion:reduce){
+  .js .s,.js .s.on{transition:none;transform:none}
+  .js .s [data-a],.js .s.on [data-a]{animation:none;opacity:1;transform:none}
+  .truck,.road .dash,.js .s.on .chart .b,.js .s.on .track .line i{animation:none}
+  .truck{transform:translateX(400px)}
+}
+</style>
+
+<header class="top">
+  <div class="in">
+    <div class="logo">VEX<b>BIZ</b><small>Flete</small></div>
+    <div class="where" id="where"><b>01</b><span>Portada</span></div>
+  </div>
+  <div class="prog"><i id="prog"></i></div>
+</header>
+
+<main class="deck" id="deck">
+
+<!-- 1 PORTADA -->
+<section class="s cover on" data-t="Portada">
+  <div class="box">
+    <p class="chap" data-a>Propuesta de comercialización · Octubre 2026</p>
+    <h1 class="mark" data-a style="--d:1">Vexbiz <b>Flete</b></h1>
+    <p class="lead" data-a style="--d:2">Una app sencilla que conecta las compras de ferretería del marketplace con fleteros verificados. Facturación mensual desde este mismo mes.</p>
+    <div class="road" data-a style="--d:3" aria-hidden="true">
+      <svg viewBox="0 0 900 120" preserveAspectRatio="xMidYMid meet">
+        <line class="lane" x1="40" y1="92" x2="860" y2="92"/>
+        <line class="dash" x1="40" y1="92" x2="860" y2="92"/>
+        <g class="pin"><circle cx="40" cy="92" r="7" fill="#D9A33A"/><text x="40" y="22" text-anchor="start">Ferretería</text></g>
+        <g class="pin"><circle cx="860" cy="92" r="7" fill="#F2C768"/><text x="860" y="22" text-anchor="end">Cliente</text></g>
+        <g class="truck">
+          <rect x="-60" y="44" width="70" height="40" rx="4" fill="#10264A" stroke="#D9A33A" stroke-width="2"/>
+          <path d="M10 56h22l14 14v14H10z" fill="#D9A33A"/>
+          <rect x="16" y="60" width="13" height="9" rx="1.5" fill="#050B1C"/>
+          <rect x="-52" y="52" width="20" height="12" rx="2" fill="#94A0BD"/>
+          <rect x="-28" y="52" width="20" height="12" rx="2" fill="#94A0BD"/>
+          <circle cx="-42" cy="86" r="8" fill="#050B1C" stroke="#EDF0F7" stroke-width="2.5"/>
+          <circle cx="28" cy="86" r="8" fill="#050B1C" stroke="#EDF0F7" stroke-width="2.5"/>
+        </g>
+      </svg>
+    </div>
+    <div class="who" data-a style="--d:4"><span>Presenta: <b>Eduardo Marcano</b>, Comercialización</span><span>Coordinación de flota: <b>José Eduardo</b></span></div>
+  </div>
+</section>
+
+<!-- 2 OPORTUNIDAD -->
+<section class="s" data-t="La oportunidad">
+  <div class="box">
+    <div class="head">
+      <p class="chap" data-a>La oportunidad</p>
+      <h2 data-a style="--d:1">Necesitamos facturar <span class="gold">ya</span>, con lo que tenemos</h2>
+      <p class="lead" data-a style="--d:2">El marketplace funciona en su mayoría y tiene productos. Lo que falta es un motivo fuerte para comprar hoy y un ingreso recurrente que no dependa de que todo esté terminado.</p>
+    </div>
+    <div class="g g3">
+      <div class="card" data-a style="--d:3"><div class="ic"><svg viewBox="0 0 24 24"><path d="M3 21h18M5 21V9l7-5 7 5v12M9 21v-6h6v6"/></svg></div><h3>Ferreterías</h3><p>Venden cemento, arena, bloque y cabilla: productos que siempre necesitan transporte para llegar al cliente.</p></div>
+      <div class="card" data-a style="--d:4"><div class="ic"><svg viewBox="0 0 24 24"><path d="M1 6h13v10H1zM14 10h4l3 3v3h-7z"/><circle cx="5.5" cy="18" r="2"/><circle cx="17.5" cy="18" r="2"/></svg></div><h3>Fleteros</h3><p>Camiones, camionetas y carros de carga que trabajan con muchas ferreterías y buscan más viajes.</p></div>
+      <div class="card hl" data-a style="--d:5"><div class="ic"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg></div><h3>Una red que ya existe</h3><p>Tenemos el contacto directo de un coordinador que maneja una red amplia de fleteros y su relación con ferreterías de la zona.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- 3 LA IDEA -->
+<section class="s" data-t="La idea">
+  <div class="box">
+    <div class="head">
+      <p class="chap" data-a>La idea</p>
+      <h2 data-a style="--d:1">Un <span class="gold">inDrive de fletes</span> conectado al marketplace</h2>
+      <p class="lead" data-a style="--d:2">Los fleteros pagan una membresía mensual y reciben todos los pedidos de flete. Las ferreterías venden en ve.vexbiz.com. El cliente compra y recibe en su puerta.</p>
+    </div>
+    <div class="tri">
+      <div class="col">
+        <div class="card" data-a style="--d:3"><span class="k">Cliente</span><h3>Compra y elige su flete</h3><p>Compra materiales en el marketplace y escoge al fletero por precio, calificación o vehículo.</p></div>
+        <div class="card" data-a style="--d:4"><span class="k">Ferretería aliada</span><h3>Vende más</h3><p>Publica sus productos de carga y llega a clientes nuevos sin preocuparse por el despacho.</p></div>
+      </div>
+      <div class="hubc" data-a style="--d:5"><div>VEXBIZ<br>FLETE<small>App</small></div></div>
+      <div class="col">
+        <div class="card" data-a style="--d:6"><span class="k">Fletero</span><h3>Más viajes, su precio</h3><p>Paga $30 al mes, ve todos los pedidos de su zona y cuadra el precio directo con el cliente.</p></div>
+        <div class="card hl" data-a style="--d:7"><span class="k">Vexbiz</span><h3>Ingreso recurrente</h3><p>Cobra membresías cada mes y mueve ventas de ferretería dentro del marketplace.</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 4 FLUJO -->
+<section class="s" data-t="Cómo funciona">
+  <div class="box">
+    <div class="head">
+      <p class="chap" data-a>Cómo funciona</p>
+      <h2 data-a style="--d:1">De la compra a la entrega en <span class="gold">seis pasos</span></h2>
+    </div>
+    <ol class="flow">
+      <li data-a style="--d:2"><span class="who-tag">Cliente</span><h3>Compra en el marketplace</h3><p>Cemento, arena, bloque o cabilla en ve.vexbiz.com, indicando dirección de entrega.</p></li>
+      <li data-a style="--d:3"><span class="who-tag">Ferretería</span><h3>Confirma el pedido</h3><p>Recibe la orden, confirma existencia y prepara la carga.</p></li>
+      <li data-a style="--d:4"><span class="who-tag">App</span><h3>Avisa a los fleteros</h3><p>Notificación a los fleteros activos de la zona con el tipo de vehículo que hace falta.</p></li>
+      <li data-a style="--d:5"><span class="who-tag">Fleteros</span><h3>Ofertan su precio</h3><p>Cada fletero propone su tarifa durante un tiempo límite. Sin peleas por quién lo vio primero.</p></li>
+      <li data-a style="--d:6"><span class="who-tag">Cliente</span><h3>Elige y acuerda</h3><p>Acepta una oferta o contraoferta. Precio, calificación y vehículo a la vista.</p></li>
+      <li data-a style="--d:7"><span class="who-tag">Fletero</span><h3>Carga y entrega</h3><p>Estados: cargado, en camino, entregado. El cliente sigue el viaje y califica el servicio.</p></li>
+    </ol>
+  </div>
+</section>
+
+<!-- 5 PRECIO LIBRE -->
+<section class="s" data-t="Precio libre">
+  <div class="box">
+    <div class="split">
+      <div class="head">
+        <p class="chap" data-a>Oferta y demanda</p>
+        <h2 data-a style="--d:1">El precio lo <span class="gold">cuadran ellos</span></h2>
+        <p class="lead" data-a style="--d:2">No hay tarifa fija. El fletero propone, el cliente acepta o contraoferta, y lo que gane el fletero es 100% suyo.</p>
+        <ul class="ck" data-a style="--d:3">
+          <li>Los fleteros tienen libertad para fijar su tarifa y, con el tiempo, acordar una tarifa de referencia entre ellos.</li>
+          <li>Vexbiz no cobra comisión por flete, así que nadie gana nada saltándose la plataforma.</li>
+          <li>El cliente compara ofertas y elige la que le conviene.</li>
+        </ul>
+      </div>
+      <div class="phone" data-a style="--d:2" aria-label="Ejemplo de negociación en la app">
+        <div class="bar"><b>VEXBIZ FLETE</b><span>Pedido #0142</span></div>
+        <div class="order">
+          <div class="r"><span>Carga</span><b>40 sacos de cemento</b></div>
+          <div class="r"><span>Ruta</span><b>Alta Vista → Villa Asia</b></div>
+          <div class="r"><span>Vehículo</span><b>Camión 350</b></div>
+        </div>
+        <div class="msg f" data-a style="--d:5"><small>Fletero · Carlos ★ 4.8</small><span class="p">$15</span> Te lo llevo en 40 min</div>
+        <div class="msg f" data-a style="--d:7"><small>Fletero · Ramón ★ 4.9</small><span class="p">$13</span> Salgo ya de la ferretería</div>
+        <div class="msg c" data-a style="--d:9"><small>Cliente</small><span class="p">$12</span> ¿Me lo dejas en 12?</div>
+        <div class="msg f" data-a style="--d:11"><small>Fletero · Ramón</small>Hecho, voy saliendo</div>
+        <div class="deal" data-a style="--d:13">Flete acordado · $12</div>
+        <div class="track" data-a style="--d:14"><span>En camino · llega en 18 min</span><div class="line"><i></i></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 6 MODELO DE INGRESO -->
+<section class="s" data-t="Modelo de ingreso">
+  <div class="box">
+    <div class="split">
+      <div class="head">
+        <p class="chap" data-a>Modelo de ingreso</p>
+        <div class="price" data-a style="--d:1"><span class="n">$30</span><span class="u">por fletero<br>al mes</span></div>
+        <p class="lead" data-a style="--d:2">Membresía de fundador para los primeros 20 fleteros. Da acceso a todos los pedidos de flete de la plataforma. Después del grupo fundador, el precio sube.</p>
+        <ul class="ck" data-a style="--d:3">
+          <li><b>Membresías mensuales</b>: ingreso recurrente desde el primer mes.</li>
+          <li><b>Ventas de ferretería</b> dentro del marketplace.</li>
+          <li><b>Venta de GPS tracker</b> a los fleteros, un nicho que Vexbiz ya maneja.</li>
+        </ul>
+      </div>
+      <div class="g" data-a style="--d:2">
+        <span class="k">Ingreso mensual por membresías a $30</span>
+        <div class="chart" role="img" aria-label="20 fleteros: 600 dólares; 50 fleteros: 1.500 dólares; 100 fleteros: 3.000 dólares al mes">
+          <div class="c"><span class="v">$600</span><span class="b" style="--h:20%;--d:0"></span></div>
+          <div class="c"><span class="v">$1.500</span><span class="b" style="--h:50%;--d:1"></span></div>
+          <div class="c"><span class="v">$3.000</span><span class="b" style="--h:100%;--d:2"></span></div>
+        </div>
+        <div class="chart-l"><span>20 fleteros<br>Meta octubre</span><span>50 fleteros</span><span>100 fleteros</span></div>
+        <p class="note">Proyección conservadora: mantiene $30 aunque el precio suba después del grupo fundador. No incluye ventas del marketplace ni GPS.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 7 VALOR PARA EL FLETERO -->
+<section class="s" data-t="Por qué pagan">
+  <div class="box">
+    <div class="head">
+      <p class="chap" data-a>Por qué un fletero paga</p>
+      <h2 data-a style="--d:1">Una membresía, <span class="gold">no una apuesta</span></h2>
+      <p class="lead" data-a style="--d:2">Los $30 deben valer la pena desde el primer día, aunque un mes haya pocos pedidos.</p>
+    </div>
+    <div class="g g3">
+      <div class="card" data-a style="--d:3"><div class="ic"><svg viewBox="0 0 24 24"><path d="M4 4h16v12H5l-1 4z"/><path d="M8 9h8M8 12h5"/></svg></div><h3>Pedidos de flete</h3><p>Acceso a todos los pedidos del marketplace y de las ferreterías aliadas en su zona.</p></div>
+      <div class="card" data-a style="--d:4"><div class="ic"><svg viewBox="0 0 24 24"><path d="M12 2l3 6 6 1-4.5 4 1 6-5.5-3-5.5 3 1-6L3 9l6-1z"/></svg></div><h3>Auxilio vial</h3><p>Si se queda accidentado, el coordinador de flota va a rescatarlo.</p></div>
+      <div class="card" data-a style="--d:5"><div class="ic"><svg viewBox="0 0 24 24"><path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/><path d="M8.5 12l2.5 2.5 4.5-5"/></svg></div><h3>Sello verificado</h3><p>Documentos y vehículo revisados. El cliente y la ferretería confían más en él.</p></div>
+      <div class="card" data-a style="--d:6"><div class="ic"><svg viewBox="0 0 24 24"><path d="M3 21h18M5 21V9l7-5 7 5v12"/></svg></div><h3>Visibilidad</h3><p>Su perfil y calificación frente a todas las ferreterías aliadas.</p></div>
+      <div class="card" data-a style="--d:7"><div class="ic"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></div><h3>Prioridad fundador</h3><p>Precio congelado y prioridad en pedidos para los primeros 20.</p></div>
+      <div class="card hl" data-a style="--d:8"><div class="ic"><svg viewBox="0 0 24 24"><path d="M3 12h4l3-8 4 16 3-8h4"/></svg></div><h3>Lo que gana es suyo</h3><p>Sin comisiones por viaje. Cada flete que cierre es ganancia completa.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- 8 FLOTA -->
+<section class="s" data-t="Operación de flota">
+  <div class="box">
+    <div class="head">
+      <p class="chap" data-a>Operación de flota</p>
+      <h2 data-a style="--d:1">Un coordinador que <span class="gold">responde en la calle</span></h2>
+      <p class="lead" data-a style="--d:2">José Eduardo coordina toda la flota de fleteros, camiones y delivery, y es el enlace diario con las ferreterías.</p>
+    </div>
+    <div class="g g2">
+      <div class="card hl" data-a style="--d:3">
+        <span class="k">Qué hace el coordinador</span>
+        <ul class="ck">
+          <li>Auxilio vial a fleteros accidentados.</li>
+          <li>Revisa documentos y vehículos, y vigila que estén vigentes.</li>
+          <li>Coordina pedidos, llama a fleteros y ferreterías, y da seguimiento hasta la entrega.</li>
+          <li>Atiende reclamos y aplica las reglas de la plataforma.</li>
+        </ul>
+      </div>
+      <div class="card" data-a style="--d:4">
+        <span class="k">Requisitos para inscribirse</span>
+        <ul class="ck">
+          <li>Cédula de identidad y licencia de conducir.</li>
+          <li>Certificado médico vigente.</li>
+          <li>Título o autorización de uso del vehículo.</li>
+          <li>Póliza RCV vigente.</li>
+          <li>Fotos del vehículo y su capacidad de carga.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 9 LA APP -->
+<section class="s" data-t="La app">
+  <div class="box">
+    <div class="head">
+      <p class="chap" data-a>La app</p>
+      <h2 data-a style="--d:1">Web app + Telegram: <span class="gold">lista en semanas</span></h2>
+      <p class="lead" data-a style="--d:2">Para facturar este mes no podemos esperar a las tiendas de aplicaciones. Arrancamos con una web app instalable en flete.vexbiz.com y avisos por un bot de Telegram.</p>
+    </div>
+    <div class="g g3">
+      <div class="card" data-a style="--d:3"><span class="k">Por qué no app nativa ya</span><h3>Las tiendas tardan</h3><p>Google Play exige a las cuentas personales nuevas 14 días de prueba cerrada con 12 testers. La App Store pide cuenta paga y revisión. La app nativa queda para la fase 2.</p></div>
+      <div class="card" data-a style="--d:4"><span class="k">Web app instalable</span><h3>flete.vexbiz.com</h3><p>Se agrega a la pantalla del teléfono desde el navegador, sin tiendas. La construye el equipo con el stack que ya usa Vexbiz.</p></div>
+      <div class="card" data-a style="--d:5"><span class="k">Bot de Telegram</span><h3>Avisos al instante</h3><p>Gratis y listo en un día. WhatsApp requiere aprobación de Meta y cobra por mensaje; lo sumamos más adelante.</p></div>
+    </div>
+    <div class="g g2">
+      <div class="card hl" data-a style="--d:6"><span class="k">Entra en el MVP · 31 de octubre</span>
+        <ul class="ck">
+          <li>Registro del fletero con carga de documentos.</li>
+          <li>Estado de membresía: sin pago, no ve pedidos.</li>
+          <li>Tablero de pedidos con ofertas y contraofertas.</li>
+          <li>Estados del flete y calificación del servicio.</li>
+          <li>Panel de administración para coordinación.</li>
+        </ul>
+      </div>
+      <div class="card" data-a style="--d:7"><span class="k">Fase 2</span>
+        <ul class="ck no">
+          <li>App nativa en Play Store y App Store.</li>
+          <li>GPS en tiempo real dentro de la app.</li>
+          <li>Pago del flete dentro de la app.</li>
+          <li>Tarifas sugeridas automáticas.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 10 GPS -->
+<section class="s" data-t="Rastreo GPS">
+  <div class="box">
+    <div class="head">
+      <p class="chap" data-a>Rastreo</p>
+      <h2 data-a style="--d:1">El cliente ve <span class="gold">dónde va su carga</span></h2>
+    </div>
+    <div class="g g2">
+      <div class="card" data-a style="--d:2"><span class="k">Fase 1 · desde el día uno</span><h3>Ubicación compartida</h3><p>El fletero comparte su ubicación en vivo por Telegram durante el viaje. Funciona en cualquier teléfono, sin desarrollo extra.</p></div>
+      <div class="card hl" data-a style="--d:3"><span class="k">Fase 2 · nuevo ingreso</span><h3>GPS tracker en el camión</h3><p>Vendemos e instalamos GPS tracker a los fleteros. Rastreo permanente para el cliente y para la coordinación, y una venta más para Vexbiz.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- 11 MARKETPLACE -->
+<section class="s" data-t="Marketplace">
+  <div class="box">
+    <div class="head">
+      <p class="chap" data-a>Marketplace</p>
+      <h2 data-a style="--d:1">Lo que ve.vexbiz.com necesita <span class="gold">para vender ferretería</span></h2>
+    </div>
+    <div class="g g3">
+      <div class="card" data-a style="--d:2"><h3>Peso y volumen</h3><p>En cada producto de carga, para saber qué vehículo hace falta. 50 sacos de cemento no caben en un carro.</p></div>
+      <div class="card" data-a style="--d:3"><h3>Pagos</h3><p>Pago móvil, Zelle, Binance y efectivo, integrados con Spidi en el checkout.</p></div>
+      <div class="card" data-a style="--d:4"><h3>Precios en $ y Bs</h3><p>Conversión a la tasa BCV del día visible para el cliente.</p></div>
+      <div class="card" data-a style="--d:5"><h3>Existencia confirmada</h3><p>La ferretería confirma stock antes del despacho para no fallarle al cliente.</p></div>
+      <div class="card" data-a style="--d:6"><h3>Aviso a la ferretería</h3><p>La orden llega al instante, con un flujo claro de cobro y pago a la ferretería.</p></div>
+      <div class="card" data-a style="--d:7"><h3>Zonas de despacho</h3><p>Puerto Ordaz y San Félix para arrancar, con dirección precisa de entrega.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- 12 REGLAS Y RIESGOS -->
+<section class="s" data-t="Reglas y riesgos">
+  <div class="box">
+    <div class="head">
+      <p class="chap" data-a>Reglas y riesgos</p>
+      <h2 data-a style="--d:1">Lo que cuidamos <span class="gold">desde el inicio</span></h2>
+    </div>
+    <div class="g g2">
+      <div class="card" data-a style="--d:2"><span class="k">Reglamento del fletero</span><p>Vexbiz es plataforma intermediaria, no transportista. Cada fletero acepta las reglas al inscribirse: responsabilidad por la carga, puntualidad y trato al cliente.</p></div>
+      <div class="card" data-a style="--d:3"><span class="k">Incumplimientos</span><p>Calificaciones, advertencias y suspensión para quien no llegue, cobre de más o dañe la mercancía.</p></div>
+      <div class="card" data-a style="--d:4"><span class="k">Facturación</span><p>Cada membresía se cobra con factura de Vexbiz.</p></div>
+      <div class="card hl" data-a style="--d:5"><span class="k">Riesgo principal: pocos pedidos</span><p>Si un fletero paga y recibe dos fletes, no renueva. Lo resolvemos abriendo la app a fletes fuera del marketplace, como mudanzas o materiales comprados en otro lugar, y a los despachos propios de las ferreterías aliadas. Meta: 60 a 100 fletes al mes para 20 fleteros.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- 13 EQUIPOS -->
+<section class="s" data-t="Equipos">
+  <div class="box">
+    <div class="head">
+      <p class="chap" data-a>Qué necesitamos</p>
+      <h2 data-a style="--d:1">Tres equipos, <span class="gold">un mismo objetivo</span></h2>
+    </div>
+    <div class="g g3">
+      <div class="card" data-a style="--d:2"><span class="k">Tecnología</span><h3>App y marketplace</h3><ul class="ck"><li>Construir el MVP de Vexbiz Flete.</li><li>Ajustar el marketplace para vender ferretería con flete.</li><li>Eduardo se suma programando con el equipo.</li></ul></div>
+      <div class="card" data-a style="--d:3"><span class="k">Marketing</span><h3>Demanda y fleteros</h3><ul class="ck"><li>Campaña fuerte de productos de ferretería en redes de Vexbiz.</li><li>Instagram y TikTok propios de Vexbiz Flete para atraer fleteros.</li></ul></div>
+      <div class="card hl" data-a style="--d:4"><span class="k">Comercialización y flota</span><h3>Eduardo y José Eduardo</h3><ul class="ck"><li>Traer ferreterías y cargar sus productos.</li><li>Inscribir, verificar y cobrar a los fleteros.</li><li>Coordinar la operación diaria.</li></ul></div>
+    </div>
+  </div>
+</section>
+
+<!-- 14 CRONOGRAMA -->
+<section class="s" data-t="Cronograma">
+  <div class="box">
+    <div class="head">
+      <p class="chap" data-a>Cronograma</p>
+      <h2 data-a style="--d:1">Facturando el <span class="gold">31 de octubre</span></h2>
+    </div>
+    <div class="tl">
+      <div class="wk" data-a style="--d:2"><span class="d">Semana 1 · 6–11 oct</span><h3>Arranque</h3><p class="note">Aprobación, lista de ferreterías y fleteros, diseño del MVP con tecnología.</p></div>
+      <div class="wk" data-a style="--d:3"><span class="d">Semana 2 · 12–18 oct</span><h3>Construcción</h3><p class="note">Desarrollo de la app, carga de productos con peso y volumen, apertura de redes de Vexbiz Flete.</p></div>
+      <div class="wk" data-a style="--d:4"><span class="d">Semana 3 · 19–25 oct</span><h3>Prueba y preventa</h3><p class="note">Piloto con 3 a 5 fleteros reales. Preventa de membresías de fundador.</p></div>
+      <div class="wk goal" data-a style="--d:5"><span class="d">Semana 4 · 26–31 oct</span><h3>Lanzamiento</h3><p class="note">Campaña a clientes, cobro de membresías y primeros fletes en la plataforma.</p></div>
+    </div>
+    <p class="lead" data-a style="--d:6">La preventa de la semana 3 asegura la facturación de octubre aunque la app siga recibiendo ajustes.</p>
+  </div>
+</section>
+
+<!-- 15 METRICAS -->
+<section class="s" data-t="Métricas">
+  <div class="box">
+    <div class="head">
+      <p class="chap" data-a>Cómo medimos</p>
+      <h2 data-a style="--d:1">Metas del <span class="gold">primer mes</span></h2>
+    </div>
+    <div class="g g3">
+      <div class="met" data-a style="--d:2"><span class="n">20</span><p>Fleteros con membresía pagada</p></div>
+      <div class="met" data-a style="--d:3"><span class="n">60–100</span><p>Fletes al mes en la plataforma</p></div>
+      <div class="met" data-a style="--d:4"><span class="n">&lt;15 min</span><p>Tiempo para que un fletero tome un pedido</p></div>
+      <div class="met" data-a style="--d:5"><span class="n">Ventas</span><p>De ferretería cerradas en el marketplace</p></div>
+      <div class="met" data-a style="--d:6"><span class="n">Renovación</span><p>Fleteros que vuelven a pagar el segundo mes</p></div>
+      <div class="met" data-a style="--d:7"><span class="n">★ 4.5+</span><p>Calificación promedio del servicio</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- 16 CIERRE -->
+<section class="s" data-t="Siguiente paso">
+  <div class="box">
+    <div class="head">
+      <p class="chap" data-a>Siguiente paso</p>
+      <h2 data-a style="--d:1">Lo que pedimos <span class="gold">hoy</span></h2>
+    </div>
+    <ol class="ask">
+      <li data-a style="--d:2"><span><b>Aprobar Vexbiz Flete</b> como proyecto de facturación inmediata.</span></li>
+      <li data-a style="--d:3"><span><b>Asignar al equipo de tecnología</b> al MVP de la app y a los ajustes del marketplace.</span></li>
+      <li data-a style="--d:4"><span><b>Activar a marketing</b> con la campaña de ferretería y las redes de Vexbiz Flete.</span></li>
+      <li data-a style="--d:5"><span><b>Arrancar mañana</b> con la inscripción de ferreterías y fleteros.</span></li>
+    </ol>
+    <p class="lead" data-a style="--d:6">Vexbiz ya contempla logística de entrega, auxilio vial y GPS en su ecosistema. Vexbiz Flete adelanta ese camino y lo convierte en ingreso este mes.</p>
+  </div>
+</section>
+
+</main>
+
+<nav class="nav" aria-label="Navegación de láminas">
+  <button class="prev" id="prev" type="button">Anterior</button>
+  <span class="count" id="count"><b>1</b> / 16</span>
+  <button class="next" id="next" type="button">Siguiente</button>
+</nav>
+
+<script>
+(function(){
+  var S=[].slice.call(document.querySelectorAll('.s')),i=0,n=S.length;
+  var prev=document.getElementById('prev'),next=document.getElementById('next'),
+      cnt=document.getElementById('count'),prog=document.getElementById('prog'),wh=document.getElementById('where');
+  function pad(x){return (x<10?'0':'')+x}
+  function go(k,instant){
+    k=Math.max(0,Math.min(n-1,k));
+    S.forEach(function(s,j){
+      s.classList.toggle('back',j<k);
+      if(j===k){s.classList.remove('on');void s.offsetWidth;s.classList.add('on');s.scrollTop=0}
+      else s.classList.remove('on');
+    });
+    i=k;
+    cnt.innerHTML='<b>'+(i+1)+'</b> / '+n;
+    prog.style.width=((i+1)/n*100)+'%';
+    wh.innerHTML='<b>'+pad(i+1)+'</b><span>'+S[i].getAttribute('data-t')+'</span>';
+    prev.disabled=i===0; next.disabled=i===n-1;
+    try{history.replaceState(null,'','#s'+(i+1))}catch(e){}
+  }
+  prev.onclick=function(){go(i-1)}; next.onclick=function(){go(i+1)};
+  document.addEventListener('keydown',function(e){
+    if(e.key==='ArrowRight'||e.key==='PageDown'||e.key===' '){e.preventDefault();go(i+1)}
+    else if(e.key==='ArrowLeft'||e.key==='PageUp'){e.preventDefault();go(i-1)}
+    else if(e.key==='Home')go(0); else if(e.key==='End')go(n-1);
+  });
+  var x0=null,y0=null;
+  document.addEventListener('touchstart',function(e){x0=e.touches[0].clientX;y0=e.touches[0].clientY},{passive:true});
+  document.addEventListener('touchend',function(e){
+    if(x0===null)return;var dx=e.changedTouches[0].clientX-x0,dy=e.changedTouches[0].clientY-y0;
+    if(Math.abs(dx)>60&&Math.abs(dx)>Math.abs(dy)*1.4)go(dx<0?i+1:i-1);x0=null;
+  },{passive:true});
+  function fromHash(){var m=/^#s(\d+)$/.exec(location.hash);return m?parseInt(m[1],10)-1:null}
+  window.addEventListener('hashchange',function(){var k=fromHash();if(k!==null&&k!==i)go(k)});
+  var h=fromHash();go(h===null?0:h);
+})();
+</script>
+
+</body></html>
