@@ -1,0 +1,827 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>NOGFLEX · Gestión por Procesos</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@600;700;800;900&family=Barlow:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: full-screen deck on technical-drawing paper; the conveyor-belt splice (empalme) is the recurring motif; the Gantt is the centrepiece */
+:root{
+  color-scheme:light;
+  --paper:#E8EBE6; --sheet:#F7F8F5; --ink:#152025; --rubber:#1F2629; --rubber-2:#2C3539;
+  --steel:#5A6A72; --muted:#7C8A90; --line:rgba(21,32,37,.13); --line-2:rgba(21,32,37,.24);
+  --amber:#E0A21A; --amber-deep:#9A6B05; --zinc-1:#D9DEE0; --zinc-2:#8E9AA0;
+  --p1:#2F6690; --p2:#23866F; --p3:#D9981A; --p4:#C24E28; --p5:#6A58A6;
+  --display:"Big Shoulders Display","Arial Narrow",Impact,sans-serif;
+  --body:"Barlow","Segoe UI",Roboto,Arial,sans-serif;
+  --mono:"JetBrains Mono",ui-monospace,Menlo,Consolas,monospace;
+  --gut:clamp(16px,4.5vw,64px);
+  --ease:cubic-bezier(.2,.75,.2,1);
+}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--body);font-size:17px;line-height:1.5;-webkit-font-smoothing:antialiased;overflow:hidden}
+h1,h2,h3{font-family:var(--display);font-weight:800;line-height:.95;margin:0;text-wrap:balance;letter-spacing:.005em}
+p{margin:0}
+b,strong{font-weight:600}
+:focus-visible{outline:2.5px solid var(--p1);outline-offset:3px;border-radius:6px}
+.eyebrow{font-family:var(--mono);font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:var(--steel);display:flex;align-items:center;gap:10px}
+.eyebrow b{color:var(--ink);font-weight:500}
+.eyebrow::before{content:"";width:14px;height:14px;flex:none;border:2px solid var(--amber);transform:rotate(45deg) scale(.7)}
+
+/* paper: drafting grid */
+.bg{position:fixed;inset:0;z-index:0;pointer-events:none;background:
+  linear-gradient(var(--line) 1px,transparent 1px) 0 0/48px 48px,
+  linear-gradient(90deg,var(--line) 1px,transparent 1px) 0 0/48px 48px,var(--paper);opacity:.55}
+.bg::after{content:"";position:absolute;inset:0;background:radial-gradient(ellipse at 50% 40%,transparent 40%,var(--paper) 95%)}
+
+/* top bar */
+.top{position:fixed;inset:0 0 auto 0;z-index:20;padding:calc(14px + env(safe-area-inset-top,0px)) var(--gut) 0;display:flex;justify-content:space-between;align-items:center;gap:12px}
+.logo{font-family:var(--display);font-weight:900;font-size:22px;letter-spacing:.08em}
+.logo i{font-style:normal;color:var(--amber-deep)}
+.where{font-family:var(--mono);font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
+.where b{color:var(--ink);font-weight:500;margin-right:8px}
+/* belt progress: a moving belt with fastener plates */
+.prog{position:fixed;top:0;left:0;right:0;height:5px;z-index:21;background:var(--line)}
+.prog i{display:block;height:100%;width:0;background:repeating-linear-gradient(90deg,var(--rubber) 0 14px,var(--zinc-2) 14px 18px);transition:width .8s var(--ease)}
+
+.deck{position:fixed;inset:0;z-index:1}
+.slide{position:absolute;inset:0;display:flex;align-items:center;padding:calc(72px + env(safe-area-inset-top,0px)) var(--gut) calc(100px + env(safe-area-inset-bottom,0px));overflow-y:auto;overflow-x:hidden;opacity:0;visibility:hidden;transform:translateX(48px);transition:opacity .6s var(--ease),transform .9s var(--ease),visibility 0s .6s}
+.slide.back{transform:translateX(-48px)}
+.slide.on{opacity:1;visibility:visible;transform:none;transition:opacity .6s var(--ease),transform .9s var(--ease)}
+.inner{width:100%;max-width:1200px;margin:auto}
+.rv{opacity:0;transform:translateY(20px);transition:opacity .6s var(--ease),transform .8s var(--ease)}
+.on .rv{opacity:1;transform:none;transition-delay:calc(160ms + var(--i,0)*90ms)}
+
+.head h2{font-size:clamp(38px,5.4vw,72px);text-transform:uppercase;margin-top:12px}
+.head p{margin-top:12px;color:var(--steel);max-width:62ch;font-size:clamp(16px,1.4vw,19px)}
+.note{font-family:var(--mono);font-size:11.5px;color:var(--muted);letter-spacing:.04em}
+
+/* nav */
+.nav{position:fixed;left:0;right:0;bottom:0;z-index:20;display:flex;align-items:center;justify-content:center;gap:clamp(12px,3vw,26px);padding:12px var(--gut) calc(16px + env(safe-area-inset-bottom,0px));background:linear-gradient(to top,var(--paper) 45%,rgba(232,235,230,0))}
+.btn{font:inherit;cursor:pointer;display:inline-flex;align-items:center;gap:10px;min-height:52px;border-radius:12px;font-family:var(--display);font-weight:800;font-size:18px;letter-spacing:.1em;text-transform:uppercase;transition:transform .15s,background .25s,opacity .25s;touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+.btn svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:2.6;stroke-linecap:round;stroke-linejoin:round}
+.btn:active{transform:scale(.95)}
+.prev{background:transparent;color:var(--ink);border:1.5px solid var(--line-2);padding:0 18px 0 12px}
+.prev:disabled{opacity:.3;cursor:default}
+.next{background:var(--rubber);color:var(--sheet);border:1.5px solid var(--rubber);padding:0 16px 0 24px;box-shadow:0 10px 24px -12px rgba(21,32,37,.7)}
+.next svg{color:var(--amber)}
+.count{font-family:var(--mono);font-size:13px;color:var(--muted);min-width:64px;text-align:center;font-variant-numeric:tabular-nums}
+.count b{font-family:var(--display);font-size:30px;color:var(--ink);font-weight:800;margin-right:3px}
+@media (max-width:560px){.prev span{display:none}.prev{padding:0;width:52px;justify-content:center}.btn{font-size:16px}}
+
+/* ===== cover ===== */
+.cover{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,.9fr);gap:clamp(24px,5vw,64px);align-items:center}
+.cover>div{min-width:0}
+.cover h1{overflow-wrap:break-word;font-size:clamp(42px,6.2vw,96px);text-transform:uppercase;margin-top:16px;line-height:.88}
+.cover h1 .w{display:inline-block;opacity:0;transform:translateY(.4em);transition:opacity .6s var(--ease),transform .8s var(--ease)}
+.on .cover h1 .w{opacity:1;transform:none;transition-delay:calc(180ms + var(--i)*70ms)}
+.cover h1 em{font-style:normal;color:var(--amber-deep)}
+.cover .sub{margin-top:18px;font-size:clamp(17px,1.6vw,21px);color:var(--steel);max-width:46ch}
+.meta{margin-top:26px;display:grid;grid-template-columns:auto 1fr;gap:6px 18px;font-size:15.5px;max-width:540px;border-top:1.5px solid var(--ink);padding-top:14px}
+.meta dt{font-family:var(--mono);font-size:11.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);padding-top:3px}
+.meta dd{margin:0}
+.splice{width:100%;max-width:520px;margin-inline:auto}
+.splice svg{width:100%;height:auto;display:block;overflow:visible}
+.splice .belt-tex{animation:beltrun 2.4s linear infinite}
+@keyframes beltrun{to{transform:translateX(-24px)}}
+.splice .plate{opacity:0;transform:translateY(-26px);transition:opacity .4s,transform .6s cubic-bezier(.3,1.5,.5,1)}
+.on .splice .plate{opacity:1;transform:none;transition-delay:calc(700ms + var(--i)*110ms)}
+.splice .pin{stroke-dasharray:260;stroke-dashoffset:260;transition:stroke-dashoffset 1s var(--ease)}
+.on .splice .pin{stroke-dashoffset:0;transition-delay:1.6s}
+.splice figcaption{margin-top:16px;font-family:var(--display);font-weight:700;font-size:clamp(19px,1.9vw,25px);line-height:1.1;text-transform:uppercase;text-align:center;color:var(--ink)}
+.splice figcaption span{color:var(--steel);display:block;font-weight:600}
+
+/* ===== context ===== */
+.ctx{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:clamp(24px,5vw,60px);align-items:start;margin-top:26px}
+.ctx .lede{font-size:clamp(17px,1.5vw,20px);color:var(--ink);max-width:48ch}
+.ctx .lede+.lede{margin-top:14px;color:var(--steel)}
+.markets{display:flex;flex-wrap:wrap;gap:8px;margin-top:20px}
+.markets span{font-family:var(--mono);font-size:12px;padding:6px 11px;border:1.5px solid var(--line-2);border-radius:6px;background:var(--sheet)}
+.facts{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1.5px;background:var(--line-2);border:1.5px solid var(--line-2);border-radius:14px;overflow:hidden}
+.fact{background:var(--sheet);padding:18px 20px}
+.fact .n{font-family:var(--display);font-weight:900;font-size:clamp(38px,4vw,56px);line-height:.9;font-variant-numeric:tabular-nums}
+.fact .n small{font-size:.5em;color:var(--amber-deep)}
+.fact p{font-size:14.5px;color:var(--steel);margin-top:6px}
+.expect{grid-column:1/-1;background:var(--rubber);color:var(--sheet);padding:18px 20px;font-size:15.5px}
+.expect q{font-family:var(--display);font-weight:700;font-size:clamp(20px,1.9vw,25px);line-height:1.12;text-transform:uppercase;display:block;quotes:"«" "»"}
+.expect .src{font-family:var(--mono);font-size:11px;color:var(--zinc-2);margin-top:8px;display:block}
+
+/* ===== shift ===== */
+.shift{margin-top:26px;display:grid;gap:10px}
+.srow{display:grid;grid-template-columns:minmax(0,1fr) 70px minmax(0,1fr);align-items:center;gap:12px}
+.srow .from,.srow .to{padding:14px 18px;border-radius:12px;font-size:16px}
+.srow .from{background:transparent;border:1.5px dashed var(--line-2);color:var(--steel)}
+.srow .to{background:var(--sheet);border:1.5px solid var(--ink);font-weight:500}
+.srow .to b{display:block;font-family:var(--display);font-size:20px;text-transform:uppercase;letter-spacing:.02em;font-weight:800}
+.srow .from b{display:block;font-family:var(--display);font-size:20px;text-transform:uppercase;letter-spacing:.02em;font-weight:700;color:var(--muted)}
+.arrow{position:relative;height:16px}
+.arrow::before{content:"";position:absolute;left:0;right:8px;top:7px;height:2px;background:var(--ink);transform:scaleX(0);transform-origin:0 50%;transition:transform .6s var(--ease)}
+.arrow::after{content:"";position:absolute;right:2px;top:2px;width:10px;height:10px;border-top:2px solid var(--ink);border-right:2px solid var(--ink);transform:rotate(45deg);opacity:0;transition:opacity .3s}
+.on .arrow::before{transform:none;transition-delay:calc(600ms + var(--i)*140ms)}
+.on .arrow::after{opacity:1;transition-delay:calc(1000ms + var(--i)*140ms)}
+.shift-h{display:grid;grid-template-columns:minmax(0,1fr) 70px minmax(0,1fr);gap:12px;font-family:var(--mono);font-size:11.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+.motto{margin-top:22px;font-family:var(--display);font-weight:800;font-size:clamp(22px,2.4vw,32px);text-transform:uppercase;line-height:1}
+.motto em{font-style:normal;background:linear-gradient(transparent 62%,rgba(224,162,26,.45) 62%)}
+@media (max-width:760px){.srow,.shift-h{grid-template-columns:1fr}.arrow{display:none}.shift-h span:nth-child(2){display:none}.srow{gap:4px;margin-bottom:8px}}
+
+/* ===== pillars ===== */
+.pil{display:grid;grid-template-columns:minmax(0,.8fr) minmax(0,1.2fr);gap:clamp(20px,4vw,56px);align-items:start;margin-top:26px}
+.ptabs{display:grid;gap:10px}
+.ptab{all:unset;cursor:pointer;display:grid;grid-template-columns:56px 1fr;align-items:center;gap:14px;padding:12px 14px;border-radius:12px;border:1.5px solid var(--line-2);background:var(--sheet);transition:all .4s var(--ease)}
+.ptab .rn{font-family:var(--display);font-weight:900;font-size:34px;line-height:1;color:var(--muted);text-align:center;transition:color .4s}
+.ptab .tt{font-family:var(--display);font-weight:800;font-size:19px;text-transform:uppercase;line-height:1.05}
+.ptab .tt small{display:block;font-family:var(--mono);font-size:11px;font-weight:400;color:var(--muted);letter-spacing:.06em;text-transform:none;margin-top:3px}
+.ptab.lit{background:var(--rubber);border-color:var(--rubber);color:var(--sheet);transform:translateX(8px)}
+.ptab.lit .rn{color:var(--amber)}
+.ptab.lit .tt small{color:var(--zinc-2)}
+.pstack{display:grid}
+.pcard{grid-area:1/1;opacity:0;visibility:hidden;transform:translateY(14px);transition:opacity .4s,transform .6s var(--ease),visibility 0s .4s}
+.pcard.on{opacity:1;visibility:visible;transform:none;transition:opacity .45s .1s,transform .6s var(--ease) .1s}
+.pcard .tag{font-family:var(--mono);font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--amber-deep)}
+.pcard h3{font-size:clamp(32px,3.8vw,52px);text-transform:uppercase;margin-top:6px}
+.items{list-style:none;padding:0;margin:20px 0 0;display:grid;gap:12px}
+.items li{display:grid;grid-template-columns:52px 1fr;gap:14px;align-items:start;padding:14px 16px;background:var(--sheet);border:1.5px solid var(--line);border-radius:12px}
+.pcard.on .items li{animation:rise .55s var(--ease) both;animation-delay:calc(180ms + var(--i)*90ms)}
+@keyframes rise{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+.items .code{font-family:var(--mono);font-size:13px;font-weight:500;color:var(--sheet);background:var(--ink);border-radius:6px;text-align:center;padding:4px 0}
+.items b{font-family:var(--display);font-size:20px;text-transform:uppercase;font-weight:800;display:block;line-height:1.05}
+.items p{color:var(--steel);font-size:15px;margin-top:3px}
+@media (max-width:860px){.pil{grid-template-columns:1fr}.ptabs{grid-template-columns:repeat(4,minmax(0,1fr))}.ptab{grid-template-columns:1fr;text-align:center;padding:10px 6px}.ptab .tt{display:none}.ptab.lit{transform:none}}
+
+/* ===== process map ===== */
+.map{margin-top:24px;display:grid;gap:12px}
+.layer{display:grid;grid-template-columns:150px minmax(0,1fr);gap:14px;align-items:stretch}
+.layer .ln{font-family:var(--display);font-weight:800;text-transform:uppercase;font-size:19px;line-height:1;display:flex;flex-direction:column;justify-content:center;padding:12px 14px;border-radius:12px;background:var(--sheet);border:1.5px solid var(--line-2)}
+.layer .ln small{font-family:var(--mono);font-weight:400;font-size:10.5px;letter-spacing:.08em;color:var(--muted);text-transform:none;margin-top:4px}
+.boxes{display:flex;flex-wrap:wrap;gap:8px}
+.boxes span{flex:1 1 150px;padding:12px 14px;border-radius:10px;border:1.5px solid var(--line-2);background:var(--sheet);font-weight:500;font-size:15px;display:flex;align-items:center}
+.layer.op .ln{background:var(--rubber);color:var(--sheet);border-color:var(--rubber)}
+.layer.op .ln small{color:var(--zinc-2)}
+.chain{position:relative;display:flex;gap:0;min-width:0;border-radius:12px;background:var(--rubber);padding:10px;overflow:hidden}
+.chain::before{content:"";position:absolute;left:0;right:0;top:50%;height:2px;margin-top:-1px;background:repeating-linear-gradient(90deg,var(--amber) 0 10px,transparent 10px 22px);animation:flow 1.2s linear infinite;opacity:.6}
+@keyframes flow{from{background-position:0 0}to{background-position:22px 0}}
+.chev{position:relative;flex:1 1 0;min-width:0;padding:12px 10px 12px 22px;color:var(--sheet);font-size:14.5px;font-weight:600;line-height:1.2;background:var(--rubber-2);clip-path:polygon(0 0,calc(100% - 12px) 0,100% 50%,calc(100% - 12px) 100%,0 100%,12px 50%);margin-left:-6px}
+.chev:first-child{margin-left:0;clip-path:polygon(0 0,calc(100% - 12px) 0,100% 50%,calc(100% - 12px) 100%,0 100%);padding-left:14px}
+.chev small{display:block;font-family:var(--mono);font-size:10.5px;font-weight:400;color:var(--amber);margin-bottom:3px}
+.on .chev{animation:lightup .6s var(--ease) both;animation-delay:calc(500ms + var(--i)*130ms)}
+@keyframes lightup{from{background:var(--rubber);color:transparent}to{background:var(--rubber-2)}}
+@media (max-width:860px){.layer{grid-template-columns:1fr}.chain{flex-direction:column;gap:6px}.chev,.chev:first-child{margin-left:0;clip-path:none;border-radius:8px;padding-left:14px}.chain::before{display:none}}
+
+/* ===== method ===== */
+.method{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:0;margin-top:34px;position:relative}
+.mstep{position:relative;padding:0 18px 0 0}
+.mstep .dot{width:58px;height:58px;border-radius:50%;border:2px solid var(--ink);background:var(--sheet);display:grid;place-items:center;font-family:var(--display);font-weight:900;font-size:26px;position:relative;z-index:1;transition:background .4s,color .4s}
+.on .mstep .dot{animation:dotfill .5s var(--ease) both;animation-delay:calc(500ms + var(--i)*350ms)}
+@keyframes dotfill{to{background:var(--rubber);color:var(--amber)}}
+.mstep::before{content:"";position:absolute;left:58px;right:0;top:28px;height:2px;background:var(--line-2)}
+.mstep::after{content:"";position:absolute;left:58px;right:0;top:28px;height:2px;background:var(--ink);transform:scaleX(0);transform-origin:0 50%;transition:transform .35s linear}
+.on .mstep::after{transform:none;transition-delay:calc(700ms + var(--i)*350ms)}
+.mstep:last-child::before,.mstep:last-child::after{display:none}
+.mstep h3{font-size:26px;text-transform:uppercase;margin-top:16px}
+.mstep p{color:var(--steel);font-size:15.5px;margin-top:6px;max-width:28ch}
+.loop{margin-top:30px;display:flex;flex-wrap:wrap;align-items:center;gap:14px 22px;padding:18px 22px;border-radius:14px;background:var(--rubber);color:var(--sheet)}
+.loop q{font-family:var(--display);font-weight:800;font-size:clamp(22px,2.6vw,34px);text-transform:uppercase;line-height:1;quotes:"«" "»"}
+.loop span{font-size:15px;color:var(--zinc-1);max-width:44ch}
+@media (max-width:860px){.method{grid-template-columns:1fr 1fr;gap:26px 0}.mstep::before,.mstep::after{display:none}}
+
+/* ===== GANTT ===== */
+.g-top{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:14px 24px}
+.g-top h2{font-size:clamp(32px,3.8vw,52px);text-transform:uppercase;margin-top:10px}
+.g-tools{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.play{all:unset;cursor:pointer;display:inline-flex;align-items:center;gap:10px;padding:10px 16px;border-radius:10px;background:var(--amber);color:var(--ink);font-family:var(--display);font-weight:800;font-size:17px;letter-spacing:.08em;text-transform:uppercase;transition:transform .15s}
+.play:active{transform:scale(.96)}
+.play svg{width:16px;height:16px;fill:currentColor}
+.wk{font-family:var(--mono);font-size:13px;color:var(--steel);min-width:110px;font-variant-numeric:tabular-nums}
+.wk b{font-family:var(--display);font-size:24px;color:var(--ink)}
+
+.legend{display:flex;flex-wrap:wrap;gap:6px 8px;margin-top:12px;align-items:center}
+.lg{all:unset;cursor:pointer;display:inline-flex;align-items:center;gap:8px;padding:6px 11px;border-radius:8px;border:1.5px solid var(--line-2);background:var(--sheet);font-size:14px;font-weight:600;transition:opacity .3s,border-color .3s,background .3s}
+.lg i{width:14px;height:14px;border-radius:4px;background:var(--c);flex:none}
+.lg.sel{border-color:var(--c);background:var(--sheet);box-shadow:inset 0 0 0 1.5px var(--c)}
+.lg.dim{opacity:.4}
+.sym{display:inline-flex;align-items:center;gap:8px;padding:6px 6px;font-size:13.5px;color:var(--steel)}
+.sym .s-bar{width:26px;height:10px;border-radius:3px;background:var(--steel)}
+.sym .s-task{width:26px;height:6px;border-radius:3px;background:var(--steel);opacity:.45}
+.sym .s-mile{width:11px;height:11px;background:var(--ink);transform:rotate(45deg)}
+.sym .s-rev{width:9px;height:9px;border-radius:50%;border:2px solid var(--ink);background:var(--sheet)}
+.sym .s-hatch{width:26px;height:10px;border-radius:3px;background:repeating-linear-gradient(-45deg,var(--p5) 0 3px,transparent 3px 6px);border:1px solid var(--p5)}
+.sep{width:1.5px;height:22px;background:var(--line-2);margin:0 4px}
+
+.gwrap{margin-top:16px;overflow-x:auto;border:1.5px solid var(--ink);border-radius:14px;background:var(--sheet);-webkit-overflow-scrolling:touch}
+.gantt{--lab:268px;min-width:860px;position:relative}
+.ghead,.grow{display:grid;grid-template-columns:var(--lab) minmax(0,1fr)}
+.ghead{border-bottom:1.5px solid var(--ink);position:sticky;top:0;background:var(--sheet);z-index:3}
+.ghead .hl{position:sticky;left:0;z-index:2;background:var(--sheet);padding:10px 14px;font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);display:flex;align-items:flex-end;border-right:1.5px solid var(--ink)}
+.weeks{display:grid;grid-template-columns:repeat(9,minmax(0,1fr))}
+.weeks div{padding:8px 0 8px;text-align:center;border-left:1px solid var(--line);font-family:var(--display);font-weight:800;font-size:20px;line-height:1;transition:background .3s,color .3s}
+.weeks div:first-child{border-left:0}
+.weeks div small{display:block;font-family:var(--mono);font-weight:400;font-size:9.5px;letter-spacing:.12em;color:var(--muted);margin-bottom:2px}
+.weeks div.now{background:var(--ink);color:var(--amber)}
+.weeks div.now small{color:var(--zinc-2)}
+.gbody{position:relative}
+.grow{transition:opacity .35s,background .3s}
+.grow .lab{position:sticky;left:0;z-index:2;background:var(--sheet);padding:0 14px;border-right:1.5px solid var(--ink);display:flex;align-items:center;gap:10px;min-width:0;cursor:pointer}
+.grow .trk{position:relative;cursor:pointer;background:repeating-linear-gradient(90deg,transparent 0 calc(100%/9 - 1px),var(--line) calc(100%/9 - 1px) calc(100%/9))}
+.grow.ph{height:44px;border-top:1.5px solid var(--line-2)}
+.grow.ph:first-child{border-top:0}
+.grow.tk{height:27px}
+.grow.ph .lab{font-family:var(--display);font-weight:800;font-size:18px;text-transform:uppercase;line-height:1}
+.grow.ph .lab .pn{display:grid;place-items:center;width:26px;height:26px;border-radius:7px;background:var(--c);color:#fff;font-size:16px;flex:none}
+.grow.ph .lab .pw{margin-left:auto;font-family:var(--mono);font-weight:400;font-size:11px;color:var(--muted);text-transform:none;white-space:nowrap}
+.grow.tk .lab{font-size:13.5px;color:var(--steel);padding-left:50px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:block;line-height:27px}
+.grow.tk .lab code{font-family:var(--mono);font-size:11px;color:var(--ink);margin-right:6px}
+.grow.rev{height:38px;border-top:1.5px solid var(--ink);background:rgba(21,32,37,.03)}
+.grow.rev .lab{font-size:13.5px;font-weight:600}
+.grow:hover,.grow.hl{background:rgba(224,162,26,.10)}
+.gantt.focus .grow[data-p]:not(.f){opacity:.22}
+
+.bar{position:absolute;left:var(--l);width:var(--w);border-radius:7px;background:var(--c);transform-origin:0 50%;transform:scaleX(0);transition:transform .9s var(--ease),box-shadow .3s,filter .3s;display:flex;align-items:center;overflow:hidden}
+.ph .bar{top:8px;bottom:8px;padding:0 10px;box-shadow:0 6px 14px -8px var(--c)}
+.ph .bar span{color:#fff;font-size:13px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;opacity:0;transition:opacity .4s;letter-spacing:.02em}
+.tk .bar{top:8px;bottom:8px;opacity:.5;border-radius:6px}
+.bar.sug{background:repeating-linear-gradient(-45deg,var(--c) 0 6px,color-mix(in srgb,var(--c) 55%,var(--sheet)) 6px 12px)}
+.on .bar{transform:none;transition-delay:calc(450ms + var(--d)*55ms)}
+.on .ph .bar span{opacity:1;transition-delay:calc(1000ms + var(--d)*55ms)}
+.bar.live{filter:brightness(1.08) saturate(1.2);box-shadow:0 0 0 3px color-mix(in srgb,var(--c) 30%,transparent)}
+.tk .bar.live{opacity:1}
+.mile{position:absolute;top:50%;left:var(--x);width:16px;height:16px;margin:-8px 0 0 -8px;background:var(--ink);border:2.5px solid var(--sheet);transform:rotate(45deg) scale(0);transition:transform .45s cubic-bezier(.3,1.6,.5,1);z-index:2;box-shadow:0 0 0 1.5px var(--ink)}
+.on .mile{transform:rotate(45deg) scale(1);transition-delay:calc(1100ms + var(--d)*55ms)}
+.mile.hit{background:var(--amber)}
+.dl{position:absolute;top:50%;transform:translateY(-50%);font-size:13px;font-weight:600;color:var(--ink);white-space:nowrap;opacity:0;transition:opacity .5s;z-index:2}
+.dl::before{content:"◆ ";color:var(--c)}
+.dl.r{left:calc(var(--x) + 14px)}
+.dl.l{right:calc(100% - var(--x) + 14px)}
+.on .dl{opacity:1;transition-delay:calc(1300ms + var(--d)*55ms)}
+@media (max-width:860px){.gantt{--lab:200px}.grow.ph .lab .pw{display:none}.grow.tk .lab{padding-left:20px}}
+.revd{position:absolute;top:50%;left:var(--x);width:12px;height:12px;margin:-6px 0 0 -6px;border-radius:50%;border:2.5px solid var(--ink);background:var(--sheet);transform:scale(0);transition:transform .35s cubic-bezier(.3,1.6,.5,1),background .3s}
+.on .revd{transform:scale(1);transition-delay:calc(1500ms + var(--d)*70ms)}
+.revd.hit{background:var(--amber)}
+.cursor{position:absolute;top:0;bottom:0;left:calc(var(--lab) + (100% - var(--lab))*var(--t,0));width:2px;background:var(--ink);z-index:4;pointer-events:none;opacity:0;transition:opacity .3s}
+.cursor.show{opacity:1}
+.cursor::before{content:"";position:absolute;top:-1px;left:-6px;border:7px solid transparent;border-top:9px solid var(--amber);border-bottom:0}
+
+.ficha{margin-top:14px;display:grid;grid-template-columns:auto minmax(0,1fr) minmax(0,1fr) minmax(0,1.2fr);gap:12px 26px;align-items:center;padding:14px 18px;border-radius:14px;background:var(--rubber);color:var(--sheet);min-height:84px}
+.ficha .fp{font-family:var(--display);font-weight:900;font-size:44px;line-height:1;color:var(--fc,var(--amber));min-width:40px}
+.ficha dt{font-family:var(--mono);font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--zinc-2)}
+.ficha dd{margin:3px 0 0;font-size:15px;line-height:1.3}
+.ficha dd b{font-family:var(--display);font-size:21px;text-transform:uppercase;font-weight:800;display:block;line-height:1}
+.ficha .fade{animation:fin .45s var(--ease)}
+@keyframes fin{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+@media (max-width:860px){.ficha{grid-template-columns:auto 1fr}.ficha>div:nth-child(n+3){grid-column:1/-1}}
+.hint{margin-top:8px}
+
+/* ===== deliverables ===== */
+.docs{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:14px;margin-top:30px}
+.doc{position:relative;background:var(--sheet);border:1.5px solid var(--ink);border-radius:4px 18px 4px 4px;padding:18px 16px 16px;display:flex;flex-direction:column;gap:10px;min-height:230px;box-shadow:6px 6px 0 -1.5px var(--sheet),6px 6px 0 0 var(--line-2)}
+.doc::before{content:"";position:absolute;left:-1.5px;right:-1.5px;top:-1.5px;height:8px;background:var(--c);border-radius:4px 18px 0 0}
+.doc .wkk{font-family:var(--mono);font-size:11px;color:var(--muted);letter-spacing:.08em;margin-top:6px}
+.doc h3{font-size:22px;text-transform:uppercase;line-height:1}
+.doc p{font-size:14.5px;color:var(--steel);margin-top:auto}
+.doc .ph{font-family:var(--display);font-weight:900;font-size:44px;line-height:.8;color:var(--c)}
+.doc.sug{border-style:dashed}
+@media (max-width:1000px){.docs{grid-template-columns:repeat(2,minmax(0,1fr))}.doc{min-height:0}}
+@media (max-width:520px){.docs{grid-template-columns:1fr}}
+
+/* ===== bonus ===== */
+.bonus{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,.95fr);gap:clamp(22px,4vw,54px);margin-top:26px;align-items:start}
+.bsteps{display:grid;gap:8px;counter-reset:b}
+.bstep{display:grid;grid-template-columns:44px 1fr;gap:14px;align-items:start;padding:12px 14px;border-radius:12px;background:var(--sheet);border:1.5px solid var(--line)}
+.bstep .bn{font-family:var(--display);font-weight:900;font-size:30px;line-height:1;color:var(--p5);text-align:center}
+.bstep b{font-family:var(--display);font-size:19px;text-transform:uppercase;font-weight:800;display:block;line-height:1.05}
+.bstep p{font-size:14.5px;color:var(--steel);margin-top:2px}
+.gauge{padding:20px;border-radius:16px;background:var(--rubber);color:var(--sheet)}
+.gauge h3{font-size:24px;text-transform:uppercase}
+.gauge .sub{font-size:14.5px;color:var(--zinc-1);margin-top:6px}
+.scale{position:relative;margin-top:26px;height:54px;border-radius:10px;overflow:hidden;display:grid;grid-template-columns:40fr 35fr 25fr}
+.scale div{display:flex;align-items:flex-end;padding:6px 8px;font-family:var(--mono);font-size:11px;letter-spacing:.06em;transform:scaleY(0);transform-origin:50% 100%;transition:transform .6s var(--ease)}
+.on .scale div{transform:none;transition-delay:calc(700ms + var(--i)*180ms)}
+.scale .z0{background:var(--rubber-2);color:var(--zinc-2)}
+.scale .z1{background:color-mix(in srgb,var(--p5) 65%,var(--rubber));color:#fff}
+.scale .z2{background:var(--amber);color:var(--ink)}
+.needle{position:absolute;top:-6px;bottom:-6px;width:3px;background:var(--sheet);left:0;border-radius:2px;transition:left 2.2s var(--ease)}
+.on .needle{left:82%;transition-delay:1.4s}
+.ticks3{display:grid;grid-template-columns:40fr 35fr 25fr;margin-top:8px;font-size:13px;color:var(--zinc-1)}
+.ticks3 span{padding-right:8px}
+.ticks3 b{display:block;color:var(--sheet);font-family:var(--display);font-size:17px;text-transform:uppercase}
+.gauge .note{color:var(--zinc-2);margin-top:14px;display:block}
+@media (max-width:860px){.bonus{grid-template-columns:1fr}}
+
+/* ===== value ===== */
+.value{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px;margin-top:30px}
+.val{padding:22px;border-radius:16px;background:var(--sheet);border:1.5px solid var(--ink);display:flex;flex-direction:column;gap:12px}
+.val .vn{font-family:var(--mono);font-size:12px;color:var(--amber-deep);letter-spacing:.12em}
+.val h3{font-size:clamp(26px,2.6vw,34px);text-transform:uppercase}
+.val p{color:var(--steel);font-size:15.5px}
+.val svg{width:52px;height:52px}
+.val svg *{fill:none;stroke:var(--ink);stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.val svg .ac{stroke:var(--amber-deep)}
+.inv{margin-top:20px;font-family:var(--display);font-weight:800;font-size:clamp(22px,2.4vw,30px);text-transform:uppercase;line-height:1.05}
+.inv s{color:var(--muted);text-decoration-thickness:3px;text-decoration-color:var(--p4)}
+@media (max-width:860px){.value{grid-template-columns:1fr}}
+
+/* ===== close ===== */
+.close{text-align:center}
+.close .eyebrow{justify-content:center}
+.close h2{font-size:clamp(46px,8vw,118px);text-transform:uppercase;margin-top:16px;line-height:.86}
+.close h2 em{font-style:normal;color:var(--amber-deep)}
+.close p{margin:20px auto 0;max-width:54ch;color:var(--steel);font-size:clamp(16px,1.5vw,19px)}
+.nextstep{display:inline-flex;flex-wrap:wrap;justify-content:center;gap:10px 18px;margin-top:28px;padding:14px 22px;border-radius:12px;background:var(--rubber);color:var(--sheet);font-size:15.5px}
+.nextstep b{font-family:var(--display);text-transform:uppercase;letter-spacing:.06em;color:var(--amber)}
+.foot{margin-top:24px}
+
+@media (max-width:860px){
+  .cover,.ctx{grid-template-columns:1fr}
+  .splice{max-width:380px}
+  .slide{align-items:flex-start}
+}
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation:none!important;transition-duration:.01ms!important;transition-delay:0s!important}
+}
+</style>
+</head>
+<body>
+
+
+<div class="bg" aria-hidden="true"></div>
+<div class="prog"><i id="prog"></i></div>
+<header class="top">
+  <div class="logo">NOG<i>FLEX</i></div>
+  <div class="where" id="where"><b>01</b>Portada</div>
+</header>
+
+<main class="deck" id="deck">
+
+  <!-- 1 Portada -->
+  <section class="slide" data-name="Portada">
+    <div class="inner cover">
+      <div>
+        <div class="eyebrow rv">Propuesta de consultoría organizacional · <b>Octubre 2026</b></div>
+        <h1 id="ttl">Institucionalización y <em>estandarización</em> de procesos</h1>
+        <p class="sub rv" style="--i:6">Para la gestión de representaciones internacionales: una estructura escalable, eficiente y profesional a la altura de las marcas que NOGFLEX representa.</p>
+        <dl class="meta rv" style="--i:7">
+          <dt>Para</dt><dd><b>NOGFLEX Industrias, C.A.</b> · Presidencia</dd>
+          <dt>Enfoque</dt><dd>Sistémico, de gestión por procesos</dd>
+          <dt>Duración</dt><dd>9 semanas · 5 fases · 5 entregables</dd>
+        </dl>
+      </div>
+      <figure class="splice rv" style="--i:3;margin:0">
+        <svg viewBox="0 0 520 300" aria-hidden="true">
+          <defs>
+            <clipPath id="bl"><rect x="10" y="60" width="244" height="180" rx="6"/></clipPath>
+            <clipPath id="br"><rect x="266" y="60" width="244" height="180" rx="6"/></clipPath>
+            <pattern id="rib" width="24" height="180" patternUnits="userSpaceOnUse"><rect width="24" height="180" fill="#1F2629"/><rect x="0" width="3" height="180" fill="#2C3539"/></pattern>
+            <linearGradient id="zinc" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#EEF1F2"/><stop offset=".5" stop-color="#B9C3C7"/><stop offset="1" stop-color="#7F8C92"/></linearGradient>
+          </defs>
+          <g clip-path="url(#bl)"><rect class="belt-tex" x="-24" y="60" width="300" height="180" fill="url(#rib)"/></g>
+          <g clip-path="url(#br)"><rect class="belt-tex" x="242" y="60" width="300" height="180" fill="url(#rib)"/></g>
+          <rect x="10" y="60" width="244" height="180" rx="6" fill="none" stroke="#152025" stroke-width="2"/>
+          <rect x="266" y="60" width="244" height="180" rx="6" fill="none" stroke="#152025" stroke-width="2"/>
+          <text x="22" y="52" font-family="JetBrains Mono,monospace" font-size="11" fill="#5A6A72" letter-spacing="2">ESTRATEGIA</text>
+          <text x="498" y="52" text-anchor="end" font-family="JetBrains Mono,monospace" font-size="11" fill="#5A6A72" letter-spacing="2">OPERACIÓN</text>
+          <g id="plates"></g>
+          <line class="pin" x1="260" y1="66" x2="260" y2="234" stroke="#E0A21A" stroke-width="4" stroke-linecap="round"/>
+          <text x="260" y="276" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="11" fill="#5A6A72" letter-spacing="2">EMPALME = PROCESOS DOCUMENTADOS</text>
+        </svg>
+        <figcaption>Una banda es tan fuerte como su empalme. <span>Una empresa, tan sólida como sus procesos.</span></figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <!-- 2 Contexto -->
+  <section class="slide" data-name="Contexto">
+    <div class="inner">
+      <div class="head">
+        <div class="eyebrow rv">Contexto</div>
+        <h2 class="rv" style="--i:1">Representar a Flexco es representar un estándar</h2>
+      </div>
+      <div class="ctx">
+        <div>
+          <p class="lede rv" style="--i:2">NOGFLEX importa y comercializa productos <b>Flexco</b>: sistemas de empalme mecánico, limpieza, alineación y mantenimiento para bandas transportadoras.</p>
+          <p class="lede rv" style="--i:3">Son industrias donde una banda detenida detiene la producción. El cliente espera el repuesto correcto, a tiempo, y alguien que sepa instalarlo.</p>
+          <div class="markets rv" style="--i:4"><span>Minería</span><span>Acero y metales</span><span>Cemento</span><span>Agregados</span><span>Puertos</span><span>Granos y alimentos</span><span>Reciclaje</span></div>
+        </div>
+        <div class="facts rv" style="--i:3">
+          <div class="fact"><div class="n">1907</div><p>Año de fundación de Flexco, con sede en Downers Grove, Illinois (EE. UU.).</p></div>
+          <div class="fact"><div class="n">150<small>+</small></div><p>Países con clientes, atendidos a través de distribuidores autorizados.</p></div>
+          <div class="fact"><div class="n">12</div><p>Subsidiarias en el mundo. Flexco Chile coordina Centro y Suramérica.</p></div>
+          <div class="fact"><div class="n">6</div><p>Marcas propias: Flexco, Alligator, Clipper, Anker, Novitool y Mineline.</p></div>
+          <div class="expect"><q>Acceso inmediato a los productos y a expertos locales que conozcan la aplicación.</q><span class="src">Lo que Flexco espera de su red de distribuidores · flexco.com (traducción propia)</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 3 Justificación -->
+  <section class="slide" data-name="Justificación estratégica">
+    <div class="inner">
+      <div class="head">
+        <div class="eyebrow rv">Justificación estratégica</div>
+        <h2 class="rv" style="--i:1">De la gestión artesanal a la gestión por procesos</h2>
+        <p class="rv" style="--i:2">El valor de la representación no puede vivir en la memoria de los directivos. Tiene que estar en un sistema que cumpla con las exigencias corporativas de las marcas representadas.</p>
+      </div>
+      <div class="shift">
+        <div class="shift-h rv" style="--i:2"><span>Gestión artesanal</span><span></span><span>Gestión por procesos</span></div>
+        <div class="srow rv" style="--i:3"><div class="from"><b>Memoria de las personas</b>El “cómo se hace” depende de quién esté.</div><div class="arrow" style="--i:0"></div><div class="to"><b>Procedimientos documentados</b>Fichas, flujogramas y formatos que cualquiera puede seguir.</div></div>
+        <div class="srow rv" style="--i:4"><div class="from"><b>Decisiones concentradas</b>Cuellos de botella en la dirección.</div><div class="arrow" style="--i:1"></div><div class="to"><b>Roles claros</b>Organigrama escalable y perfiles de cargo con responsabilidades.</div></div>
+        <div class="srow rv" style="--i:5"><div class="from"><b>Respuesta variable</b>Sin forma objetiva de medir el servicio.</div><div class="arrow" style="--i:2"></div><div class="to"><b>Desempeño medido</b>KPIs de tiempo de respuesta, ventas y satisfacción de la marca.</div></div>
+        <div class="srow rv" style="--i:6"><div class="from"><b>Difícil de auditar</b>La marca no ve cómo se gestiona su línea.</div><div class="arrow" style="--i:3"></div><div class="to"><b>Listo para auditoría</b>Un Manual de Organización que sirve de guía ante la marca.</div></div>
+      </div>
+      <p class="motto rv" style="--i:7">Si no está <em>medido y documentado</em>, no existe.</p>
+    </div>
+  </section>
+
+  <!-- 4 Pilares -->
+  <section class="slide" data-name="Alcance: 4 pilares" data-steps="4" id="pil">
+    <div class="inner">
+      <div class="head">
+        <div class="eyebrow rv">Alcance del proyecto</div>
+        <h2 class="rv" style="--i:1">Cuatro pilares, diez componentes</h2>
+      </div>
+      <div class="pil">
+        <div class="ptabs rv" style="--i:2">
+          <button class="ptab" data-p="0"><span class="rn">I</span><span class="tt">Modelo de negocio y estrategia<small>2.1 – 2.3</small></span></button>
+          <button class="ptab" data-p="1"><span class="rn">II</span><span class="tt">Ingeniería de cargos y estructura<small>2.4 – 2.5</small></span></button>
+          <button class="ptab" data-p="2"><span class="rn">III</span><span class="tt">Estandarización operativa<small>2.6 – 2.9</small></span></button>
+          <button class="ptab" data-p="3"><span class="rn">IV</span><span class="tt">Manual de Organización<small>2.10</small></span></button>
+        </div>
+        <div class="pstack rv" style="--i:3">
+          <article class="pcard"><div class="tag">Pilar I</div><h3>Modelo de negocio y estrategia global</h3>
+            <ul class="items">
+              <li style="--i:0"><span class="code">2.1</span><div><b>Alineación estratégica</b><p>Revisión y validación de Misión, Visión y Valores, para proyectar correctamente a las marcas representadas.</p></div></li>
+              <li style="--i:1"><span class="code">2.2</span><div><b>Diagnóstico FODA</b><p>Brechas entre la capacidad actual y los estándares internacionales de las marcas.</p></div></li>
+              <li style="--i:2"><span class="code">2.3</span><div><b>Mapa de procesos macro</b><p>Procesos estratégicos, operativos (cadena de valor de la representación) y de soporte.</p></div></li>
+            </ul></article>
+          <article class="pcard"><div class="tag">Pilar II</div><h3>Ingeniería de cargos y estructura organizativa</h3>
+            <ul class="items">
+              <li style="--i:0"><span class="code">2.4</span><div><b>Estructura funcional</b><p>Organigrama escalable con roles claros, sin cuellos de botella en la toma de decisiones.</p></div></li>
+              <li style="--i:1"><span class="code">2.5</span><div><b>Descripciones de cargo</b><p>Perfiles con competencias para atender firmas internacionales y KPIs de gestión por posición.</p></div></li>
+            </ul></article>
+          <article class="pcard"><div class="tag">Pilar III</div><h3>Estandarización operativa y protocolos</h3>
+            <ul class="items">
+              <li style="--i:0"><span class="code">2.6</span><div><b>Fichas de procesos</b><p>El paso a paso, desde la solicitud de la marca y el inventario hasta el soporte técnico y la postventa.</p></div></li>
+              <li style="--i:1"><span class="code">2.7</span><div><b>Flujogramas</b><p>Diagramación de las fases de cada proceso para entenderlo de un vistazo.</p></div></li>
+              <li style="--i:2"><span class="code">2.8</span><div><b>Formatos de control</b><p>Trazabilidad de la gestión comercial según los lineamientos de cada marca.</p></div></li>
+              <li style="--i:3"><span class="code">2.9</span><div><b>Matriz de indicadores</b><p>Tiempos de respuesta, efectividad de ventas y satisfacción de la marca representada.</p></div></li>
+            </ul></article>
+          <article class="pcard"><div class="tag">Pilar IV</div><h3>Manual de Organización · sistema integrado</h3>
+            <ul class="items">
+              <li style="--i:0"><span class="code">2.10</span><div><b>Integración</b><p>Toda la documentación en un único sistema de gestión, que sirve de guía para las auditorías de cumplimiento de las marcas internacionales.</p></div></li>
+            </ul></article>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 5 Mapa de procesos -->
+  <section class="slide" data-name="Mapa de procesos">
+    <div class="inner">
+      <div class="head">
+        <div class="eyebrow rv">Vista previa · componente 2.3</div>
+        <h2 class="rv" style="--i:1">La cadena de valor de una representación</h2>
+        <p class="rv" style="--i:2">Así se vería el mapa de procesos macro. Es un borrador de trabajo: se valida con el equipo de NOGFLEX durante el diagnóstico.</p>
+      </div>
+      <div class="map">
+        <div class="layer rv" style="--i:3"><div class="ln">Estratégicos<small>Direccionamiento</small></div>
+          <div class="boxes"><span>Planificación estratégica</span><span>Gestión de la relación con las marcas</span><span>Revisión por la dirección</span></div></div>
+        <div class="layer op rv" style="--i:4"><div class="ln">Operativos<small>Cadena de valor</small></div>
+          <div class="chain">
+            <div class="chev" style="--i:0"><small>01</small>Solicitud del cliente o de la marca</div>
+            <div class="chev" style="--i:1"><small>02</small>Importación y nacionalización</div>
+            <div class="chev" style="--i:2"><small>03</small>Gestión de inventario</div>
+            <div class="chev" style="--i:3"><small>04</small>Venta técnica y cotización</div>
+            <div class="chev" style="--i:4"><small>05</small>Entrega e instalación</div>
+            <div class="chev" style="--i:5"><small>06</small>Soporte técnico y postventa</div>
+          </div></div>
+        <div class="layer rv" style="--i:5"><div class="ln">Soporte<small>Habilitadores</small></div>
+          <div class="boxes"><span>Talento humano</span><span>Administración y finanzas</span><span>Compras y logística</span><span>Información y sistemas</span></div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 6 Metodología -->
+  <section class="slide" data-name="Metodología">
+    <div class="inner">
+      <div class="head">
+        <div class="eyebrow rv">Metodología</div>
+        <h2 class="rv" style="--i:1">Cuatro pasos para que la representación sea impecable</h2>
+      </div>
+      <div class="method">
+        <div class="mstep rv" style="--i:0"><div class="dot">1</div><h3>Levantamiento</h3><p>Observación directa y entrevistas para capturar cómo se hacen las cosas hoy.</p></div>
+        <div class="mstep rv" style="--i:1"><div class="dot">2</div><h3>Estandarización</h3><p>Las prácticas actuales se traducen a procedimientos técnicos alineados a estándares internacionales.</p></div>
+        <div class="mstep rv" style="--i:2"><div class="dot">3</div><h3>Implementación</h3><p>Capacitación del personal en el nuevo sistema de gestión.</p></div>
+        <div class="mstep rv" style="--i:3"><div class="dot">4</div><h3>Verificación</h3><p>Auditoría interna de los procesos documentados para asegurar su cumplimiento.</p></div>
+      </div>
+      <div class="loop rv" style="--i:5"><q>Si no está medido y documentado, no existe</q><span>La verificación alimenta el siguiente ciclo de mejora del Manual de Organización.</span></div>
+    </div>
+  </section>
+
+  <!-- 7 GANTT -->
+  <section class="slide" data-name="Cronograma" id="gslide">
+    <div class="inner">
+      <div class="g-top">
+        <div class="head">
+          <div class="eyebrow rv">Cronograma del proyecto</div>
+          <h2 class="rv" style="--i:1">9 semanas, de diagnóstico a manual</h2>
+        </div>
+        <div class="g-tools rv" style="--i:2">
+          <div class="wk" id="wk" aria-live="polite">Semana <b>–</b></div>
+          <button class="play" id="play"><svg viewBox="0 0 16 16"><path d="M3 1.5v13l11-6.5z"/></svg><span>Recorrer</span></button>
+        </div>
+      </div>
+      <div class="legend rv" style="--i:3" id="legend"></div>
+      <div class="gwrap rv" style="--i:4">
+        <div class="gantt" id="gantt">
+          <div class="ghead"><div class="hl">Fase / actividad</div><div class="weeks" id="weeks"></div></div>
+          <div class="gbody" id="gbody"></div>
+          <div class="cursor" id="cursor"></div>
+        </div>
+      </div>
+      <div class="ficha rv" style="--i:5" id="ficha"></div>
+      <p class="note hint rv" style="--i:6">Toca una fase, actividad o color de la leyenda para ver el detalle. La distribución de actividades dentro de cada fase es una propuesta y se ajusta en la reunión de arranque.</p>
+    </div>
+  </section>
+
+  <!-- 8 Entregables -->
+  <section class="slide" data-name="Entregables">
+    <div class="inner">
+      <div class="head">
+        <div class="eyebrow rv">Entregables</div>
+        <h2 class="rv" style="--i:1">Lo que queda instalado en NOGFLEX</h2>
+      </div>
+      <div class="docs">
+        <div class="doc rv" style="--i:2;--c:var(--p1)"><div class="ph">1</div><div class="wkk">DIAGNÓSTICO · SEM 1–2</div><h3>Informe de diagnóstico y mapa de procesos</h3><p>Brechas de gestión frente a los estándares de las marcas.</p></div>
+        <div class="doc rv" style="--i:3;--c:var(--p2)"><div class="ph">2</div><div class="wkk">ESTRUCTURA · SEM 3–5</div><h3>Manual de perfiles de puesto y organigrama</h3><p>Roles, responsabilidades y KPIs por cargo.</p></div>
+        <div class="doc rv" style="--i:4;--c:var(--p3)"><div class="ph">3</div><div class="wkk">PROCESOS · SEM 6</div><h3>Compendio de fichas de proceso y formatos</h3><p>El corazón del negocio, estandarizado.</p></div>
+        <div class="doc rv" style="--i:5;--c:var(--p4)"><div class="ph">4</div><div class="wkk">LANZAMIENTO · SEM 7–8</div><h3>Manual de Organización final y kit de gestión</h3><p>El sistema integrado, con personal capacitado.</p></div>
+        <div class="doc sug rv" style="--i:6;--c:var(--p5)"><div class="ph">5</div><div class="wkk">COMPENSACIÓN · SEM 9</div><h3>Esquema de pago por rendimiento</h3><p>Fase complementaria sugerida, construida sobre los KPIs.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 9 Bono -->
+  <section class="slide" data-name="Compensación variable">
+    <div class="inner">
+      <div class="head">
+        <div class="eyebrow rv">Fase complementaria sugerida</div>
+        <h2 class="rv" style="--i:1">Un bono que se gana, no que se regala</h2>
+        <p class="rv" style="--i:2">El bono de rendimiento debe ser consecuencia directa del cumplimiento de objetivos medibles, nunca un premio subjetivo.</p>
+      </div>
+      <div class="bonus">
+        <div class="bsteps">
+          <div class="bstep rv" style="--i:3"><span class="bn">1</span><div><b>Selección y ponderación de KPIs</b><p>Tres niveles de peso, para premiar lo que aporta valor real.</p></div></div>
+          <div class="bstep rv" style="--i:4"><span class="bn">2</span><div><b>Umbrales</b><p>Rangos definidos antes del ciclo. Sin pago por desempeño mediocre.</p></div></div>
+          <div class="bstep rv" style="--i:5"><span class="bn">3</span><div><b>Fórmula transparente</b><p>Tan simple que cualquier trabajador la calcule en Excel o calculadora.</p></div></div>
+          <div class="bstep rv" style="--i:6"><span class="bn">4</span><div><b>Elegibilidad y gobernanza</b><p>Reglas claras sobre quién participa y cómo se aprueba.</p></div></div>
+          <div class="bstep rv" style="--i:7"><span class="bn">5</span><div><b>Ciclo de retroalimentación</b><p>Reunión de resultados y ajuste del Manual cuando un proceso falla.</p></div></div>
+        </div>
+        <div class="gauge rv" style="--i:4">
+          <h3>Umbrales progresivos</h3>
+          <p class="sub">El cumplimiento de cada KPI cae en una de tres zonas, definidas antes de iniciar el ciclo.</p>
+          <div class="scale"><div class="z0" style="--i:0">SIN BONO</div><div class="z1" style="--i:1">PROPORCIONAL</div><div class="z2" style="--i:2">AMPLIADO</div><i class="needle"></i></div>
+          <div class="ticks3"><span><b>Bajo el umbral</b>No genera pago.</span><span><b>Umbral a meta</b>Pago según avance.</span><span><b>Sobre la meta</b>Pago máximo.</span></div>
+          <span class="note">Esquema ilustrativo. Los rangos de cada KPI se fijan con la Presidencia.</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 10 Valor -->
+  <section class="slide" data-name="Valor para la Presidencia">
+    <div class="inner">
+      <div class="head">
+        <div class="eyebrow rv">Resumen de valor para la Presidencia</div>
+        <h2 class="rv" style="--i:1">Una inversión en competitividad</h2>
+      </div>
+      <div class="value">
+        <div class="val rv" style="--i:2">
+          <svg viewBox="0 0 48 48" aria-hidden="true"><circle cx="17" cy="14" r="6"/><path d="M6 38c0-7 5-12 11-12s11 5 11 12"/><rect class="ac" x="30" y="20" width="14" height="18" rx="2"/><path class="ac" d="M34 26h6M34 31h6"/></svg>
+          <span class="vn">RESULTADO 1</span><h3>Menos dependencia del factor humano</h3><p>Los procesos quedan instalados en la organización, no en una persona.</p>
+        </div>
+        <div class="val rv" style="--i:3">
+          <svg viewBox="0 0 48 48" aria-hidden="true"><path d="M24 4l16 6v12c0 10-7 18-16 22C15 40 8 32 8 22V10z"/><path class="ac" d="M17 24l5 5 9-10"/></svg>
+          <span class="vn">RESULTADO 2</span><h3>Profesionalismo ante clientes y marcas</h3><p>Reportes y gestión con estándares internacionales.</p>
+        </div>
+        <div class="val rv" style="--i:4">
+          <svg viewBox="0 0 48 48" aria-hidden="true"><rect x="6" y="30" width="9" height="12"/><rect x="19" y="22" width="9" height="20"/><rect class="ac" x="32" y="12" width="9" height="30"/><path class="ac" d="M30 6h12v12"/></svg>
+          <span class="vn">RESULTADO 3</span><h3>Escalabilidad</h3><p>Una base sólida para sumar nuevas representaciones internacionales.</p>
+        </div>
+      </div>
+      <p class="inv rv" style="--i:5">Este proyecto no es <s>papeleo</s>. Es la estructura que sostiene el crecimiento.</p>
+    </div>
+  </section>
+
+  <!-- 11 Cierre -->
+  <section class="slide" data-name="Cierre">
+    <div class="inner close">
+      <div class="eyebrow rv">NOGFLEX Industrias, C.A.</div>
+      <h2 class="rv" style="--i:1">Procesos instalados.<br><em>Marcas bien representadas.</em></h2>
+      <p class="rv" style="--i:2">Estrategia, estructura y operación alineadas en un solo sistema, listo para crecer y para responder a cualquier auditoría de las marcas representadas.</p>
+      <div class="nextstep rv" style="--i:3"><b>Próximo paso</b><span>Reunión de arranque y agenda de entrevistas para la semana 1.</span></div>
+      <p class="note foot rv" style="--i:4">Propuesta de consultoría organizacional · Octubre 2026</p>
+    </div>
+  </section>
+
+</main>
+
+<nav class="nav" aria-label="Navegación de la presentación">
+  <button class="btn prev" id="prev" aria-label="Anterior"><svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg><span>Atrás</span></button>
+  <div class="count" id="count"><b>1</b>/ 11</div>
+  <button class="btn next" id="next" aria-label="Siguiente"><span>Siguiente</span><svg viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></svg></button>
+</nav>
+
+<script>
+(function(){
+  /* ---- cover: fastener plates ---- */
+  const pg=document.getElementById('plates');
+  let svg='';
+  for(let k=0;k<7;k++){
+    const y=74+k*22.5;
+    svg+='<g class="plate" style="--i:'+k+'"><rect x="226" y="'+y+'" width="68" height="16" rx="3" fill="url(#zinc)" stroke="#152025" stroke-width="1.2"/>'+
+      '<circle cx="238" cy="'+(y+8)+'" r="3" fill="#5A6A72"/><circle cx="282" cy="'+(y+8)+'" r="3" fill="#5A6A72"/></g>';
+  }
+  pg.innerHTML=svg;
+
+  /* ---- cover title word split ---- */
+  const ttl=document.getElementById('ttl');let wi=0;
+  (function wrap(node){[...node.childNodes].forEach(n=>{
+    if(n.nodeType===3){const f=document.createDocumentFragment();
+      n.textContent.split(/(\s+)/).forEach(t=>{if(!t)return;if(/^\s+$/.test(t)){f.appendChild(document.createTextNode(t));return;}
+        const s=document.createElement('span');s.className='w';s.style.setProperty('--i',wi++);s.textContent=t;f.appendChild(s);});
+      n.replaceWith(f);} else wrap(n);});})(ttl);
+
+  /* ---- GANTT data (units: half-weeks, 1..18) ---- */
+  const PH=[
+    {n:1,name:'Diagnóstico',c:'--p1',s:1,e:4,obj:'Identificar brechas de gestión.',del:'Informe de diagnóstico y mapa de procesos',
+      t:[['2.1','Alineación estratégica',1,2,'Validar Misión, Visión y Valores frente a las marcas representadas.'],['2.2','Diagnóstico FODA',1,4,'Brechas entre la capacidad actual y los estándares de las marcas.'],['2.3','Mapa de procesos macro',3,4,'Procesos estratégicos, operativos y de soporte.']]},
+    {n:2,name:'Estructura',c:'--p2',s:5,e:10,obj:'Definir roles y responsabilidades.',del:'Manual de perfiles de puesto y organigrama',
+      t:[['2.4','Estructura funcional y organigrama',5,8,'Organigrama escalable, sin cuellos de botella en las decisiones.'],['2.5','Descripciones de cargo + KPIs',7,10,'Perfiles con competencias y KPIs de gestión por posición.']]},
+    {n:3,name:'Procesos',c:'--p3',s:11,e:12,obj:'Estandarizar el corazón del negocio.',del:'Compendio de fichas de proceso y formatos',
+      t:[['2.6','Fichas de proceso',11,12,'Paso a paso desde la solicitud de la marca hasta la postventa.'],['2.7','Flujogramas',11,12,'Diagramación de las fases de cada proceso.'],['2.8','Formatos de control',12,12,'Trazabilidad de cada transacción comercial.']]},
+    {n:4,name:'Lanzamiento',c:'--p4',s:13,e:16,obj:'Consolidar el sistema de gestión.',del:'Manual de Organización final y kit de gestión',
+      t:[['2.9','Matriz de indicadores (KPIs)',13,14,'Tiempos de respuesta, efectividad de ventas, satisfacción de la marca.'],['2.10','Integración del Manual de Organización',13,16,'Toda la documentación en un único sistema de gestión.'],['','Capacitación al personal',15,16,'Implementación: el equipo aprende a usar el nuevo sistema.'],['','Auditoría interna',16,16,'Verificación del cumplimiento de los procesos documentados.']]},
+    {n:5,name:'Compensación variable',c:'--p5',s:17,e:18,sug:true,obj:'Definir un plan de compensación acorde a la naturaleza del negocio.',del:'Esquema de pago por rendimiento',
+      t:[['','KPIs ponderados y umbrales',17,17,'Tres niveles de peso y rangos definidos antes del ciclo.'],['','Fórmula, elegibilidad y retroalimentación',18,18,'Cálculo simple, reglas claras y reunión de resultados.']]}
+  ];
+  const U=18,pct=v=>(v/U*100)+'%';
+  const wkW=n=>{const a=Math.ceil(n/2);return a;};
+  const weeksLabel=(s,e)=>{const a=wkW(s),b=wkW(e);return a===b?'Sem '+a:'Sem '+a+'–'+b;};
+
+  const weeksEl=document.getElementById('weeks');
+  for(let w=1;w<=9;w++){const d=document.createElement('div');d.innerHTML='<small>SEM</small>'+w;weeksEl.appendChild(d);}
+  const body=document.getElementById('gbody');
+  let d=0,html='';
+  PH.forEach((p,pi)=>{
+    html+='<div class="grow ph" data-p="'+pi+'" data-k="-1" style="--c:var('+p.c+')">'+
+      '<div class="lab"><span class="pn">'+p.n+'</span>'+p.name+'<span class="pw">'+weeksLabel(p.s,p.e)+'</span></div>'+
+      '<div class="trk"><div class="bar'+(p.sug?' sug':'')+'" data-s="'+p.s+'" data-e="'+p.e+'" style="--l:'+pct(p.s-1)+';--w:'+pct(p.e-p.s+1)+';--d:'+(d++)+'"><span>'+((p.e-p.s+1)/2)+' sem</span></div>'+
+      '<i class="mile" data-at="'+p.e+'" style="--x:'+pct(p.e)+';--d:'+d+'"></i>'+
+      (p.e<=12?'<span class="dl r" style="--x:'+pct(p.e)+';--d:'+d+'">'+p.del+'</span>':'<span class="dl l" style="--x:'+pct(p.s-1)+';--d:'+d+'">'+p.del+'</span>')+'</div></div>';
+    p.t.forEach((t,ti)=>{
+      html+='<div class="grow tk" data-p="'+pi+'" data-k="'+ti+'" style="--c:var('+p.c+')">'+
+        '<div class="lab" title="'+t[1]+'">'+(t[0]?'<code>'+t[0]+'</code>':'')+t[1]+'</div>'+
+        '<div class="trk"><div class="bar'+(p.sug?' sug':'')+'" data-s="'+t[2]+'" data-e="'+t[3]+'" style="--l:'+pct(t[2]-1)+';--w:'+pct(t[3]-t[2]+1)+';--d:'+(d++)+'"></div></div></div>';
+    });
+  });
+  html+='<div class="grow rev"><div class="lab">Revisión de avance con Presidencia</div><div class="trk">';
+  for(let w=1;w<=9;w++)html+='<i class="revd" data-at="'+(w*2)+'" style="--x:calc('+pct(w*2)+' - 10px);--d:'+w+'"></i>';
+  html+='</div></div>';
+  body.innerHTML=html;
+
+  /* legend */
+  const lg=document.getElementById('legend');
+  let lh='';
+  PH.forEach((p,i)=>lh+='<button class="lg" data-p="'+i+'" style="--c:var('+p.c+')"><i></i>'+p.n+' · '+p.name+'</button>');
+  lh+='<span class="sep" aria-hidden="true"></span>'+
+    '<span class="sym"><i class="s-bar"></i>Fase</span><span class="sym"><i class="s-task"></i>Actividad</span>'+
+    '<span class="sym"><i class="s-mile"></i>Entregable</span><span class="sym"><i class="s-rev"></i>Revisión semanal</span>'+
+    '<span class="sym"><i class="s-hatch"></i>Fase sugerida</span>';
+  lg.innerHTML=lh;
+
+  /* ficha / detail */
+  const ficha=document.getElementById('ficha'),gantt=document.getElementById('gantt');
+  function fichaDefault(){
+    ficha.style.removeProperty('--fc');
+    ficha.innerHTML='<div class="fp fade">9</div>'+
+      '<div class="fade"><dt>Duración</dt><dd><b>9 semanas</b>5 fases secuenciales</dd></div>'+
+      '<div class="fade"><dt>Ritmo</dt><dd><b>Semanal</b>Revisión de avance con Presidencia</dd></div>'+
+      '<div class="fade"><dt>Resultado</dt><dd><b>5 entregables</b>Del diagnóstico al esquema de compensación</dd></div>';
+  }
+  function showPhase(pi,ti){
+    const p=PH[pi];
+    ficha.style.setProperty('--fc','var('+p.c+')');
+    if(ti>=0){const t=p.t[ti];
+      ficha.innerHTML='<div class="fp fade">'+p.n+'</div>'+
+        '<div class="fade"><dt>Actividad'+(t[0]?' · '+t[0]:'')+'</dt><dd><b>'+t[1]+'</b>Fase '+p.n+' · '+p.name+'</dd></div>'+
+        '<div class="fade"><dt>Cuándo</dt><dd><b>'+weeksLabel(t[2],t[3])+'</b>'+(t[3]-t[2]+1)/2+' sem. de trabajo</dd></div>'+
+        '<div class="fade"><dt>Qué se hace</dt><dd>'+t[4]+'</dd></div>';
+    } else {
+      ficha.innerHTML='<div class="fp fade">'+p.n+'</div>'+
+        '<div class="fade"><dt>Fase'+(p.sug?' · sugerida':'')+'</dt><dd><b>'+p.name+'</b>'+p.obj+'</dd></div>'+
+        '<div class="fade"><dt>Cuándo</dt><dd><b>'+weeksLabel(p.s,p.e)+'</b>'+((p.e-p.s+1)/2)+' semana'+((p.e-p.s+1)/2>1?'s':'')+'</dd></div>'+
+        '<div class="fade"><dt>Entregable ◆</dt><dd>'+p.del+'</dd></div>';
+    }
+  }
+  let focused=-1;
+  function focus(pi){
+    focused=pi;
+    gantt.classList.toggle('focus',pi>=0);
+    body.querySelectorAll('.grow[data-p]').forEach(r=>r.classList.toggle('f',+r.dataset.p===pi));
+    lg.querySelectorAll('.lg').forEach(b=>{const me=+b.dataset.p===pi;b.classList.toggle('sel',me);b.classList.toggle('dim',pi>=0&&!me);b.setAttribute('aria-pressed',me);});
+  }
+  lg.addEventListener('click',e=>{const b=e.target.closest('.lg');if(!b)return;const pi=+b.dataset.p;
+    if(focused===pi){focus(-1);fichaDefault();}else{focus(pi);showPhase(pi,-1);}});
+  body.addEventListener('click',e=>{const r=e.target.closest('.grow[data-p]');if(!r)return;
+    const pi=+r.dataset.p,ti=+r.dataset.k;showPhase(pi,ti);
+    body.querySelectorAll('.grow').forEach(x=>x.classList.toggle('hl',x===r));});
+  body.addEventListener('mouseover',e=>{const r=e.target.closest('.grow[data-p]');if(!r||playing)return;showPhase(+r.dataset.p,+r.dataset.k);});
+  body.addEventListener('mouseleave',()=>{if(playing)return;const h=body.querySelector('.grow.hl');if(h)showPhase(+h.dataset.p,+h.dataset.k);else if(focused>=0)showPhase(focused,-1);else fichaDefault();});
+  fichaDefault();
+
+  /* play-through cursor */
+  const cursor=document.getElementById('cursor'),playB=document.getElementById('play'),wk=document.getElementById('wk');
+  const wDivs=[...weeksEl.children],bars=[...body.querySelectorAll('.bar')],miles=[...body.querySelectorAll('.mile,.revd')];
+  let playing=false,raf=0,t0=0;const DUR=9000;
+  function setT(t){
+    cursor.style.setProperty('--t',t);
+    const u=t*U; // position in half-week units
+    const w=Math.min(9,Math.floor(t*9)+1);
+    wDivs.forEach((x,i)=>x.classList.toggle('now',i===w-1));
+    wk.innerHTML='Semana <b>'+w+'</b> / 9';
+    bars.forEach(b=>b.classList.toggle('live',u>=+b.dataset.s-1&&u<=+b.dataset.e));
+    miles.forEach(m=>m.classList.toggle('hit',u>=+m.dataset.at-.02));
+    // ficha follows current phase
+    const pi=PH.findIndex(p=>u>=p.s-1&&u<=p.e);
+    if(pi>=0&&pi!==setT.last){setT.last=pi;showPhase(pi,-1);}
+  }
+  const ico=playB.querySelector('path');const PLAY='M3 1.5v13l11-6.5z',PAUSE='M3 2h3.5v12H3zM9.5 2H13v12H9.5z';
+  function stop(reset){
+    ico.setAttribute('d',PLAY);playing=false;cancelAnimationFrame(raf);playB.querySelector('span').textContent='Recorrer';
+    if(reset){cursor.classList.remove('show');bars.forEach(b=>b.classList.remove('live'));wDivs.forEach(x=>x.classList.remove('now'));wk.innerHTML='Semana <b>–</b>';setT.last=-1;}
+  }
+  function tick(now){
+    const t=Math.min(1,(now-t0)/DUR);setT(t);
+    if(t<1)raf=requestAnimationFrame(tick);else{playing=false;ico.setAttribute('d',PLAY);playB.querySelector('span').textContent='Repetir';}
+  }
+  playB.addEventListener('click',()=>{
+    if(playing){stop(false);return;}
+    focus(-1);playing=true;setT.last=-1;cursor.classList.add('show');ico.setAttribute('d',PAUSE);playB.querySelector('span').textContent='Pausa';
+    const cur=parseFloat(cursor.style.getPropertyValue('--t'))||0;
+    t0=performance.now()-(cur>=1?0:cur)*DUR;raf=requestAnimationFrame(tick);
+  });
+
+  /* ---- deck ---- */
+  const slides=[...document.querySelectorAll('.slide')],N=slides.length;
+  const prog=document.getElementById('prog'),where=document.getElementById('where'),count=document.getElementById('count');
+  const prevB=document.getElementById('prev'),nextB=document.getElementById('next');
+  let cur=0,step=0;
+  const pil=document.getElementById('pil'),gslide=document.getElementById('gslide');
+  const cards=[...pil.querySelectorAll('.pcard')],tabs=[...pil.querySelectorAll('.ptab')];
+  function showPillar(k){cards.forEach((c,i)=>c.classList.toggle('on',i===k));tabs.forEach((n,i)=>{n.classList.toggle('lit',i===k);n.setAttribute('aria-pressed',i===k);});}
+  tabs.forEach((n,i)=>n.addEventListener('click',()=>{step=i;showPillar(i);ui();}));
+  const steps=s=>+(s.dataset.steps||1);
+  function go(n,dir){
+    if(n<0||n>=N)return;
+    const old=slides[cur];old.classList.remove('on');old.classList.toggle('back',dir>0);
+    if(old===gslide)stop(true);
+    cur=n;const s=slides[cur];s.classList.toggle('back',dir<0);void s.offsetWidth;s.classList.add('on');s.scrollTop=0;
+    step=dir<0?steps(s)-1:0;if(s===pil)showPillar(step);ui();
+  }
+  function ui(){
+    const s=slides[cur];
+    prog.style.width=((cur+(step+1)/steps(s))/N*100)+'%';
+    where.innerHTML='<b>'+String(cur+1).padStart(2,'0')+'</b>'+s.dataset.name;
+    count.innerHTML='<b>'+(cur+1)+'</b>/ '+N;
+    prevB.disabled=cur===0&&step===0;
+    nextB.querySelector('span').textContent=cur===N-1?'Inicio':'Siguiente';
+  }
+  function next(){const s=slides[cur];
+    if(step<steps(s)-1){step++;if(s===pil)showPillar(step);ui();return;}
+    if(cur===N-1){go(0,-1);step=0;ui();return;}
+    go(cur+1,1);}
+  function prev(){const s=slides[cur];
+    if(step>0){step--;if(s===pil)showPillar(step);ui();return;}
+    go(cur-1,-1);}
+  nextB.addEventListener('click',next);prevB.addEventListener('click',prev);
+  document.addEventListener('keydown',e=>{
+    const onBtn=e.target.closest&&e.target.closest('button');
+    if(['ArrowRight','PageDown'].includes(e.key)||((e.key===' '||e.key==='Enter')&&!onBtn)){e.preventDefault();next();}
+    else if(['ArrowLeft','PageUp'].includes(e.key)){e.preventDefault();prev();}
+  });
+  let sx=null,sy=null,inG=false;
+  document.addEventListener('touchstart',e=>{sx=e.touches[0].clientX;sy=e.touches[0].clientY;inG=!!(e.target.closest&&e.target.closest('.gwrap'));},{passive:true});
+  document.addEventListener('touchend',e=>{if(sx===null||inG){sx=null;return;}
+    const dx=e.changedTouches[0].clientX-sx,dy=e.changedTouches[0].clientY-sy;
+    if(Math.abs(dx)>50&&Math.abs(dx)>Math.abs(dy)*1.4){dx<0?next():prev();}sx=null;},{passive:true});
+  // deep link to the Gantt: #cronograma
+  showPillar(0);
+  const startAt=location.hash==='#cronograma'?slides.indexOf(gslide):0;
+  cur=startAt;slides[cur].classList.add('on');ui();
+})();
+</script>
+
+</body>
+</html>
