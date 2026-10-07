@@ -76,7 +76,7 @@ b,strong{font-weight:600}
 /* ===== cover ===== */
 .cover{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,.9fr);gap:clamp(24px,5vw,64px);align-items:center}
 .cover>div{min-width:0}
-.cover h1{overflow-wrap:break-word;font-size:clamp(42px,6.2vw,96px);text-transform:uppercase;margin-top:16px;line-height:.88}
+.cover h1{font-size:clamp(42px,6.2vw,96px);text-transform:uppercase;margin-top:16px;line-height:.88}
 .cover h1 .w{display:inline-block;opacity:0;transform:translateY(.4em);transition:opacity .6s var(--ease),transform .8s var(--ease)}
 .on .cover h1 .w{opacity:1;transform:none;transition-delay:calc(180ms + var(--i)*70ms)}
 .cover h1 em{font-style:normal;color:var(--amber-deep)}
@@ -338,6 +338,103 @@ b,strong{font-weight:600}
   .splice{max-width:380px}
   .slide{align-items:flex-start}
 }
+/* ===== mobile gantt ===== */
+.mg{display:none}
+.mg-ov{position:relative;margin-top:14px;border:1.5px solid var(--ink);border-radius:14px;background:var(--sheet);padding:8px 8px 6px}
+.mg-grid{display:grid;grid-template-columns:34px minmax(0,1fr);align-items:center}
+.mg-weeks{display:grid;grid-template-columns:repeat(9,minmax(0,1fr));border-bottom:1.5px solid var(--ink)}
+.mg-weeks div{text-align:center;font-family:var(--display);font-weight:800;font-size:17px;line-height:1;padding:4px 0 6px;transition:background .3s,color .3s;border-radius:4px 4px 0 0}
+.mg-weeks div small{display:block;font-family:var(--mono);font-weight:400;font-size:8.5px;color:var(--muted);letter-spacing:.06em}
+.mg-weeks div.now{background:var(--ink);color:var(--amber)}
+.mg-row{height:34px;transition:opacity .35s}
+.mg-row .chip{all:unset;cursor:pointer;width:26px;height:26px;border-radius:7px;background:var(--c);color:#fff;font-family:var(--display);font-weight:800;font-size:16px;display:grid;place-items:center}
+.mg-tr{position:relative;height:100%;background:repeating-linear-gradient(90deg,transparent 0 calc(100%/9 - 1px),var(--line) calc(100%/9 - 1px) calc(100%/9))}
+.mg-row .bar{top:8px;bottom:8px;border-radius:6px}
+.mg-row .mile{width:12px;height:12px;margin:-6px 0 0 -6px;border-width:2px}
+.mg-ov.sel .mg-row:not(.f){opacity:.3}
+.mg-rev{height:28px;border-top:1.5px solid var(--line-2)}
+.mg-rev .revd{width:10px;height:10px;margin:-5px 0 0 -5px;border-width:2px}
+.mg-rev .lbl{font-family:var(--mono);font-size:9px;color:var(--muted);line-height:1.1;text-align:center}
+.mg-cursor{position:absolute;top:6px;bottom:6px;left:calc(8px + 34px + (100% - 16px - 34px)*var(--t,0));width:2px;background:var(--ink);z-index:4;opacity:0;transition:opacity .3s;pointer-events:none}
+.mg-cursor.show{opacity:1}
+.mg-tabs{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:6px;margin-top:12px}
+.mg-tab{all:unset;cursor:pointer;text-align:center;padding:8px 2px 7px;border-radius:10px;border:1.5px solid var(--line-2);background:var(--sheet);transition:all .3s var(--ease)}
+.mg-tab b{display:block;font-family:var(--display);font-weight:900;font-size:24px;line-height:1;color:var(--c)}
+.mg-tab small{display:block;font-family:var(--mono);font-size:9.5px;color:var(--muted);margin-top:2px}
+.mg-tab.on{background:var(--c);border-color:var(--c)}
+.mg-tab.on b,.mg-tab.on small{color:#fff}
+.mg-tab:focus-visible{outline:2.5px solid var(--ink);outline-offset:2px}
+.mg-card{margin-top:10px;background:var(--sheet);border:1.5px solid var(--ink);border-radius:14px;overflow:hidden}
+.mg-card .band{height:7px;background:var(--c)}
+.mg-card .bd{padding:14px 14px 16px}
+.mg-card .ey{font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--steel)}
+.mg-card h3{font-size:30px;text-transform:uppercase;margin-top:4px}
+.mg-card .obj{color:var(--steel);font-size:15px;margin-top:4px}
+.mg-card .dlv{margin-top:12px;padding:10px 12px;border-radius:10px;background:var(--rubber);color:var(--sheet);font-size:14.5px;line-height:1.3;display:grid;grid-template-columns:16px 1fr;gap:8px;align-items:start}
+.mg-card .dlv i{width:11px;height:11px;margin-top:4px;background:var(--amber);transform:rotate(45deg)}
+.mg-card .dlv small{display:block;font-family:var(--mono);font-size:9.5px;letter-spacing:.12em;color:var(--zinc-2);text-transform:uppercase}
+.mg-acts{list-style:none;margin:14px 0 0;padding:0;display:grid;gap:12px}
+.mg-acts li{display:grid;gap:5px}
+.mg-acts .an{display:flex;gap:8px;align-items:baseline;font-weight:600;font-size:15px;line-height:1.25}
+.mg-acts .an code{font-family:var(--mono);font-size:11px;font-weight:500;color:var(--sheet);background:var(--ink);border-radius:4px;padding:1px 5px;flex:none}
+.mg-acts .an span{margin-left:auto;font-family:var(--mono);font-size:10.5px;font-weight:400;color:var(--muted);white-space:nowrap}
+.mg-acts .mt{position:relative;height:10px;border-radius:5px;background:repeating-linear-gradient(90deg,var(--line) 0 calc(100%/9 - 2px),transparent calc(100%/9 - 2px) calc(100%/9))}
+.mg-acts .mt .bar{top:0;bottom:0;border-radius:5px}
+.mg-acts p{font-size:13.5px;color:var(--steel);line-height:1.35}
+.mg-card.fadein .bd{animation:fin .45s var(--ease)}
+.pre .bar,.bar.pre{transform:scaleX(0)!important;transition:none!important}
+.mg-hint{margin-top:10px;text-align:center}
+
+@media (max-width:760px){
+  .gwrap,.ficha,.hint,.legend .lg,.legend .sep,.legend .sym:has(.s-bar),.legend .sym:has(.s-task){display:none}
+  .mg{display:block}
+  #gslide .g-top h2{font-size:clamp(26px,7.6vw,34px);margin-top:6px}
+  #gslide .g-top{gap:8px}
+  .play{padding:8px 14px;font-size:15px}
+  .wk{min-width:0}
+  .legend .sym{padding:2px 0;font-size:12px}
+  .mg-ov{margin-top:8px}
+  .mg-row{height:29px}
+  .mg-row .bar{top:7px;bottom:7px}
+  .mg-row .chip{width:23px;height:23px;font-size:14px}
+  .mg-tabs{margin-top:10px}
+  .mg-tab{padding:6px 2px}
+  .mg-tab b{font-size:21px}
+  .legend{margin-top:8px;gap:2px 10px}
+  .g-top{align-items:center}
+  .g-top .head{flex:1 1 100%}
+  .g-tools{width:100%;justify-content:space-between}
+  /* method: one column */
+  .method{grid-template-columns:1fr;gap:16px;margin-top:22px}
+  .mstep{display:grid;grid-template-columns:52px 1fr;column-gap:14px;padding:0}
+  .mstep .dot{grid-row:1/3;width:52px;height:52px;font-size:22px}
+  .mstep h3{margin-top:2px;font-size:23px}
+  .mstep p{grid-column:2;max-width:none}
+  .loop{margin-top:20px;padding:16px}
+  /* shift: label each box */
+  .shift-h{display:none}
+  .srow .from::before,.srow .to::before{display:block;font-family:var(--mono);font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;margin-bottom:4px;color:var(--muted)}
+  .srow .from::before{content:"Gestión artesanal"}
+  .srow .to::before{content:"Gestión por procesos";color:var(--amber-deep)}
+  .srow{margin-bottom:10px}
+  .srow .from,.srow .to{padding:11px 14px;font-size:15px}
+  .srow .from b,.srow .to b{font-size:18px}
+  /* general rhythm */
+  .head h2{font-size:clamp(32px,9vw,44px)}
+  .slide{padding-top:calc(64px + env(safe-area-inset-top,0px))}
+  .cover{gap:22px}
+  .meta{grid-template-columns:1fr;gap:0}
+  .meta dt{padding-top:8px}
+  .facts .fact{padding:14px}
+  .expect q{font-size:19px}
+  .value{gap:12px}
+  .val{padding:16px}
+  .layer .ln{flex-direction:row;align-items:baseline;gap:10px;padding:10px 12px}
+  .layer .ln small{margin-top:0}
+  .boxes span{flex:1 1 130px;padding:10px 12px;font-size:14px}
+  .count{min-width:48px}
+}
+.fit{white-space:normal}
 @media (prefers-reduced-motion:reduce){
   *,*::before,*::after{animation:none!important;transition-duration:.01ms!important;transition-delay:0s!important}
 }
@@ -540,6 +637,16 @@ b,strong{font-weight:600}
           <div class="cursor" id="cursor"></div>
         </div>
       </div>
+      <div class="mg rv" style="--i:4" id="mg">
+        <div class="mg-ov" id="mgov">
+          <div class="mg-grid"><span></span><div class="mg-weeks" id="mgweeks"></div></div>
+          <div id="mgrows"></div>
+          <div class="mg-cursor" id="mcursor"></div>
+        </div>
+        <div class="mg-tabs" id="mgtabs" role="tablist" aria-label="Fases"></div>
+        <div class="mg-card" id="mgcard"></div>
+        <p class="note mg-hint">Desliza o toca «Siguiente» para pasar de fase</p>
+      </div>
       <div class="ficha rv" style="--i:5" id="ficha"></div>
       <p class="note hint rv" style="--i:6">Toca una fase, actividad o color de la leyenda para ver el detalle. La distribución de actividades dentro de cada fase es una propuesta y se ajusta en la reunión de arranque.</p>
     </div>
@@ -679,7 +786,7 @@ b,strong{font-weight:600}
       '<div class="lab"><span class="pn">'+p.n+'</span>'+p.name+'<span class="pw">'+weeksLabel(p.s,p.e)+'</span></div>'+
       '<div class="trk"><div class="bar'+(p.sug?' sug':'')+'" data-s="'+p.s+'" data-e="'+p.e+'" style="--l:'+pct(p.s-1)+';--w:'+pct(p.e-p.s+1)+';--d:'+(d++)+'"><span>'+((p.e-p.s+1)/2)+' sem</span></div>'+
       '<i class="mile" data-at="'+p.e+'" style="--x:'+pct(p.e)+';--d:'+d+'"></i>'+
-      (p.e<=12?'<span class="dl r" style="--x:'+pct(p.e)+';--d:'+d+'">'+p.del+'</span>':'<span class="dl l" style="--x:'+pct(p.s-1)+';--d:'+d+'">'+p.del+'</span>')+'</div></div>';
+      (p.e<=10?'<span class="dl r" style="--x:'+pct(p.e)+';--d:'+d+'">'+p.del+'</span>':'<span class="dl l" style="--x:'+pct(p.s-1)+';--d:'+d+'">'+p.del+'</span>')+'</div></div>';
     p.t.forEach((t,ti)=>{
       html+='<div class="grow tk" data-p="'+pi+'" data-k="'+ti+'" style="--c:var('+p.c+')">'+
         '<div class="lab" title="'+t[1]+'">'+(t[0]?'<code>'+t[0]+'</code>':'')+t[1]+'</div>'+
@@ -741,26 +848,69 @@ b,strong{font-weight:600}
   body.addEventListener('mouseleave',()=>{if(playing)return;const h=body.querySelector('.grow.hl');if(h)showPhase(+h.dataset.p,+h.dataset.k);else if(focused>=0)showPhase(focused,-1);else fichaDefault();});
   fichaDefault();
 
+  /* ---- mobile gantt ---- */
+  const mq=matchMedia('(max-width:760px)');
+  const isM=()=>mq.matches;
+  const mgweeks=document.getElementById('mgweeks'),mgrows=document.getElementById('mgrows'),mgov=document.getElementById('mgov');
+  const mgtabs=document.getElementById('mgtabs'),mgcard=document.getElementById('mgcard'),mcursor=document.getElementById('mcursor');
+  for(let w=1;w<=9;w++){const x=document.createElement('div');x.innerHTML='<small>S</small>'+w;mgweeks.appendChild(x);}
+  let mh='',md=0;
+  PH.forEach((p,pi)=>{
+    mh+='<div class="mg-grid mg-row" data-p="'+pi+'" style="--c:var('+p.c+')"><button class="chip" data-p="'+pi+'" aria-label="Fase '+p.n+': '+p.name+'">'+p.n+'</button>'+
+      '<div class="mg-tr"><div class="bar'+(p.sug?' sug':'')+'" data-s="'+p.s+'" data-e="'+p.e+'" style="--l:'+pct(p.s-1)+';--w:'+pct(p.e-p.s+1)+';--d:'+(md++)+'"></div>'+
+      '<i class="mile" data-at="'+p.e+'" style="--x:'+pct(p.e)+';--d:'+md+'"></i></div></div>';
+  });
+  mh+='<div class="mg-grid mg-rev"><span class="lbl">REV.</span><div class="mg-tr">';
+  for(let w=1;w<=9;w++)mh+='<i class="revd" data-at="'+(w*2)+'" style="--x:calc('+pct(w*2)+' - 7px);--d:'+w+'"></i>';
+  mh+='</div></div>';
+  mgrows.innerHTML=mh;
+  let th='';
+  PH.forEach((p,pi)=>th+='<button class="mg-tab" role="tab" data-p="'+pi+'" style="--c:var('+p.c+')"><b>'+p.n+'</b><small>'+weeksLabel(p.s,p.e).replace('Sem ','S')+'</small></button>');
+  mgtabs.innerHTML=th;
+  let mSel=-1;
+  function mSelect(pi,anim){
+    if(pi===mSel&&!anim)return;mSel=pi;const p=PH[pi];
+    mgov.classList.add('sel');
+    mgrows.querySelectorAll('.mg-row').forEach(r=>r.classList.toggle('f',+r.dataset.p===pi));
+    mgtabs.querySelectorAll('.mg-tab').forEach(t=>{const me=+t.dataset.p===pi;t.classList.toggle('on',me);t.setAttribute('aria-selected',me);});
+    const len=(p.e-p.s+1)/2;
+    let h='<div class="band"></div><div class="bd"><div class="ey">Fase '+p.n+(p.sug?' · sugerida':'')+' · '+weeksLabel(p.s,p.e).replace('Sem','Semana'+(p.e-p.s>1?'s':''))+' · '+len+' sem</div>'+
+      '<h3>'+p.name+'</h3><p class="obj">'+p.obj+'</p>'+
+      '<div class="dlv"><i></i><div><small>Entregable</small>'+p.del+'</div></div><ul class="mg-acts">';
+    p.t.forEach((t,ti)=>{
+      h+='<li><div class="an">'+(t[0]?'<code>'+t[0]+'</code>':'')+t[1]+'<span>'+weeksLabel(t[2],t[3]).replace('Sem ','S')+'</span></div>'+
+        '<div class="mt"><div class="bar'+(p.sug?' sug':'')+' pre" style="--l:'+pct(t[2]-1)+';--w:'+pct(t[3]-t[2]+1)+';--d:'+ti+'"></div></div><p>'+t[4]+'</p></li>';
+    });
+    h+='</ul></div>';
+    mgcard.style.setProperty('--c','var('+p.c+')');
+    mgcard.innerHTML=h;
+    mgcard.classList.remove('fadein');void mgcard.offsetWidth;mgcard.classList.add('fadein');
+    requestAnimationFrame(()=>requestAnimationFrame(()=>mgcard.querySelectorAll('.bar.pre').forEach(b=>{b.style.transitionDelay=(120+ +b.style.getPropertyValue('--d')*90)+'ms';b.classList.remove('pre');})));
+  }
+  mgtabs.addEventListener('click',e=>{const t=e.target.closest('.mg-tab');if(!t)return;const pi=+t.dataset.p;if(playing)stop(false);step=pi;mSelect(pi);ui();});
+  mgrows.addEventListener('click',e=>{const c=e.target.closest('.mg-row');if(!c)return;const pi=+c.dataset.p;if(playing)stop(false);step=pi;mSelect(pi);ui();});
+  mSelect(0);
+
   /* play-through cursor */
   const cursor=document.getElementById('cursor'),playB=document.getElementById('play'),wk=document.getElementById('wk');
-  const wDivs=[...weeksEl.children],bars=[...body.querySelectorAll('.bar')],miles=[...body.querySelectorAll('.mile,.revd')];
+  const wDivs=[...weeksEl.children,...mgweeks.children],bars=[...body.querySelectorAll('.bar'),...mgrows.querySelectorAll('.bar')],miles=[...body.querySelectorAll('.mile,.revd'),...mgrows.querySelectorAll('.mile,.revd')];
   let playing=false,raf=0,t0=0;const DUR=9000;
   function setT(t){
-    cursor.style.setProperty('--t',t);
+    cursor.style.setProperty('--t',t);mcursor.style.setProperty('--t',t);
     const u=t*U; // position in half-week units
     const w=Math.min(9,Math.floor(t*9)+1);
-    wDivs.forEach((x,i)=>x.classList.toggle('now',i===w-1));
+    wDivs.forEach((x,i)=>x.classList.toggle('now',i%9===w-1));
     wk.innerHTML='Semana <b>'+w+'</b> / 9';
     bars.forEach(b=>b.classList.toggle('live',u>=+b.dataset.s-1&&u<=+b.dataset.e));
     miles.forEach(m=>m.classList.toggle('hit',u>=+m.dataset.at-.02));
     // ficha follows current phase
     const pi=PH.findIndex(p=>u>=p.s-1&&u<=p.e);
-    if(pi>=0&&pi!==setT.last){setT.last=pi;showPhase(pi,-1);}
+    if(pi>=0&&pi!==setT.last){setT.last=pi;showPhase(pi,-1);if(isM()){mSelect(pi);step=pi;ui();}}
   }
   const ico=playB.querySelector('path');const PLAY='M3 1.5v13l11-6.5z',PAUSE='M3 2h3.5v12H3zM9.5 2H13v12H9.5z';
   function stop(reset){
     ico.setAttribute('d',PLAY);playing=false;cancelAnimationFrame(raf);playB.querySelector('span').textContent='Recorrer';
-    if(reset){cursor.classList.remove('show');bars.forEach(b=>b.classList.remove('live'));wDivs.forEach(x=>x.classList.remove('now'));wk.innerHTML='Semana <b>–</b>';setT.last=-1;}
+    if(reset){cursor.classList.remove('show');mcursor.classList.remove('show');bars.forEach(b=>b.classList.remove('live'));wDivs.forEach(x=>x.classList.remove('now'));wk.innerHTML='Semana <b>–</b>';setT.last=-1;}
   }
   function tick(now){
     const t=Math.min(1,(now-t0)/DUR);setT(t);
@@ -768,7 +918,7 @@ b,strong{font-weight:600}
   }
   playB.addEventListener('click',()=>{
     if(playing){stop(false);return;}
-    focus(-1);playing=true;setT.last=-1;cursor.classList.add('show');ico.setAttribute('d',PAUSE);playB.querySelector('span').textContent='Pausa';
+    focus(-1);playing=true;setT.last=-1;cursor.classList.add('show');mcursor.classList.add('show');ico.setAttribute('d',PAUSE);playB.querySelector('span').textContent='Pausa';
     const cur=parseFloat(cursor.style.getPropertyValue('--t'))||0;
     t0=performance.now()-(cur>=1?0:cur)*DUR;raf=requestAnimationFrame(tick);
   });
@@ -782,13 +932,14 @@ b,strong{font-weight:600}
   const cards=[...pil.querySelectorAll('.pcard')],tabs=[...pil.querySelectorAll('.ptab')];
   function showPillar(k){cards.forEach((c,i)=>c.classList.toggle('on',i===k));tabs.forEach((n,i)=>{n.classList.toggle('lit',i===k);n.setAttribute('aria-pressed',i===k);});}
   tabs.forEach((n,i)=>n.addEventListener('click',()=>{step=i;showPillar(i);ui();}));
-  const steps=s=>+(s.dataset.steps||1);
+  const steps=s=>s===gslide&&isM()?5:+(s.dataset.steps||1);
+  const onStep=s=>{if(s===pil)showPillar(step);if(s===gslide&&isM())mSelect(step);};
   function go(n,dir){
     if(n<0||n>=N)return;
     const old=slides[cur];old.classList.remove('on');old.classList.toggle('back',dir>0);
     if(old===gslide)stop(true);
     cur=n;const s=slides[cur];s.classList.toggle('back',dir<0);void s.offsetWidth;s.classList.add('on');s.scrollTop=0;
-    step=dir<0?steps(s)-1:0;if(s===pil)showPillar(step);ui();
+    step=dir<0?steps(s)-1:0;onStep(s);ui();
   }
   function ui(){
     const s=slides[cur];
@@ -799,11 +950,11 @@ b,strong{font-weight:600}
     nextB.querySelector('span').textContent=cur===N-1?'Inicio':'Siguiente';
   }
   function next(){const s=slides[cur];
-    if(step<steps(s)-1){step++;if(s===pil)showPillar(step);ui();return;}
+    if(step<steps(s)-1){step++;onStep(s);ui();return;}
     if(cur===N-1){go(0,-1);step=0;ui();return;}
     go(cur+1,1);}
   function prev(){const s=slides[cur];
-    if(step>0){step--;if(s===pil)showPillar(step);ui();return;}
+    if(step>0){step--;onStep(s);ui();return;}
     go(cur-1,-1);}
   nextB.addEventListener('click',next);prevB.addEventListener('click',prev);
   document.addEventListener('keydown',e=>{
@@ -816,6 +967,23 @@ b,strong{font-weight:600}
   document.addEventListener('touchend',e=>{if(sx===null||inG){sx=null;return;}
     const dx=e.changedTouches[0].clientX-sx,dy=e.changedTouches[0].clientY-sy;
     if(Math.abs(dx)>50&&Math.abs(dx)>Math.abs(dy)*1.4){dx<0?next():prev();}sx=null;},{passive:true});
+  /* shrink headlines whose longest word would overflow */
+  function fit(){
+    document.querySelectorAll('.cover h1,.close h2,.head h2,.g-top h2').forEach(el=>{
+      el.style.fontSize='';
+      const sl=el.closest('.slide');const hid=!sl.classList.contains('on');
+      if(hid){sl.style.visibility='hidden';sl.style.opacity='0';sl.style.display='flex';}
+      let fs=parseFloat(getComputedStyle(el).fontSize),n=0;
+      const words=[...el.querySelectorAll('.w')];
+      const over=()=>el.scrollWidth>el.clientWidth+1;
+      while(over()&&fs>18&&n<40){fs-=1.5;el.style.fontSize=fs+'px';n++;}
+      if(hid){sl.style.visibility='';sl.style.opacity='';sl.style.display='';}
+    });
+  }
+  fit();
+  if(document.fonts&&document.fonts.ready)document.fonts.ready.then(fit);
+  let rt;addEventListener('resize',()=>{clearTimeout(rt);rt=setTimeout(()=>{fit();if(steps(slides[cur])<=step)step=0;onStep(slides[cur]);ui();},150);});
+
   // deep link to the Gantt: #cronograma
   showPillar(0);
   const startAt=location.hash==='#cronograma'?slides.indexOf(gslide):0;
