@@ -52,6 +52,10 @@ b,strong{font-weight:600}
 .slide{position:absolute;inset:0;display:flex;align-items:center;padding:calc(72px + env(safe-area-inset-top,0px)) var(--gut) calc(100px + env(safe-area-inset-bottom,0px));overflow-y:auto;overflow-x:hidden;opacity:0;visibility:hidden;transform:translateX(48px);transition:opacity .6s var(--ease),transform .9s var(--ease),visibility 0s .6s}
 .slide.back{transform:translateX(-48px)}
 .slide.on{opacity:1;visibility:visible;transform:none;transition:opacity .6s var(--ease),transform .9s var(--ease)}
+/* Android Chrome: hidden slides stacked above must never capture touch-scroll */
+.slide:not(.on){pointer-events:none;overflow:hidden;z-index:0}
+.slide.on{z-index:2;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;touch-action:pan-y pinch-zoom}
+.gwrap{touch-action:pan-x pan-y}
 .inner{width:100%;max-width:1200px;margin:auto}
 .rv{opacity:0;transform:translateY(20px);transition:opacity .6s var(--ease),transform .8s var(--ease)}
 .on .rv{opacity:1;transform:none;transition-delay:calc(160ms + var(--i,0)*90ms)}
