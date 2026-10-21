@@ -1,0 +1,436 @@
+<!doctype html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><style>body{margin:0}[hidden]{display:none!important}img{max-width:100%}</style></head><body>
+<title>Vexbiz × Ferretería Principal</title>
+<meta name="description" content="Propuesta de Vexbiz para Ferretería Principal: un canal más de venta al detal y al mayor dentro del ecosistema Vexbiz, con 5% de comisión por venta concretada.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700;800&family=Barlow:wght@400;500;600&display=swap">
+<script>document.documentElement.classList.add('js')</script>
+<style>
+/* Layout: presentación por láminas a pantalla completa, botones Anterior/Siguiente fijos abajo. Identidad Vexbiz: azul noche + oro (misma base que Fraperri y Vexbiz Flete). */
+:root{
+  color-scheme:dark;
+  --ink:#050B1C; --navy:#071530; --panel:#0B1B36; --panel-hi:#10264A;
+  --line:rgba(217,163,58,.24); --hair:rgba(237,240,247,.10);
+  --gold:#D9A33A; --gold-hi:#F2C768; --ok:#5CC28B; --wood:#B07A45;
+  --text:#EDF0F7; --muted:#94A0BD; --soft:#C6CDDF;
+  --display:"Barlow Condensed","Arial Narrow",Impact,sans-serif;
+  --body:"Barlow","Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  --gut:clamp(16px,4vw,56px);
+}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{margin:0;background:var(--ink);color:var(--text);font-family:var(--body);font-size:17px;line-height:1.55;-webkit-font-smoothing:antialiased;overflow:hidden}
+html:not(.js) body{overflow:auto}
+a{color:var(--gold-hi)}
+h1,h2,h3{font-family:var(--display);font-weight:700;line-height:1.02;margin:0;text-wrap:balance;text-transform:uppercase}
+p{margin:0}
+.gold{color:var(--gold)}
+:focus-visible{outline:2px solid var(--gold-hi);outline-offset:3px;border-radius:4px}
+
+/* ---------- bar ---------- */
+.top{position:fixed;inset:0 0 auto 0;z-index:20;padding-top:env(safe-area-inset-top,0px);background:linear-gradient(var(--ink) 55%,rgba(5,11,28,0))}
+.top .in{display:flex;align-items:center;justify-content:space-between;gap:12px;height:56px;padding-inline:var(--gut)}
+.logo{font-family:var(--display);font-weight:800;font-size:24px;letter-spacing:.04em;line-height:1}
+.logo b{color:var(--gold)}
+.logo small{font-weight:600;font-size:13px;letter-spacing:.24em;color:var(--muted);margin-left:10px}
+.where{font-family:var(--display);font-size:13px;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);text-align:right}
+.where b{color:var(--gold-hi);font-weight:600;margin-right:6px}
+@media (max-width:560px){.where span,.logo small{display:none}}
+.prog{position:absolute;left:0;right:0;bottom:0;height:2px;background:var(--hair)}
+.prog i{display:block;height:100%;background:linear-gradient(90deg,var(--gold),var(--gold-hi));width:0;transition:width .5s cubic-bezier(.2,.7,.2,1)}
+
+/* ---------- slides ---------- */
+.deck{position:relative;height:100%}
+.s{padding:calc(80px + env(safe-area-inset-top,0px)) var(--gut) calc(110px + env(safe-area-inset-bottom,0px))}
+.js .s{position:absolute;inset:0;overflow-y:auto;overflow-x:hidden;visibility:hidden;opacity:0;transform:translateX(40px);transition:opacity .45s,transform .6s cubic-bezier(.2,.7,.2,1),visibility 0s .6s}
+.js .s.back{transform:translateX(-40px)}
+.js .s.on{visibility:visible;opacity:1;transform:none;transition:opacity .45s,transform .6s cubic-bezier(.2,.7,.2,1)}
+.box{max-width:1120px;margin:0 auto;min-height:100%;display:flex;flex-direction:column;justify-content:center;gap:28px}
+.chap{font-family:var(--display);font-weight:600;font-size:14px;letter-spacing:.24em;text-transform:uppercase;color:var(--gold);display:flex;align-items:center;gap:12px}
+.chap::before{content:"";width:28px;height:1px;background:var(--gold)}
+.s h2{font-size:clamp(34px,5vw,64px);max-width:20ch}
+.lead{color:var(--soft);font-size:clamp(17px,1.6vw,21px);max-width:60ch}
+.head{display:grid;gap:14px}
+
+/* entrada animada por lámina */
+.js .s [data-a]{opacity:0;transform:translateY(18px)}
+.js .s.on [data-a]{animation:in .7s cubic-bezier(.2,.7,.2,1) both;animation-delay:calc(var(--d,0) * 110ms + 120ms)}
+@keyframes in{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
+
+/* ---------- grids & cards ---------- */
+.g{display:grid;gap:16px}
+.g2{grid-template-columns:repeat(2,minmax(0,1fr))}
+.g3{grid-template-columns:repeat(3,minmax(0,1fr))}
+.g4{grid-template-columns:repeat(4,minmax(0,1fr))}
+@media (max-width:860px){.g3,.g4{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:560px){.g2,.g3,.g4{grid-template-columns:minmax(0,1fr)}}
+.card{background:var(--panel);border:1px solid var(--hair);border-radius:14px;padding:20px 20px 22px;display:grid;gap:8px;align-content:start;min-width:0}
+.card h3{font-size:24px;letter-spacing:.02em}
+.card p{color:var(--soft);font-size:16px}
+.card.hl{border-color:var(--line);background:linear-gradient(160deg,var(--panel-hi),var(--panel))}
+.ic{width:42px;height:42px;border-radius:50%;border:1.5px solid var(--gold);display:grid;place-items:center;color:var(--gold-hi)}
+.ic svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.k{font-family:var(--display);font-size:13px;letter-spacing:.2em;text-transform:uppercase;color:var(--gold)}
+ul.ck{list-style:none;padding:0;margin:0;display:grid;gap:9px}
+ul.ck li{position:relative;padding-left:26px;color:var(--soft);font-size:16px}
+ul.ck li::before{content:"";position:absolute;left:2px;top:.45em;width:11px;height:6px;border-left:2px solid var(--gold);border-bottom:2px solid var(--gold);transform:rotate(-45deg)}
+ul.ck b{color:var(--text)}
+
+/* ---------- cover ---------- */
+.cover .box{gap:22px}
+.mark{font-family:var(--display);font-weight:800;font-size:clamp(56px,10vw,138px);line-height:.85;letter-spacing:.02em;text-transform:uppercase}
+.mark b{color:var(--gold)}
+.mark .x{display:inline-block;color:var(--muted);font-weight:500;margin:0 .12em}
+.cover .lead{font-size:clamp(18px,1.9vw,23px)}
+.road{position:relative;width:100%;max-width:900px;height:120px;margin-top:10px}
+@media (max-width:560px){.road{height:90px}}
+.road svg{width:100%;height:100%;overflow:visible}
+.road .lane{stroke:var(--hair);stroke-width:2}
+.road .dash{stroke:var(--gold);stroke-width:2;stroke-dasharray:10 12;animation:dash 1.2s linear infinite}
+@keyframes dash{to{stroke-dashoffset:-22}}
+.road .pin text{font-family:var(--display);font-size:15px;letter-spacing:.14em;fill:var(--muted);text-transform:uppercase}
+.truck{animation:drive 7s cubic-bezier(.45,0,.55,1) infinite}
+@keyframes drive{0%{transform:translateX(70px)}12%{transform:translateX(70px)}80%{transform:translateX(730px)}100%{transform:translateX(730px)}}
+.who{display:flex;flex-wrap:wrap;gap:10px 22px;color:var(--muted);font-size:15px}
+.who b{color:var(--text);font-weight:600}
+
+/* ---------- facts ---------- */
+.split{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,.9fr);gap:40px;align-items:center}
+@media (max-width:860px){.split{grid-template-columns:minmax(0,1fr)}}
+.met{display:grid;gap:4px;padding:16px 0;border-top:1px solid var(--hair)}
+.met .n{font-family:var(--display);font-weight:700;font-size:34px;line-height:1.05;color:var(--gold-hi)}
+.met p{color:var(--soft);font-size:15px}
+
+/* ---------- browser mock ---------- */
+.browser{border-radius:14px;border:1px solid var(--line);background:var(--panel);overflow:hidden;box-shadow:0 30px 80px rgba(0,0,0,.45)}
+.browser .bb{display:flex;align-items:center;gap:7px;padding:10px 14px;border-bottom:1px solid var(--hair)}
+.browser .bb i{width:9px;height:9px;border-radius:50%;background:var(--hair)}
+.browser .bb span{margin-left:10px;font-size:13px;color:var(--muted);background:var(--ink);border-radius:999px;padding:3px 14px}
+.browser img{display:block;width:100%;height:auto}
+
+/* ---------- hub ---------- */
+.tri{display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);gap:18px;align-items:center}
+.hubc{position:relative;width:170px;height:170px;border-radius:50%;display:grid;place-items:center;text-align:center;background:radial-gradient(circle at 35% 30%,#123063,#0A1532 70%);border:1.5px solid var(--gold);box-shadow:0 0 0 12px rgba(217,163,58,.06),0 0 60px rgba(217,163,58,.25);font-family:var(--display);font-weight:800;font-size:28px;line-height:1;letter-spacing:.04em}
+.hubc small{display:block;font-size:13px;letter-spacing:.24em;color:var(--gold);margin-top:6px}
+.hubc::after{content:"";position:absolute;inset:-14px;border-radius:50%;border:1px solid var(--gold);opacity:0;animation:ping 2.6s ease-out infinite}
+@keyframes ping{0%{transform:scale(.9);opacity:.6}100%{transform:scale(1.35);opacity:0}}
+.tri .col{display:grid;gap:16px}
+@media (max-width:760px){.tri{grid-template-columns:minmax(0,1fr)}.hubc{margin:4px auto;width:140px;height:140px;font-size:22px}}
+
+/* ---------- flow ---------- */
+.flow{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;counter-reset:f}
+@media (max-width:860px){.flow{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:560px){.flow{grid-template-columns:minmax(0,1fr)}}
+.flow li{counter-increment:f;position:relative;background:var(--panel);border:1px solid var(--hair);border-radius:14px;padding:18px 18px 20px 70px;min-width:0}
+.flow li::before{content:counter(f);position:absolute;left:18px;top:16px;width:36px;height:36px;border-radius:50%;display:grid;place-items:center;font-family:var(--display);font-weight:700;font-size:19px;color:var(--ink);background:var(--gold)}
+.flow h3{font-size:21px;margin-bottom:4px}
+.flow p{color:var(--soft);font-size:15px}
+.who-tag{display:inline-block;font-family:var(--display);font-size:12px;letter-spacing:.18em;text-transform:uppercase;color:var(--gold-hi);margin-bottom:6px}
+
+/* ---------- money ---------- */
+.price{display:flex;align-items:flex-end;gap:14px;flex-wrap:wrap}
+.price .n{font-family:var(--display);font-weight:800;font-size:clamp(90px,14vw,180px);line-height:.8;color:var(--gold-hi)}
+.price .u{font-family:var(--display);font-size:22px;letter-spacing:.12em;text-transform:uppercase;color:var(--soft);padding-bottom:10px}
+.splitbar{display:grid;gap:10px}
+.splitbar .bar{display:flex;height:64px;border-radius:12px;overflow:hidden;border:1px solid var(--hair)}
+.splitbar .a{flex:95;background:linear-gradient(90deg,var(--panel-hi),#16386A);display:flex;align-items:center;padding-left:18px;font-family:var(--display);font-weight:700;font-size:24px;letter-spacing:.04em;transform-origin:left}
+.splitbar .b{flex:5;background:var(--gold);transform-origin:left}
+.js .s.on .splitbar .a{animation:grow-x 1.1s .5s cubic-bezier(.2,.7,.2,1) both}
+.js .s.on .splitbar .b{animation:grow-x .6s 1.5s cubic-bezier(.2,.7,.2,1) both}
+@keyframes grow-x{from{transform:scaleX(0)}}
+.splitbar .leg{display:flex;justify-content:space-between;gap:12px;font-size:15px;color:var(--muted)}
+.splitbar .leg b{color:var(--text)}
+.splitbar .leg .g5 b{color:var(--gold-hi)}
+.note{font-size:14px;color:var(--muted)}
+
+/* ---------- 30 productos ---------- */
+.shelf{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:10px}
+.shelf i{aspect-ratio:1;max-width:100%;border-radius:8px;border:1px solid var(--hair);background:var(--panel);position:relative}
+.shelf i::after{content:"";position:absolute;inset:22%;border-radius:4px;background:var(--gold);opacity:.18}
+.js .s.on .shelf i{animation:lit .5s cubic-bezier(.2,.7,.2,1) both;animation-delay:calc(var(--i) * 70ms + 500ms)}
+@keyframes lit{from{background:var(--panel);border-color:var(--hair);transform:scale(.85);opacity:.3}to{}}
+.shelf i{background:linear-gradient(160deg,var(--panel-hi),var(--panel));border-color:var(--line)}
+.shelf i::after{opacity:.85}
+.count30{display:flex;align-items:baseline;gap:12px;margin-top:6px}
+.count30 b{font-family:var(--display);font-weight:800;font-size:56px;line-height:1;color:var(--gold-hi)}
+.count30 span{font-family:var(--display);font-size:15px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted)}
+.tags{display:flex;flex-wrap:wrap;gap:8px}
+.tags span{font-size:14px;color:var(--soft);border:1px solid var(--hair);border-radius:999px;padding:5px 12px}
+
+/* ---------- timeline ---------- */
+.tl{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:14px}
+@media (max-width:860px){.tl{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:560px){.tl{grid-template-columns:minmax(0,1fr)}}
+.wk{border-top:3px solid var(--gold);background:var(--panel);border-radius:0 0 14px 14px;padding:16px 18px 20px;display:grid;gap:8px;align-content:start;min-width:0}
+.wk .d{font-family:var(--display);font-size:14px;letter-spacing:.16em;text-transform:uppercase;color:var(--gold-hi)}
+.wk h3{font-size:22px}
+.wk.goal{background:linear-gradient(160deg,#2A2210,var(--panel));border-top-color:var(--gold-hi)}
+.track{height:6px;border-radius:3px;background:var(--hair);overflow:hidden}
+.track i{display:block;height:100%;width:100%;background:linear-gradient(90deg,var(--gold),var(--gold-hi));transform-origin:left}
+.js .s.on .track i{animation:grow-x 2.6s .6s cubic-bezier(.4,0,.2,1) both}
+
+/* ---------- closing ---------- */
+.ask{counter-reset:a;display:grid;gap:12px;list-style:none;padding:0;margin:0}
+.ask li{counter-increment:a;display:grid;grid-template-columns:auto 1fr;gap:16px;align-items:baseline;padding:14px 0;border-bottom:1px solid var(--hair);font-size:clamp(17px,1.7vw,21px);color:var(--soft)}
+.ask li::before{content:counter(a,decimal-leading-zero);font-family:var(--display);font-weight:700;font-size:22px;color:var(--gold)}
+.ask b{color:var(--text)}
+.contact{display:flex;flex-wrap:wrap;gap:10px 28px;font-size:16px;color:var(--soft)}
+.contact b{color:var(--text);font-weight:600}
+
+/* ---------- nav ---------- */
+.nav{position:fixed;left:0;right:0;bottom:0;z-index:20;padding:14px var(--gut) calc(14px + env(safe-area-inset-bottom,0px));background:linear-gradient(rgba(5,11,28,0),var(--ink) 40%);display:flex;justify-content:center;align-items:center;gap:14px}
+.nav button{font:inherit;font-family:var(--display);font-weight:600;font-size:17px;letter-spacing:.12em;text-transform:uppercase;cursor:pointer;border-radius:999px;padding:12px 26px;min-width:140px;border:1.5px solid var(--gold);transition:background .25s,color .25s,opacity .25s,transform .15s}
+.nav button:active{transform:scale(.97)}
+.nav .prev{background:transparent;color:var(--gold-hi)}
+.nav .next{background:var(--gold);color:var(--ink)}
+.nav .next:hover{background:var(--gold-hi)}
+.nav .prev:hover{background:rgba(217,163,58,.12)}
+.nav button:disabled{opacity:.3;cursor:default}
+.nav .count{font-family:var(--display);font-size:16px;letter-spacing:.14em;color:var(--muted);min-width:64px;text-align:center;font-variant-numeric:tabular-nums}
+.nav .count b{color:var(--text)}
+@media (max-width:560px){.nav button{min-width:0;padding:11px 20px;font-size:15px}}
+html:not(.js) .nav{display:none}
+
+@media (prefers-reduced-motion:reduce){
+  .js .s,.js .s.on{transition:none;transform:none}
+  .js .s [data-a],.js .s.on [data-a]{animation:none;opacity:1;transform:none}
+  .truck,.road .dash,.hubc::after,.js .s.on .splitbar .a,.js .s.on .splitbar .b,.js .s.on .shelf i,.js .s.on .track i{animation:none}
+  .truck{transform:translateX(400px)}
+}
+
+/* ---------- visión: anillos ---------- */
+.rings{position:relative;width:min(100%,440px);aspect-ratio:1;margin-inline:auto}
+.rings svg{width:100%;height:100%;overflow:visible}
+.rings .r{fill:none;stroke:var(--line);stroke-width:1.5}
+.rings .r.o{stroke:var(--gold);stroke-dasharray:4 8;animation:spin 40s linear infinite;transform-origin:220px 220px}
+@keyframes spin{to{transform:rotate(360deg)}}
+.rings text{font-family:var(--display);font-size:14px;letter-spacing:.18em;text-transform:uppercase;fill:var(--muted)}
+.rings .c{fill:var(--gold)}
+.rings .sat{fill:var(--gold-hi)}
+.js .s.on .rings .grow{animation:pop .9s cubic-bezier(.2,.7,.2,1) both;transform-origin:220px 220px}
+.js .s.on .rings .g1{animation-delay:.3s}.js .s.on .rings .g2{animation-delay:.6s}.js .s.on .rings .g3{animation-delay:.9s}
+@keyframes pop{from{transform:scale(.4);opacity:0}}
+.orb{transform-origin:220px 220px;animation:spin var(--t,14s) linear infinite}
+/* ---------- dos vías ---------- */
+.lane-h{display:flex;align-items:center;gap:10px;font-family:var(--display);font-weight:700;font-size:26px;letter-spacing:.06em;text-transform:uppercase}
+.lane-h i{font-style:normal;font-size:13px;letter-spacing:.2em;color:var(--ink);background:var(--gold);border-radius:999px;padding:3px 10px}
+.lane-h.m i{background:var(--gold-hi)}
+/* ---------- números ---------- */
+.zeros{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+@media (max-width:560px){.zeros{grid-template-columns:minmax(0,1fr)}}
+.zeros div{border:1px solid var(--hair);border-radius:12px;padding:12px 14px;background:var(--panel)}
+.zeros b{display:block;font-family:var(--display);font-weight:800;font-size:34px;line-height:1;color:var(--gold-hi)}
+.zeros span{font-size:14px;color:var(--soft)}
+.sim{display:grid;gap:6px;border-top:1px solid var(--hair);padding-top:14px}
+.sim .row{display:flex;justify-content:space-between;gap:12px;font-size:16px;color:var(--soft)}
+.sim .row b{font-family:var(--display);font-size:22px;color:var(--text);font-variant-numeric:tabular-nums}
+.sim .row.t b{color:var(--gold-hi)}
+.fut{border-left:3px solid var(--gold);padding:8px 0 8px 14px;font-size:15px;color:var(--soft);max-width:52ch}
+.fut b{color:var(--gold-hi);font-weight:600}
+@media (prefers-reduced-motion:reduce){.rings .r.o,.orb,.js .s.on .rings .grow{animation:none}}
+</style>
+
+<header class="top">
+  <div class="in">
+    <div class="logo">VEX<b>BIZ</b><small>× Ferretería Principal</small></div>
+    <div class="where" id="where"><b>01</b><span>Portada</span></div>
+  </div>
+  <div class="prog"><i id="prog"></i></div>
+</header>
+
+<main class="deck" id="deck">
+
+<!-- 1 PORTADA -->
+<section class="s cover on" data-t="Portada">
+  <div class="box">
+    <p class="chap" data-a>Propuesta de alianza comercial · Octubre 2026</p>
+    <h1 class="mark" data-a style="--d:1">Vex<b>biz</b><span class="x">×</span>Principal</h1>
+    <p class="lead" data-a style="--d:2">Ustedes ya venden en línea. Vexbiz les suma una vía más al detal y les abre una puerta nueva al mayor, dentro de un ecosistema que conecta a todo el comercio de suministros.</p>
+    <div class="road" data-a style="--d:3" aria-hidden="true">
+      <svg viewBox="0 0 900 120" preserveAspectRatio="xMidYMid meet">
+        <line class="lane" x1="40" y1="92" x2="860" y2="92"/>
+        <line class="dash" x1="40" y1="92" x2="860" y2="92"/>
+        <g class="pin"><circle cx="40" cy="92" r="7" fill="#D9A33A"/><text x="40" y="22" text-anchor="start">Ferretería Principal</text></g>
+        <g class="pin"><circle cx="860" cy="92" r="7" fill="#F2C768"/><text x="860" y="22" text-anchor="end">Toda la red Vexbiz</text></g>
+        <g class="truck">
+          <rect x="-60" y="44" width="70" height="40" rx="4" fill="#10264A" stroke="#D9A33A" stroke-width="2"/>
+          <rect x="-54" y="50" width="58" height="6" rx="1" fill="#B07A45"/>
+          <rect x="-54" y="58" width="58" height="6" rx="1" fill="#B07A45" opacity=".75"/>
+          <path d="M10 56h22l14 14v14H10z" fill="#D9A33A"/>
+          <rect x="16" y="60" width="13" height="9" rx="1.5" fill="#050B1C"/>
+          <circle cx="-42" cy="86" r="8" fill="#050B1C" stroke="#EDF0F7" stroke-width="2.5"/>
+          <circle cx="28" cy="86" r="8" fill="#050B1C" stroke="#EDF0F7" stroke-width="2.5"/>
+        </g>
+      </svg>
+    </div>
+    <div class="who" data-a style="--d:4"><span>Presenta: <b>Eduardo Marcano</b>, Coordinador de Operaciones</span><span>Vexbiz Corporación Tecnológica Industrial, C.A.</span></div>
+  </div>
+</section>
+
+<!-- 2 LA VISIÓN -->
+<section class="s" data-t="La visión">
+  <div class="box">
+    <div class="split">
+      <div class="head">
+        <p class="chap" data-a>La visión</p>
+        <h2 data-a style="--d:1;font-size:clamp(32px,4.2vw,54px);max-width:none">No somos una tienda más: <span class="gold">somos un ecosistema</span></h2>
+        <p class="lead" data-a style="--d:2">Vexbiz reúne en una sola plataforma a todo el que produce, vende, compra y presta servicios. Nacimos en Ciudad Guayana con una meta clara: convertirnos en el gran mercado digital de suministros, al estilo de Amazon, primero en Venezuela y luego más allá.</p>
+        <div data-a style="--d:3">
+          <div class="met"><span class="n">7 actores, un solo motor</span><p>Del fabricante al cliente final, en B2B, B2C y C2C. Cada uno gana cuando otro vende.</p></div>
+          <div class="met"><span class="n">Ustedes ponen el negocio</span><p>Vexbiz pone la tecnología. No competimos con nuestros aliados; no tenemos inventario propio.</p></div>
+        </div>
+      </div>
+      <div class="rings" data-a style="--d:2" role="img" aria-label="Crecimiento de Vexbiz: de Ciudad Guayana a Venezuela y al mundo">
+        <svg viewBox="0 0 440 440">
+          <circle class="r o grow g3" cx="220" cy="220" r="205"/>
+          <circle class="r grow g2" cx="220" cy="220" r="145"/>
+          <circle class="r grow g1" cx="220" cy="220" r="85"/>
+          <circle class="c grow" cx="220" cy="220" r="10"/>
+          <text x="220" y="258" text-anchor="middle">Guayana</text>
+          <text x="220" y="100" text-anchor="middle">Venezuela</text>
+          <text x="220" y="40" text-anchor="middle">El mundo</text>
+          <g class="orb" style="--t:10s"><circle class="sat" cx="305" cy="220" r="5"/></g>
+          <g class="orb" style="--t:18s"><circle class="sat" cx="220" cy="365" r="5"/></g>
+          <g class="orb" style="--t:30s"><circle class="sat" cx="15" cy="220" r="5"/></g>
+        </svg>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 3 LA PROPUESTA -->
+<section class="s" data-t="La propuesta">
+  <div class="box">
+    <div class="head">
+      <p class="chap" data-a>La propuesta</p>
+      <h2 data-a style="--d:1;max-width:none">Una vía más al detal, <span class="gold">una puerta nueva al mayor</span></h2>
+      <p class="lead" data-a style="--d:2">Ya tienen el catálogo digitalizado y venden por internet. Vexbiz no reemplaza nada de eso: lo multiplica.</p>
+    </div>
+    <div class="tri">
+      <div class="col">
+        <div class="card" data-a style="--d:3"><p class="lane-h">Al detal <i>B2C</i></p><p>Su catálogo frente al cliente final que busca ferretería, junto a repuestos, refrigeración, solar y más en el mismo carrito.</p></div>
+        <div class="card" data-a style="--d:4"><span class="k">Técnicos partner</span><h3>Vendedores en la calle</h3><p>Técnicos con código propio recomiendan sus productos a sus clientes y ganan por cada venta.</p></div>
+      </div>
+      <div class="hubc" data-a style="--d:5"><div>PRINCIPAL<small>en Vexbiz</small></div></div>
+      <div class="col">
+        <div class="card hl" data-a style="--d:6"><p class="lane-h m">Al mayor <i>B2B</i></p><p>Acceso a nuestra cartera de ferreterías, comercios, empresas de servicio y contratistas que compran en volumen.</p></div>
+        <div class="card" data-a style="--d:7"><span class="k">Proveedores de la red</span><h3>Abastecimiento</h3><p>Contacto con los fabricantes e importadores que ya están en el ecosistema.</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 4 LOS NÚMEROS -->
+<section class="s" data-t="Los números">
+  <div class="box">
+    <div class="split">
+      <div class="head">
+        <p class="chap" data-a>Los números</p>
+        <div class="price" data-a style="--d:1"><span class="n">5%</span><span class="u">por venta<br>concretada</span></div>
+        <p class="lead" data-a style="--d:2">Vexbiz gana solo cuando ustedes venden. Sin venta, no hay comisión.</p>
+        <div class="zeros" data-a style="--d:3">
+          <div><b>$0</b><span>de incorporación</span></div>
+          <div><b>$0</b><span>por cargar el catálogo</span></div>
+          <div><b>$0</b><span>en desarrollo o equipo técnico</span></div>
+        </div>
+        <p class="fut" data-a style="--d:4"><b>A futuro:</b> más adelante se sumará una mensualidad de $50 por el uso de la plataforma. Hoy no se cobra.</p>
+      </div>
+      <div class="g" data-a style="--d:2">
+        <span class="k">Por cada $100 vendidos en la plataforma</span>
+        <div class="splitbar" role="img" aria-label="De cada 100 dólares vendidos, 95 son para Ferretería Principal y 5 de comisión para Vexbiz">
+          <div class="bar"><span class="a">$95</span><span class="b"></span></div>
+          <div class="leg"><span><b>$95</b> para la ferretería</span><span class="g5"><b>$5</b> comisión Vexbiz</span></div>
+        </div>
+        <div class="sim">
+          <span class="k">Ejemplo ilustrativo de un mes</span>
+          <div class="row"><span>Ventas nuevas por Vexbiz</span><b>$10.000</b></div>
+          <div class="row"><span>Comisión Vexbiz (5%)</span><b>−$500</b></div>
+          <div class="row t"><span>Ingreso para la ferretería</span><b>$9.500</b></div>
+        </div>
+        <p class="note">Ventas que hoy no ocurren, porque ese comprador, ese técnico o ese comercio de otra plaza todavía no los tiene en su pantalla.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 5 LO QUE GANAN -->
+<section class="s" data-t="Lo que ganan">
+  <div class="box">
+    <div class="head">
+      <p class="chap" data-a>Lo que ganan</p>
+      <h2 data-a style="--d:1">Más canales, <span class="gold">sin montar nada</span></h2>
+    </div>
+    <div class="g g3">
+      <div class="card" data-a style="--d:2"><div class="ic"><svg viewBox="0 0 24 24"><ellipse cx="12" cy="6" rx="8" ry="3"/><path d="M4 6v12c0 1.7 3.6 3 8 3s8-1.3 8-3V6M4 12c0 1.7 3.6 3 8 3s8-1.3 8-3"/></svg></div><h3>Carga inmediata</h3><p>Su catálogo digital entra a la plataforma con ayuda de IA: ficha y foto por producto, sin trabajo de su equipo.</p></div>
+      <div class="card" data-a style="--d:3"><div class="ic"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.5 3 2.5 15 0 18M12 3c-2.5 3-2.5 15 0 18"/></svg></div><h3>Clientes nuevos</h3><p>Compradores, técnicos y comercios que hoy no llegan a su tienda ni a su web.</p></div>
+      <div class="card" data-a style="--d:4"><div class="ic"><svg viewBox="0 0 24 24"><path d="M3 21h18M5 21V9l7-5 7 5v12M9 21v-6h6v6"/></svg></div><h3>Venta al mayor</h3><p>Pedidos en volumen de la cartera B2B de Vexbiz, en Guayana y en las plazas que vamos abriendo.</p></div>
+      <div class="card" data-a style="--d:5"><div class="ic"><svg viewBox="0 0 24 24"><rect x="3" y="6" width="18" height="13" rx="2"/><path d="M3 10h18M7 15h4"/></svg></div><h3>Cobro seguro</h3><p>Pre-orden sin cargo hasta confirmar existencia. Pago Móvil, transferencias, tarjetas y cripto, con el dinero liberado al pagar.</p></div>
+      <div class="card" data-a style="--d:6"><div class="ic"><svg viewBox="0 0 24 24"><path d="M1 6h13v10H1zM14 10h4l3 3v3h-7z"/><circle cx="5.5" cy="18" r="2"/><circle cx="17.5" cy="18" r="2"/></svg></div><h3>Última milla</h3><p>Transportistas aliados retiran en su tienda y entregan en la obra o la casa del cliente.</p></div>
+      <div class="card hl" data-a style="--d:7"><div class="ic"><svg viewBox="0 0 24 24"><path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/><path d="M8.5 12l2.5 2.5 4.5-5"/></svg></div><h3>Su factura, su cliente</h3><p>Ustedes facturan directo al comprador. La relación comercial y fiscal sigue siendo suya.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- 6 SIGUIENTE PASO -->
+<section class="s" data-t="Siguiente paso">
+  <div class="box">
+    <div class="head">
+      <p class="chap" data-a>Siguiente paso</p>
+      <h2 data-a style="--d:1">Entren al ecosistema <span class="gold">desde el inicio</span></h2>
+    </div>
+    <ol class="ask">
+      <li data-a style="--d:2"><span><b>Una reunión con la gerencia</b> para mostrar la plataforma funcionando en ve.vexbiz.com.</span></li>
+      <li data-a style="--d:3"><span><b>Confirmar la alianza</b> con un 5% de comisión por venta concretada, al detal y al mayor.</span></li>
+      <li data-a style="--d:4"><span><b>Compartir su catálogo digital</b> y los documentos de la empresa. Nosotros hacemos la carga.</span></li>
+      <li data-a style="--d:5"><span><b>Nombrar un enlace</b> para confirmar órdenes, despachos y pedidos al mayor.</span></li>
+    </ol>
+    <div class="contact" data-a style="--d:6"><span><b>Eduardo Marcano</b> · Coordinador de Operaciones</span><span>comercializacion@vexbiz.com</span><span>+58 424-930.6453</span><span>ve.vexbiz.com</span></div>
+  </div>
+</section>
+
+</main>
+
+<nav class="nav" aria-label="Navegación de láminas">
+  <button class="prev" id="prev" type="button">Anterior</button>
+  <span class="count" id="count"><b>1</b> / 6</span>
+  <button class="next" id="next" type="button">Siguiente</button>
+</nav>
+
+<script>
+(function(){
+  var S=[].slice.call(document.querySelectorAll('.s')),i=0,n=S.length;
+  var prev=document.getElementById('prev'),next=document.getElementById('next'),
+      cnt=document.getElementById('count'),prog=document.getElementById('prog'),wh=document.getElementById('where');
+  function pad(x){return (x<10?'0':'')+x}
+  function go(k){
+    k=Math.max(0,Math.min(n-1,k));
+    S.forEach(function(s,j){
+      s.classList.toggle('back',j<k);
+      if(j===k){s.classList.remove('on');void s.offsetWidth;s.classList.add('on');s.scrollTop=0}
+      else s.classList.remove('on');
+    });
+    i=k;
+    cnt.innerHTML='<b>'+(i+1)+'</b> / '+n;
+    prog.style.width=((i+1)/n*100)+'%';
+    wh.innerHTML='<b>'+pad(i+1)+'</b><span>'+S[i].getAttribute('data-t')+'</span>';
+    prev.disabled=i===0; next.disabled=i===n-1;
+    try{history.replaceState(null,'','#s'+(i+1))}catch(e){}
+  }
+  prev.onclick=function(){go(i-1)}; next.onclick=function(){go(i+1)};
+  document.addEventListener('keydown',function(e){
+    if(e.key==='ArrowRight'||e.key==='PageDown'||e.key===' '){e.preventDefault();go(i+1)}
+    else if(e.key==='ArrowLeft'||e.key==='PageUp'){e.preventDefault();go(i-1)}
+    else if(e.key==='Home')go(0); else if(e.key==='End')go(n-1);
+  });
+  var x0=null,y0=null;
+  document.addEventListener('touchstart',function(e){x0=e.touches[0].clientX;y0=e.touches[0].clientY},{passive:true});
+  document.addEventListener('touchend',function(e){
+    if(x0===null)return;var dx=e.changedTouches[0].clientX-x0,dy=e.changedTouches[0].clientY-y0;
+    if(Math.abs(dx)>60&&Math.abs(dx)>Math.abs(dy)*1.4)go(dx<0?i+1:i-1);x0=null;
+  },{passive:true});
+  function fromHash(){var m=/^#s(\d+)$/.exec(location.hash);return m?parseInt(m[1],10)-1:null}
+  window.addEventListener('hashchange',function(){var k=fromHash();if(k!==null&&k!==i)go(k)});
+  var h=fromHash();go(h===null?0:h);
+})();
+</script>
+</body></html>
