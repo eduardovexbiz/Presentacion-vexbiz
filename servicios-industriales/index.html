@@ -1,0 +1,305 @@
+<!doctype html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><style>body{margin:0}[hidden]{display:none!important}img{max-width:100%}</style></head><body>
+<title>Vexbiz Industrial en Campo</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;700;800&family=Source+Sans+3:wght@400;600;700&family=JetBrains+Mono:wght@500&display=swap">
+<style>
+/* Layout: portafolio fotográfico; collage en el hero, tarjetas con foto por servicio, galería de trabajos con ficha técnica, franja de flota */
+:root{
+  --navy:#0f2a52; --navy-deep:#0a1d3b; --gold:#c08f2c; --gold-soft:#d9ad55;
+  --bg:#f6f3ea; --surface:#ffffff; --ink:#14233d; --muted:#5a6578; --line:#e2dbc9;
+  --band-ink:#f2f4f8; --band-muted:#aab6cc;
+  --f-display:"Archivo","Helvetica Neue",Arial,sans-serif;
+  --f-body:"Source Sans 3","Segoe UI",Arial,sans-serif;
+  --f-mono:"JetBrains Mono",ui-monospace,Menlo,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0c1426;--surface:#13203a;--ink:#e9edf5;--muted:#9aa7bd;--line:#24334f;--navy:#0f2547;--navy-deep:#081428;--gold:#d4a446;--gold-soft:#e2bb6a;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#0c1426;--surface:#13203a;--ink:#e9edf5;--muted:#9aa7bd;--line:#24334f;--navy:#0f2547;--navy-deep:#081428;--gold:#d4a446;--gold-soft:#e2bb6a;color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font:400 17px/1.6 var(--f-body);margin:0}
+.wrap{max-width:1120px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+h1,h2,h3{font-family:var(--f-display);text-wrap:balance;margin:0;letter-spacing:-.01em}
+h2{font-size:clamp(28px,4vw,42px);line-height:1.08;font-weight:800}
+h2 em,h1 em{font-style:normal;color:var(--gold)}
+.eyebrow{font:700 12px/1 var(--f-display);letter-spacing:.22em;text-transform:uppercase;color:var(--gold);display:flex;align-items:center;gap:14px}
+.eyebrow::after{content:"";height:1px;flex:1;max-width:240px;background:currentColor;opacity:.5}
+.lead{color:var(--muted);max-width:64ch;font-size:18px;margin:0}
+section{padding-block:76px}
+.sec-head{display:grid;gap:16px;margin-bottom:40px}
+.band{background:var(--navy);color:var(--band-ink)}
+.band .lead{color:var(--band-muted)} .band h2{color:#fff}
+.ph{position:relative;overflow:hidden;background:var(--navy-deep)}
+.ph img{display:block;width:100%;height:100%;object-fit:cover;max-width:100%;filter:saturate(1.05) contrast(1.04)}
+.ph::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,transparent 45%,rgba(10,29,59,.55));pointer-events:none}
+
+/* HERO */
+.hero{padding-block:40px 0;overflow:hidden}
+.topbar{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;font:700 11px/1 var(--f-display);letter-spacing:.24em;text-transform:uppercase;color:var(--band-muted)}
+.brand{display:flex;align-items:center;gap:12px;color:#fff}
+.brand svg{width:38px;height:38px}
+.hero-grid{display:grid;grid-template-columns:1fr 1.1fr;gap:44px;align-items:center;padding-block:48px 56px}
+.hero h1{font-size:clamp(36px,5.6vw,62px);line-height:1.02;font-weight:800;color:#fff}
+.hero .lead{margin-top:20px;font-size:19px}
+.tags{display:flex;flex-wrap:wrap;gap:8px;margin-top:26px}
+.tags span{border:1px solid rgba(217,173,85,.55);color:var(--gold-soft);font:700 11px/1 var(--f-display);letter-spacing:.14em;text-transform:uppercase;padding:9px 12px}
+.collage{display:grid;grid-template-columns:1.25fr 1fr;grid-template-rows:180px 180px;gap:10px}
+.collage .ph:first-child{grid-row:1/3}
+.collage .ph{border:1px solid rgba(217,173,85,.25)}
+.badge{position:absolute;left:14px;bottom:12px;z-index:1;font:700 11px/1 var(--f-display);letter-spacing:.16em;text-transform:uppercase;color:#fff;background:rgba(10,29,59,.75);border-left:3px solid var(--gold);padding:8px 10px}
+.wave{display:block;width:100%;height:60px}
+.stats{background:var(--navy-deep);color:var(--band-ink)}
+.stats .wrap{display:grid;grid-template-columns:repeat(4,1fr)}
+.stat{padding:28px 20px;border-right:1px solid rgba(255,255,255,.08)}
+.stat:last-child{border-right:0}
+.stat b{display:block;font:800 clamp(28px,3.8vw,42px)/1 var(--f-display);color:var(--gold-soft);font-variant-numeric:tabular-nums}
+.stat span{display:block;margin-top:8px;font-size:14px;color:var(--band-muted);line-height:1.4}
+
+/* SERVICIOS */
+.svc-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:22px}
+.svc{background:var(--surface);border:1px solid var(--line);display:flex;flex-direction:column}
+.svc .ph{aspect-ratio:16/10}
+.svc .body{padding:22px 22px 24px;display:flex;flex-direction:column;gap:10px;flex:1}
+.svc .k{font:700 11px/1 var(--f-display);letter-spacing:.16em;text-transform:uppercase;color:var(--gold)}
+.svc h3{font-size:20px;line-height:1.2}
+.svc p{margin:0;color:var(--muted);font-size:15.5px}
+.svc ul{margin:4px 0 0;padding:0;list-style:none;display:grid;gap:5px;font-size:14.5px}
+.svc li{padding-left:16px;position:relative}
+.svc li::before{content:"";position:absolute;left:0;top:.6em;width:7px;height:7px;background:var(--gold)}
+.svc.text-only{background:var(--navy);border-color:var(--navy);color:var(--band-ink)}
+.svc.text-only p{color:var(--band-muted)} .svc.text-only h3{color:#fff}
+
+/* TRABAJOS */
+.works{display:grid;grid-template-columns:repeat(12,1fr);gap:16px}
+.work{grid-column:span 4;display:flex;flex-direction:column;background:var(--surface);border:1px solid var(--line)}
+.work.wide{grid-column:span 6}
+.work .ph{aspect-ratio:4/3}
+.work.wide .ph{aspect-ratio:16/10}
+.work .cap{padding:16px 18px 18px;display:grid;gap:6px}
+.work .code{font:500 12px var(--f-mono);color:var(--gold)}
+.work h3{font-size:17px;line-height:1.25}
+.work p{margin:0;font-size:14.5px;color:var(--muted)}
+
+.orders{margin-top:40px;background:var(--surface);border:1px solid var(--line);overflow-x:auto}
+.orders table{width:100%;border-collapse:collapse;font-size:15px;min-width:600px}
+.orders th{text-align:left;font:700 11px/1 var(--f-display);letter-spacing:.16em;text-transform:uppercase;color:var(--gold-soft);background:var(--navy);padding:14px 18px}
+.orders td{padding:12px 18px;border-bottom:1px solid var(--line);vertical-align:top}
+.orders tr:last-child td{border-bottom:0}
+.orders td.y{font:500 13px var(--f-mono);color:var(--gold);white-space:nowrap;font-variant-numeric:tabular-nums}
+.orders td.c{font-weight:700;white-space:nowrap}
+
+/* ESCALA */
+.scale-wrap{display:grid;grid-template-columns:1fr 1fr;gap:44px;align-items:center}
+.scale-wrap .ph{aspect-ratio:4/3;border:1px solid rgba(217,173,85,.3)}
+.scale{display:grid;grid-template-columns:1fr 1fr;gap:22px 28px}
+.scale .m{border-top:3px solid var(--gold);padding-top:14px}
+.scale b{font:800 clamp(28px,3.4vw,38px)/1 var(--f-display);color:#fff;font-variant-numeric:tabular-nums}
+.scale b small{font-size:.5em;color:var(--gold-soft);margin-left:4px}
+.scale p{margin:6px 0 0;color:var(--band-muted);font-size:14.5px}
+
+/* FLOTA */
+.fleet-strip{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:28px}
+.fleet-strip .ph{aspect-ratio:1/1}
+.fleet-lists{display:grid;grid-template-columns:1fr 1fr;gap:24px}
+.box{background:var(--surface);border:1px solid var(--line)}
+.box h3{font-size:12px;letter-spacing:.18em;text-transform:uppercase;padding:14px 20px;background:var(--navy);color:var(--gold-soft)}
+.box table{width:100%;border-collapse:collapse;font-size:15px}
+.box td{padding:10px 20px;border-bottom:1px solid var(--line)}
+.box tr:last-child td{border-bottom:0}
+.box td.q{font:500 14px var(--f-mono);color:var(--gold);width:52px}
+.chips{display:flex;flex-wrap:wrap;gap:8px;padding:18px 20px}
+.chips span{background:var(--bg);border:1px solid var(--line);font-size:14px;padding:6px 11px}
+
+/* CLIENTES */
+.clients{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--line);border:1px solid var(--line)}
+.client{background:var(--surface);padding:20px;display:grid;gap:6px}
+.client b{font:700 16px/1.2 var(--f-display)}
+.client span{font-size:13px;color:var(--muted);line-height:1.4}
+.client.hl{background:var(--navy)} .client.hl b{color:#fff} .client.hl span{color:var(--gold-soft)}
+
+/* CTA */
+.cta{padding-block:72px 60px}
+.cta-grid{display:grid;grid-template-columns:1.2fr 1fr;gap:40px;align-items:end;margin-top:30px}
+.contact{display:grid;gap:12px}
+.contact .row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.contact code{font:500 15px var(--f-mono);color:#fff;background:rgba(255,255,255,.07);padding:8px 12px;user-select:all}
+.copy{font:700 11px/1 var(--f-display);letter-spacing:.14em;text-transform:uppercase;background:transparent;color:var(--gold-soft);border:1px solid var(--gold-soft);padding:9px 12px;cursor:pointer}
+.copy:hover,.copy:focus-visible{background:var(--gold-soft);color:var(--navy-deep);outline:none}
+.legal{margin-top:44px;padding-top:18px;border-top:1px solid rgba(255,255,255,.12);font-size:13px;color:var(--band-muted);display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
+
+.rise{animation:rise .7s ease-out both}.d1{animation-delay:.1s}.d2{animation-delay:.2s}
+@keyframes rise{from{transform:translateY(14px)}to{transform:none}}
+@media (prefers-reduced-motion:reduce){.rise{animation:none}}
+
+@media (max-width:900px){
+  .hero-grid,.scale-wrap,.fleet-lists,.cta-grid{grid-template-columns:1fr}
+  .svc-grid{grid-template-columns:1fr 1fr}
+  .work,.work.wide{grid-column:span 6}
+  .clients{grid-template-columns:repeat(2,1fr)}
+  .stats .wrap{grid-template-columns:1fr 1fr}.stat:nth-child(2){border-right:0}
+  .fleet-strip{grid-template-columns:1fr 1fr}
+}
+@media (max-width:560px){
+  .svc-grid{grid-template-columns:1fr}
+  .work,.work.wide{grid-column:span 12}
+  .collage{grid-template-rows:140px 140px}
+  section{padding-block:56px}
+}
+</style>
+
+<header class="band hero">
+  <div class="wrap">
+    <div class="topbar">
+      <div class="brand"><svg viewBox="0 0 40 40" aria-hidden="true"><rect x="1" y="1" width="38" height="38" fill="none" stroke="#d9ad55" stroke-width="2"/><path d="M9 10 L20 31 L31 10" fill="none" stroke="#fff" stroke-width="4"/></svg><span>Vexbiz Industrial</span></div>
+      <span>Servicios en campo · Petróleo y gas · 2026</span>
+    </div>
+    <div class="hero-grid">
+      <div>
+        <h1 class="rise">El músculo industrial que su operación <em>necesita en sitio</em>.</h1>
+        <p class="lead rise d1">Mantenimiento pesado, montaje, izamiento y transporte de carga con flota, taller y cuadrillas propias de nuestra red. La misma gente que mantuvo hornos, molinos y laminadores de Guayana, ahora en sus campos y macollas.</p>
+        <div class="tags rise d2"><span>Upstream</span><span>Facilidades de superficie</span><span>Plantas de proceso</span><span>Logística de campo</span></div>
+      </div>
+      <div class="collage rise d1">
+        <div class="ph"><img src="img/crane.jpg" alt="Grúa telescópica todo terreno Grove"><span class="badge">Izamiento · Grove todo terreno</span></div>
+        <div class="ph"><img src="img/gear.jpg" alt="Técnico montando un piñón de molino"><span class="badge">Mecánica pesada</span></div>
+        <div class="ph"><img src="img/trucks.jpg" alt="Flota de camiones chuto Iveco"><span class="badge">Flota propia</span></div>
+      </div>
+    </div>
+  </div>
+  <svg class="wave" viewBox="0 0 1440 60" preserveAspectRatio="none" aria-hidden="true"><path d="M0 34 C 240 0, 480 60, 720 30 S 1200 8, 1440 26 L1440 60 L0 60 Z" fill="var(--navy-deep)"/><path d="M0 34 C 240 0, 480 60, 720 30 S 1200 8, 1440 26" fill="none" stroke="var(--gold)" stroke-width="5"/></svg>
+</header>
+<div class="stats"><div class="wrap">
+  <div class="stat"><b>1997</b><span>Año desde el que opera nuestra red de servicio en Guayana</span></div>
+  <div class="stat"><b>+200</b><span>Órdenes ejecutadas para la industria pesada venezolana</span></div>
+  <div class="stat"><b>2.000 m²</b><span>De galpones-taller para fabricación y reparación</span></div>
+  <div class="stat"><b>+30</b><span>Años de experiencia del equipo técnico y de operaciones</span></div>
+</div></div>
+
+<!-- SERVICIOS -->
+<section>
+  <div class="wrap">
+    <div class="sec-head"><span class="eyebrow">Lo que ofrecemos</span><h2>Ocho líneas de servicio, <em>una sola orden</em>.</h2><p class="lead">Del mantenimiento del equipo rotativo al traslado de la carga hasta la localización. Usted pide una vez y Vexbiz coordina todo.</p></div>
+    <div class="svc-grid">
+      <article class="svc"><div class="ph"><img src="img/gear.jpg" alt="Montaje de piñón y eje"></div><div class="body"><span class="k">Equipo rotativo</span><h3>Bombas, compresores y válvulas</h3><p>Reparación especializada de los equipos que mueven crudo, gas y agua de proceso.</p><ul><li>Overhaul de compresores</li><li>Bombas y válvulas de proceso</li><li>Rebabitado de cojinetes</li></ul></div></article>
+      <article class="svc"><div class="ph"><img src="img/struct.jpg" alt="Montaje de estructura en planta con andamios"></div><div class="body"><span class="k">Proyectos</span><h3>Montaje de plantas y facilidades</h3><p>Montaje mecánico, eléctrico y de instrumentación, con arranque y puesta en marcha.</p><ul><li>Estaciones de flujo</li><li>Facilidades de superficie</li><li>Paradas mayores de planta</li></ul></div></article>
+      <article class="svc"><div class="ph"><img src="img/weld.jpg" alt="Soldador reparando una tolva"></div><div class="body"><span class="k">Metalmecánica</span><h3>Estructuras y soldadura</h3><p>Fabricación y reparación en taller propio con soldadores certificados.</p><ul><li>Skids, plataformas y soportería</li><li>Tolvas, chutes, ductos y juntas</li><li>Tuberías hasta 400 °C</li></ul></div></article>
+      <article class="svc"><div class="ph"><img src="img/lift.jpg" alt="Izamiento de componente pesado"></div><div class="body"><span class="k">Izamiento</span><h3>Izamiento de cargas críticas</h3><p>Grúa todo terreno, brazos hidráulicos y gatos de alta capacidad para terrenos difíciles.</p><ul><li>Montaje y desmontaje en campo</li><li>Gatos de 100 a 300 t</li><li>Plan de izaje en sitio</li></ul></div></article>
+      <article class="svc"><div class="ph"><img src="img/trucks2.jpg" alt="Camiones chuto de la flota"></div><div class="body"><span class="k">Logística</span><h3>Transporte pesado a campo</h3><p>Chutos, plataformas y gandolas para llevar equipos y materiales hasta la localización.</p><ul><li>Gandola plataforma de 45 t</li><li>Del puerto al sitio de obra</li><li>Mudanza entre localizaciones</li></ul></div></article>
+      <article class="svc"><div class="ph"><img src="img/plant.jpg" alt="Planta industrial pesada"></div><div class="body"><span class="k">Ambiente · RASDA</span><h3>Desechos peligrosos y saneamiento</h3><p>Recolección, manejo y transporte de sustancias y desechos según la normativa ambiental.</p><ul><li>Desechos peligrosos y no peligrosos</li><li>Apoyo al saneamiento de pozos</li><li>Limpieza industrial a presión y vapor</li></ul></div></article>
+      <article class="svc"><div class="ph"><img src="img/compr.jpg" alt="Compresor portátil Ingersoll Rand"></div><div class="body"><span class="k">Equipos de apoyo</span><h3>Alquiler de equipos con operador</h3><p>Compresores, montacargas, grúas y equipos de soldadura movilizados con su operador.</p><ul><li>Grúa telescópica de 45 t</li><li>Montacargas de 5 y 7 t</li><li>Containers equipados para campo</li></ul></div></article>
+      <article class="svc text-only"><div class="body"><span class="k">Civil</span><h3>Obras civiles y vialidad</h3><p>Vías de acceso, fundaciones, obras hidráulicas y edificaciones para habilitar áreas de trabajo y campamentos.</p></div></article>
+      <article class="svc text-only"><div class="body"><span class="k">HVAC</span><h3>Climatización de salas críticas</h3><p>Aire acondicionado central e individual para salas de control, subestaciones y campamentos. Servicio ya ejecutado para PDVSA Industrial.</p></div></article>
+    </div>
+  </div>
+</section>
+
+<!-- TRABAJOS -->
+<section style="padding-top:0">
+  <div class="wrap">
+    <div class="sec-head"><span class="eyebrow">Trabajos realizados</span><h2>Evidencia en planta, <em>orden por orden</em>.</h2><p class="lead">Fotos de obras ejecutadas por nuestra red de servicio en la industria básica de Guayana.</p></div>
+    <div class="works">
+      <figure class="work wide" style="margin:0"><div class="ph"><img src="img/struct.jpg" alt="Andamiaje y montaje estructural"></div><figcaption class="cap"><span class="code">ENE 2007 · Acería</span><h3>Reparación estructural en planta siderúrgica</h3><p>Montaje de andamiaje y estructura con grúa en sitio durante parada programada.</p></figcaption></figure>
+      <figure class="work wide" style="margin:0"><div class="ph"><img src="img/lift.jpg" alt="Izamiento en transportador"></div><figcaption class="cap"><span class="code">Planta de Pellas</span><h3>Izamiento de componente en transportador</h3><p>Desmontaje y montaje de equipo mecánico en altura, con maniobra de izaje.</p></figcaption></figure>
+      <figure class="work" style="margin:0"><div class="ph"><img src="img/weld.jpg" alt="Soldador dentro de una tolva"></div><figcaption class="cap"><span class="code">OCT 2006 · Taller</span><h3>Reconstrucción de tolva y chute</h3><p>Soldadura interior en espacio confinado.</p></figcaption></figure>
+      <figure class="work" style="margin:0"><div class="ph"><img src="img/gear.jpg" alt="Piñón y eje de molino"></div><figcaption class="cap"><span class="code">2014 · Molino 220BM1</span><h3>Corona y eje piñón de molino de bolas</h3><p>Cambio de flanco de trabajo y montaje de eje piñón.</p></figcaption></figure>
+      <figure class="work" style="margin:0"><div class="ph"><img src="img/plant.jpg" alt="Planta industrial"></div><figcaption class="cap"><span class="code">2002–2021</span><h3>Paradas mayores en Sidor y FMO</h3><p>Hornos, parrillas móviles y ventiladores de proceso.</p></figcaption></figure>
+    </div>
+    <div class="orders">
+      <table>
+        <thead><tr><th>Año</th><th>Cliente</th><th>Servicio ejecutado</th></tr></thead>
+        <tbody>
+          <tr><td class="y">2016</td><td class="c">Grupo Padisa 2015</td><td>Traslado, izamiento y desmontaje de cargas en el campamento Capure, campo Pedernales, Delta Amacuro</td></tr>
+          <tr><td class="y">2014</td><td class="c">PDVSA Industrial</td><td>Mantenimiento y reparación de aire acondicionado en sala de control y subestaciones, planta de bauxita sinterizada, Matanzas</td></tr>
+          <tr><td class="y">2020–21</td><td class="c">Sidor</td><td>Reparación de cojinetes de deslizamiento del motor del ventilador BG 5015 y ventiladores de proceso, Planta de Pellas</td></tr>
+          <tr><td class="y">2018</td><td class="c">Ferrominera Orinoco</td><td>Reparación general de la parrilla móvil de la Planta de Pellas</td></tr>
+          <tr><td class="y">2017–19</td><td class="c">Vepica</td><td>Mantenimiento especializado de equipos de formación y piroconsolidación de pellas; camión chuto de 30 t para la segunda línea de pellas</td></tr>
+          <tr><td class="y">2015</td><td class="c">Hidrobolívar</td><td>Traslado en gandola de motor vertical de 1.600 kW desde la toma Chiripón</td></tr>
+          <tr><td class="y">2011–14</td><td class="c">Sidor</td><td>Alquiler de grúa telescópica de 45 t con operador para todas las plantas</td></tr>
+          <tr><td class="y">2017–18</td><td class="c">Cabelum</td><td>Contrato marco de mantenimiento mecánico, electromecánico e instrumentación</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- ESCALA -->
+<section class="band">
+  <div class="wrap scale-wrap">
+    <div class="ph"><img src="img/plant.jpg" alt="Planta siderúrgica"><span class="badge">Industria básica de Guayana</span></div>
+    <div>
+      <div class="sec-head" style="margin-bottom:28px"><span class="eyebrow">Escala demostrada</span><h2>Si mantenemos una acería, <em>mantenemos su estación de flujo</em>.</h2></div>
+      <div class="scale">
+        <div class="m"><b>5.000<small>kW</small></b><p>Reductores reparados</p></div>
+        <div class="m"><b>3.400<small>kW</small></b><p>Molinos de bolas intervenidos</p></div>
+        <div class="m"><b>300<small>t</small></b><p>Gatos hidráulicos con centralina</p></div>
+        <div class="m"><b>2,5<small>m</small></b><p>Juntas de expansión fabricadas</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FLOTA -->
+<section>
+  <div class="wrap">
+    <div class="sec-head"><span class="eyebrow">Flota y taller</span><h2>Llegamos con <em>todo lo necesario</em>.</h2><p class="lead">Equipos propios de la red, movilizados con operadores certificados en grúas, cargadores, montacargas y gandolas.</p></div>
+    <div class="fleet-strip">
+      <div class="ph"><img src="img/crane.jpg" alt="Grúa Grove"><span class="badge">Grúa 35 t</span></div>
+      <div class="ph"><img src="img/trucks.jpg" alt="Chutos Iveco"><span class="badge">5 chutos Iveco</span></div>
+      <div class="ph"><img src="img/vans.jpg" alt="Vehículos de apoyo"><span class="badge">Unidades de apoyo</span></div>
+      <div class="ph"><img src="img/welders.jpg" alt="Banco de máquinas de soldar"><span class="badge">Soldadura</span></div>
+    </div>
+    <div class="fleet-lists">
+      <div class="box"><h3>Maquinaria y equipo móvil</h3><table>
+        <tr><td class="q">5</td><td>Camiones chuto Iveco Trakker y Stralis</td></tr>
+        <tr><td class="q">1</td><td>Grúa telescópica todo terreno Grove, 35 t</td></tr>
+        <tr><td class="q">2</td><td>Semirremolques plataforma</td></tr>
+        <tr><td class="q">2</td><td>Camiones Canter con combustible y lubricación</td></tr>
+        <tr><td class="q">2</td><td>Montacargas de 7 t y 5 t</td></tr>
+        <tr><td class="q">2</td><td>Brazos hidráulicos, hasta 21.420 kg</td></tr>
+        <tr><td class="q">3</td><td>Containers equipados para campo</td></tr>
+        <tr><td class="q">1</td><td>Autobús de 32 puestos para personal</td></tr>
+      </table></div>
+      <div class="box"><h3>Herramental y cuadrillas</h3><div class="chips">
+        <span>Compresores Atlas Copco e Ingersoll Rand</span><span>Soldadoras eléctricas y diésel</span><span>Plasma y oxicorte</span><span>Hidrojet</span><span>Torquímetro 1.000 ft-lb</span><span>Señoritas de 0,5 a 10 t</span><span>Eslingas y grilletes hasta 2"</span><span>Mecánicos</span><span>Soldadores</span><span>Electricistas</span><span>Instrumentistas</span><span>Supervisores HSE</span><span>Trabajo en alturas</span>
+      </div></div>
+    </div>
+  </div>
+</section>
+
+<!-- CLIENTES -->
+<section style="padding-top:0">
+  <div class="wrap">
+    <div class="sec-head"><span class="eyebrow">Trayectoria de la red</span><h2>Quienes ya confiaron <em>su operación</em>.</h2></div>
+    <div class="clients">
+      <div class="client hl"><b>PDVSA Industrial</b><span>Climatización de planta</span></div>
+      <div class="client hl"><b>Grupo Padisa 2015</b><span>Campo Pedernales</span></div>
+      <div class="client"><b>Sidor</b><span>Acerías, laminación, pellas</span></div>
+      <div class="client"><b>Ferrominera Orinoco</b><span>Planta de Pellas y P.M.H.</span></div>
+      <div class="client"><b>Bauxilum · Venalum</b><span>Planta piloto de galio</span></div>
+      <div class="client"><b>Corpoelec</b><span>Proveedor registrado</span></div>
+      <div class="client"><b>Vepica</b><span>Segunda línea de pellas</span></div>
+      <div class="client"><b>China Railway N°10</b><span>Izamiento de 45 t</span></div>
+    </div>
+  </div>
+</section>
+
+<footer class="band cta">
+  <div class="wrap">
+    <span class="eyebrow">Vexbiz Industrial</span>
+    <h2 style="margin-top:16px;font-size:clamp(32px,5vw,52px);max-width:18ch">Su próxima parada puede durar <em>menos</em>. Hablemos.</h2>
+    <div class="cta-grid">
+      <p class="lead">Un solo contacto para cotizar servicios, coordinar visitas técnicas y dar seguimiento a cada orden, con la trazabilidad de la plataforma Vexbiz.</p>
+      <div class="contact">
+        <div class="row"><code>comercializacion1@vexbiz.com</code><button class="copy" id="c1" data-t="comercializacion1@vexbiz.com">Copiar</button></div>
+        <div class="row"><code>+58 422-0232852</code><button class="copy" id="c2" data-t="+58 422-0232852">Copiar</button></div>
+        <div style="color:var(--band-muted);font-size:15px">Puerto Ordaz · Estado Bolívar · Venezuela</div>
+      </div>
+    </div>
+    <div class="legal"><span>Vexbiz Industrial · Procura y servicios de alta escala</span><span>Vexbiz Corporación Tecnológica Industrial, C.A. · RIF J-50811824-3</span></div>
+  </div>
+</footer>
+<script>
+document.querySelectorAll('.copy').forEach(b=>b.addEventListener('click',()=>{const t=b.dataset.t,done=()=>{b.textContent='Copiado';setTimeout(()=>b.textContent='Copiar',1600)};try{navigator.clipboard.writeText(t).then(done,()=>sel(b))}catch(e){sel(b)}}));
+function sel(b){const c=b.previousElementSibling,r=document.createRange();r.selectNodeContents(c);const s=getSelection();s.removeAllRanges();s.addRange(r)}
+</script>
+
+</body></html>
